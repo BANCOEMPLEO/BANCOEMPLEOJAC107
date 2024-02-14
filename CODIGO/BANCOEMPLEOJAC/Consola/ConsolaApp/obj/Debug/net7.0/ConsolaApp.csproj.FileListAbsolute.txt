@@ -1,0 +1,15 @@
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\bin\Debug\net7.0\ConsolaApp.exe
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\bin\Debug\net7.0\ConsolaApp.deps.json
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\bin\Debug\net7.0\ConsolaApp.runtimeconfig.json
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\bin\Debug\net7.0\ConsolaApp.dll
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\bin\Debug\net7.0\ConsolaApp.pdb
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\obj\Debug\net7.0\ConsolaApp.csproj.AssemblyReference.cache
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\obj\Debug\net7.0\ConsolaApp.GeneratedMSBuildEditorConfig.editorconfig
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\obj\Debug\net7.0\ConsolaApp.AssemblyInfoInputs.cache
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\obj\Debug\net7.0\ConsolaApp.AssemblyInfo.cs
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\obj\Debug\net7.0\ConsolaApp.csproj.CoreCompileInputs.cache
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\obj\Debug\net7.0\ConsolaApp.dll
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\obj\Debug\net7.0\refint\ConsolaApp.dll
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\obj\Debug\net7.0\ConsolaApp.pdb
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\obj\Debug\net7.0\ConsolaApp.genruntimeconfig.cache
+I:\e\bancoempleo\Proyectos\BANCOEMPLEOJAC\CODIGO\BANCOEMPLEOJAC\Consola\ConsolaApp\obj\Debug\net7.0\ref\ConsolaApp.dll

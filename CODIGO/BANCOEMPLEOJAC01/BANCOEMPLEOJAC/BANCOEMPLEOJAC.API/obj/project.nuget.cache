@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "/yP56RHA0Xu3uTkBSLH8HRHCWjO8i/x0a8IWGse9TMMH8moqqW/0+qO6OpbNaCK2uw3aTwAsZGfDwTcQ69Lz7Q==",
+  "success": true,
+  "projectFilePath": "I:\\e\\bancoempleo\\Proyectos\\BANCOEMPLEOJAC\\CODIGO\\BANCOEMPLEOJAC01\\BANCOEMPLEOJAC\\BANCOEMPLEOJAC.API\\BANCOEMPLEOJAC.API.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\hivanr\\.nuget\\packages\\microsoft.aspnetcore.openapi\\7.0.15\\microsoft.aspnetcore.openapi.7.0.15.nupkg.sha512",
+    "C:\\Users\\hivanr\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "C:\\Users\\hivanr\\.nuget\\packages\\microsoft.openapi\\1.4.3\\microsoft.openapi.1.4.3.nupkg.sha512",
+    "C:\\Users\\hivanr\\.nuget\\packages\\swashbuckle.aspnetcore\\6.5.0\\swashbuckle.aspnetcore.6.5.0.nupkg.sha512",
+    "C:\\Users\\hivanr\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.5.0\\swashbuckle.aspnetcore.swagger.6.5.0.nupkg.sha512",
+    "C:\\Users\\hivanr\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.5.0\\swashbuckle.aspnetcore.swaggergen.6.5.0.nupkg.sha512",
+    "C:\\Users\\hivanr\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.5.0\\swashbuckle.aspnetcore.swaggerui.6.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}

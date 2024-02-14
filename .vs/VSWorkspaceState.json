@@ -1,7 +1,15 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\CODIGO",
+    "\\CODIGO\\BANCOEMPLEOJAC",
+    "\\CODIGO\\BANCOEMPLEOJAC\\BANCOEMPLEO",
+    "\\CODIGO\\BANCOEMPLEOJAC\\BANCOEMPLEO\\BANCOEMPLEO",
+    "\\CODIGO\\BANCOEMPLEOJAC\\BANCOEMPLEO\\BANCOEMPLEO\\Server\\Areas",
+    "\\CODIGO\\BANCOEMPLEOJAC\\BANCOEMPLEO\\BANCOEMPLEO\\Server\\Areas\\Identity",
+    "\\CODIGO\\BANCOEMPLEOJAC\\BANCOEMPLEO\\BANCOEMPLEO\\Server\\Areas\\Identity\\Pages",
+    "\\CODIGO\\BANCOEMPLEOJAC\\BANCOEMPLEO\\BANCOEMPLEO\\Server\\Areas\\Identity\\Pages\\Shared"
   ],
-  "SelectedNode": "\\CODIGO",
+  "SelectedNode": "\\CODIGO\\BANCOEMPLEOJAC\\BANCOEMPLEO\\BANCOEMPLEO.sln",
   "PreviewInSolutionExplorer": false
 }
