@@ -67,10 +67,11 @@ namespace BANCOEMPLEOJAC.Utilidades
             CreateMap<PropuestaEmpleo, PropuestaEmpleoDTO>();
             CreateMap<PropuestaEmpleoDTO, PropuestaEmpleo>();
 
-            CreateMap<PropuestaEmpleo, PropuestaEmpleoDTO>();
-            CreateMap<PropuestaEmpleoDTO, PropuestaEmpleo>();
+            //CreateMap<PropuestaEmpleo, PropuestaEmpleoDTO>();
+            //CreateMap<PropuestaEmpleoDTO, PropuestaEmpleo>();
 
             CreateMap<PropuestaServicioDTO, PropuestaServicio>();
+            CreateMap<PropuestaServicio, PropuestaServicioDTO>();
             //CreateMap<PropuestaEmpleoDTO, PropuestaEmpleo>().ForMember(destino =>
             //     destino.IdPropuestaEmpleo,
             //     opt => opt.Ignore()

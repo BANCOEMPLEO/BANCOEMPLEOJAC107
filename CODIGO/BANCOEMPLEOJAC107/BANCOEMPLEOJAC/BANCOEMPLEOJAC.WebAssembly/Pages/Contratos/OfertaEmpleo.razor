@@ -14,16 +14,21 @@
                 <h1 class="display-5 fw-bolder">@modelo.Nombre</h1>
                 <div class="fs-5 mb-5">
 
-                    <span>S /.@modelo.Valor</span>
+                    <span>$COL /.@modelo.Valor</span>
                 </div>
                 <p class="lead">@modelo.Descripcion</p>
                 <div class="d-flex">
                     <input class="form-control text-center me-3" type="number" min="1" style="width:60px" @bind-value="cantidad">
+
+                    <a class="btn btn-outline-dark flex-shrink-0" href="/propuestaempleo/@modelo.IdPropuestaEmpleo.ToString()">
+                        <i class="bi-cart-fill me-1"></i>
+                        Proponer
+                    </a>
                     <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await AgregarCarrito(modelo))">
                         <i class="bi-cart-fill me-1"></i>
-                        Agregar al carrito
+                        Agregar a Canasta
                     </button>
-                    <a class="btn btn-outline-dark flex-shrink-0" href="/catalogo">
+                    <a class="btn btn-outline-dark flex-shrink-0" href="/ofertasempleos">
                         <i class="bi-cart-fill me-1"></i>
                         Volver
                     </a>
@@ -42,6 +47,7 @@
 
 </div>
 @code {
+    // VOY : QUE SE PUEDAN CREAR REPROPUESTAS DE EMPLEO 24/FEB/2024 12:27AM : INICIO : 24/FEB/2024 12:55PM
     // POR HACER : QUE SE VEA INFORMACIÓN DEL EMPLEADOR Y DEL EMPLEADO SI LA HAY POR COMPONENTE Y PARAMETROS 24/FEB/2024 12:24AM
 
     [Parameter]
@@ -57,6 +63,21 @@
     }
 
     private async Task AgregarCarrito(PropuestaEmpleoDTO modelo)
+    {
+        decimal? precioFinal = (modelo.Valor);
+
+        CarritoDTO carrito = new CarritoDTO()
+            {
+                // Producto = modelo,
+                Cantidad = cantidad,
+                Precio = precioFinal,
+                Total = Convert.ToDecimal(cantidad) * precioFinal
+            };
+
+        await carritoServicio.AgregarCarrito(carrito);
+
+    }
+    private async Task AgregarPropuesta(PropuestaEmpleoDTO modelo)
     {
         decimal? precioFinal = (modelo.Valor);
 
