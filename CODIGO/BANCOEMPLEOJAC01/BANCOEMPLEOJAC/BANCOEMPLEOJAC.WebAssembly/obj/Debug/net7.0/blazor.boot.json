@@ -1,7 +1,7 @@
 {
   "entryAssembly": "BANCOEMPLEOJAC.WebAssembly",
   "resources": {
-    "hash": "sha256-0qU9ChnXHV6dgg/XXZ7xfWqNHaZkfDDcsQDb2vhrz30=",
+    "hash": "sha256-TeW3cK8rogNvou9/gWAq5PleAQsqmSA+nFaxUTBgqfA=",
     "runtime": {
       "dotnet.7.0.16.euum8eoa9s.js": "sha256-4BiArKugJJtpQrznGF5zWfmJ2TB98+p6rKsyoqhtMk4=",
       "dotnet.timezones.blat": "sha256-rwyJqJu36keQwNmm/O1XV7tnkkVldIOK8GIjn4gTUt4=",
@@ -11,12 +11,16 @@
       "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
     },
     "assembly": {
-      "Microsoft.AspNetCore.Authorization.dll": "sha256-qItsrcGUYsmf5k/rs5T3s0/5TooOLLkE7D3h/jaADeA=",
-      "Microsoft.AspNetCore.Components.dll": "sha256-ARTjidnVeShn7SWNQ9115es8+pJo2HuaJY7cqwaxyL8=",
+      "Blazored.LocalStorage.dll": "sha256-eXVgTw72kEn74FZgDQbLtvAmXbiZDSj5gzUnxVmwowQ=",
+      "Blazored.Toast.dll": "sha256-6wGoA8FmxkQCTFIXEM+U+Y2kJJnSTJXRYwuByAUPWGU=",
+      "CurrieTechnologies.Razor.SweetAlert2.dll": "sha256-jaHzMzp157atLBDyTfDX4LuHLGBZ1q/5g/2s83upTCk=",
+      "Microsoft.AspNetCore.Authorization.dll": "sha256-Cgh+Y4XVfSXTPsbXKMm7rZ+Pjh1st6+GJF3Ix7cuFR4=",
+      "Microsoft.AspNetCore.Components.dll": "sha256-mUtnopWTcat5StB4R5d9n0V1IC8uBev/P1KtD4x1DiI=",
+      "Microsoft.AspNetCore.Components.Authorization.dll": "sha256-QzgihzdGXbC5bCsDM8IIWaORHJHSOrMrObg7qDRhNZg=",
       "Microsoft.AspNetCore.Components.Forms.dll": "sha256-t6c5epX2ackuIi7LsWzLHHmrD9rxPsgqWnzWFbzR9pE=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-bNOL5azLh7fxx/VGp45o6TTEfTj0wxIQlZL0Tt+LqmI=",
       "Microsoft.AspNetCore.Components.WebAssembly.dll": "sha256-jNBqDMk+/z2RZ8S/nqRX3UQiqjeytKB9hEX6MLop3Jo=",
-      "Microsoft.AspNetCore.Metadata.dll": "sha256-Zu14OYccKsdCox8RZ+DsDcVlvU5EJAPlNCZHcdBmm90=",
+      "Microsoft.AspNetCore.Metadata.dll": "sha256-fMHdoIa6xD5lUHebujGRc+7ET7p8XY/fIe0Zx9sgRwc=",
       "Microsoft.Extensions.Configuration.dll": "sha256-PqQvp77oZ4+uuy2ElXk8AU9I6RfZSf18UGTrd4rulOo=",
       "Microsoft.Extensions.Configuration.Abstractions.dll": "sha256-CnS3b9EMFQmETBUVEgtcron4DBsfFdcVt3zfCP6Uflg=",
       "Microsoft.Extensions.Configuration.Binder.dll": "sha256-7GY9+7Cm0Z8DJ+JCFwgCx9OfFtUvXlFHaaLlBYmXfIE=",
@@ -202,10 +206,12 @@
       "mscorlib.dll": "sha256-7yxnoj0sx/xIMKjSCkfYzaeQKDj1UsUSr/JXW7fRggs=",
       "netstandard.dll": "sha256-c9xgB5oQro5/rBTTHeD+4cqLi9QOB+6fhaP3jmkeGo4=",
       "System.Private.CoreLib.dll": "sha256-FGXoQzMt7mcWfUZbWXoXgg8tPIt7PF+QZoXXBQWegAQ=",
-      "BANCOEMPLEOJAC.WebAssembly.dll": "sha256-LnRaryUkCVBdiaNVurz4Gq0z53fnNCn6AF+xMDSV0AA="
+      "BANCOEMPLEOJAC.DTO.dll": "sha256-YA31MTyDvtzSnhJN9DkLXiPIeltSGCc486z/PzjN38w=",
+      "BANCOEMPLEOJAC.WebAssembly.dll": "sha256-LUHb0QBSLVz8aZ+HSgMryfnw9BzUNEZ2kr7QwR1x89o="
     },
     "pdb": {
-      "BANCOEMPLEOJAC.WebAssembly.pdb": "sha256-9aBgBelX4kFdbt5uuzWTlKg+Ni8F94bFSAQ5Iaana28="
+      "BANCOEMPLEOJAC.DTO.pdb": "sha256-8fLXQ0k6aZYF4NHSF/GHu29sJBF+rdv5q5PNWtHuYtE=",
+      "BANCOEMPLEOJAC.WebAssembly.pdb": "sha256-d494RocUyb5OkTxajXyVclLcQ2FQixBs6G9HmMenwRc="
     },
     "runtimeAssets": {
       "dotnet.wasm": {

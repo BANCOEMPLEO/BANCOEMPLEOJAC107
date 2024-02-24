@@ -1,0 +1,194 @@
+﻿@page "/empleos"
+@using Microsoft.AspNetCore.Authorization
+
+@inject IEmpleoServicio empleoServicio
+@inject IToastService toastService
+@inject SweetAlertService Swal
+@attribute [Authorize(Roles = "1")]
+
+<PerfilesCargos />
+
+<div class="row justify-content-center  mt-3">
+    <div class="col-sm-6 col-md-4 col-xl-3 mb-4">
+        <div class="d-grid gap-1 col-12 mx-auto">
+            <a class="btn btn-primary" href="/empleo">Nuevo Empleo</a>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-8 col-xl-9 mb-4">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Buscar empleo..." @bind-value="buscar">
+            <button class="btn btn-outline-secondary" type="button" @onclick="(async()=> await ObtenerEmpleos(buscar))">
+                <i class="oi oi-magnifying-glass"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="row gx-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 justify-content-start mt-2">
+
+    @if (lista != null)
+    {
+        foreach (var item in lista)
+        {
+            <div class="col mb-5">
+                <div class="card h-100">
+                    <!-- Sale badge-->
+                    @if (DateTime.Now < item.FechaHoraCreacion.Value.AddDays(30))
+                    {
+                        <div class="badge bg-primary text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Nuevo</div>
+                    }
+                    <!-- Product details-->
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <!-- Product name-->
+                            <h5 class="fw-bolder">@item.Nombre</h5>
+                            <!-- Product price-->
+                            @if (item.PrecioOferta != 0 && item.PrecioOferta > item.Precio)
+                            {
+                                <span class="text-danger text-decoration-line-through">$COL/. @item.Precio</span>
+                                <span>$COL /.@item.PrecioOferta</span>
+                            }
+                            else
+                            {
+                                <span>$COL /.@item.Precio</span>
+                            }
+                        </div>
+                        <div class="text-center">
+                            <h4>Cantidad : @item.Cantidad</h4>
+                        </div>
+                    </div>
+                    <!-- Product actions-->
+                    <div class="card-footer bg-transparent">
+                        <div class="row justify-content-between">
+                            <a class="col-5 btn btn-sm btn-outline-primary mt-auto" href="/empleo/@item.IdEmpleo" title="Editar"><i class="oi oi-pencil fs-5" title="Editar"></i></a>
+                                @if (item.Activo)
+                                {
+                                    <button class="col-5 btn btn-sm btn-outline-danger mt-auto" title="Desactivar" @onclick="(async () => await Desactivar(item))">
+                                        <i class="oi oi-target fs-5"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="col-5 btn btn-sm btn-outline-primary mt-auto" title="Activar" @onclick="(async () => await Activar(item))">
+                                        <i class="oi oi-task fs-5"></i>
+                                    </button>
+                                }
+                            <button class="col-5 btn btn-sm btn-outline-danger mt-auto" title="Eliminar" @onclick="(async () => await Eliminar(item))">
+                                <i class="oi oi-trash fs-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    }
+
+
+</div>
+@code {
+    // VOY : QUE SE PUEDAN CREAR REPROPUESTAS DE EMPLEO 24/FEB/2024 12:27AM 
+    // HECHO : DESDE LAS 2PM DEL 23/FEB/2024 YA SE PUEDEN PONER COMO PROPUESTAS LOS EMPLEOS Y QUEDAN EN EL LISTADO DE PUBLICOS FALTAS LAS REPROPUESTAS DE EMPLEO 24/FEB/2024 12.28AM
+    private List<EmpleoDTO>? lista = null;
+    private string buscar = "";
+
+    private async Task ObtenerEmpleos(string Valor = "")
+    {
+        var response = await empleoServicio.Lista(Valor);
+        if (response.EsCorrecto)
+        {
+            lista = (List<EmpleoDTO>)response.Resultado!;
+        }
+        else
+        {
+            lista = new List<EmpleoDTO>();
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await ObtenerEmpleos();
+    }
+    private async Task Eliminar(EmpleoDTO modelo)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Esta seguro?",
+                Text = $"Eliminar Empleo: {modelo.Nombre}",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Si, eliminar",
+                CancelButtonText = "No, volver",
+            });
+        if (result.IsConfirmed)
+        {
+            var response = await empleoServicio.Eliminar(modelo.IdEmpleo);
+            if (response.EsCorrecto)
+            {
+                await ObtenerEmpleos();
+                toastService.ShowSuccess("Empleo fue eliminado");
+            }
+            else
+            {
+                toastService.ShowWarning(response.Mensaje);
+            }
+        }
+    }
+    private async Task Activar(EmpleoDTO modelo)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Esta seguro de?",
+                Text = $"Activar Empleo: {modelo.Nombre}",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Si, activar",
+                CancelButtonText = "No, volver",
+            });
+        if (result.IsConfirmed)
+        {
+            var response = await empleoServicio.Activar(modelo);
+            if (response.EsCorrecto)
+            {
+                await ObtenerEmpleos();
+                toastService.ShowSuccess("Empleo fue Activado para el público");
+            }
+            else
+            {
+                toastService.ShowWarning(response.Mensaje);
+            }
+            StateHasChanged();
+       }
+    }
+    private async Task Desactivar(EmpleoDTO modelo)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Esta seguro de?",
+                Text = $"Desactivar Empleo: {modelo.Nombre}",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Si, desactivar",
+                CancelButtonText = "No, volver",
+            });
+        if (result.IsConfirmed)
+        {
+            var response = await empleoServicio.Desactivar(modelo);
+            if (response.EsCorrecto)
+            {
+                await ObtenerEmpleos();
+                toastService.ShowSuccess("Empleo fue Desactivado para el publico");
+            }
+            else
+            {
+                toastService.ShowWarning(response.Mensaje);
+            }
+            StateHasChanged();
+        }
+    }
+
+}

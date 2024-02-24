@@ -1,9 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BANCOEMPLEOJAC.DTO\BANCOEMPLEOJAC.DTO.csproj" />
+    <ProjectReference Include="..\BANCOEMPLEOJAC.MODELS\BANCOEMPLEOJAC.Modelo.csproj" />
+    <ProjectReference Include="..\BANCOEMPLEOJAC.REPOSITORIO\BANCOEMPLEOJAC.Repositorio.csproj" />
+    <ProjectReference Include="..\BANCOEMPLEOJAC.Utilidades\BANCOEMPLEOJAC.Utilidades.csproj" />
+  </ItemGroup>
 
 </Project>

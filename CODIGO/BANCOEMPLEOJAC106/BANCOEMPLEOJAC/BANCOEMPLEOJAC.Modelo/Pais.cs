@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace BANCOEMPLEOJAC.Modelo;
+
+public partial class Pais
+{
+    public string IdPais { get; set; } = null!;
+
+    public string? Nombre { get; set; }
+
+    public string? Descripion { get; set; }
+
+    public string? Region { get; set; }
+
+    public virtual ICollection<Departamento> Departamentos { get; set; } = new List<Departamento>();
+}

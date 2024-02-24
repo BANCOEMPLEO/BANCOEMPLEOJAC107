@@ -1,28 +1,59 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "I:\\e\\bancoempleo\\Proyectos\\BANCOEMPLEOJAC\\CODIGO\\BANCOEMPLEOJAC01\\BANCOEMPLEOJAC\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{94F936CA-A62C-41B7-9D9A-55B673BC5C87}|BANCOEMPLEOJAC.WebAssembly\\BANCOEMPLEOJAC.WebAssembly.csproj|i:\\e\\bancoempleo\\proyectos\\bancoempleojac\\codigo\\bancoempleojac01\\bancoempleojac\\bancoempleojac.webassembly\\pages\\admin\\usuarios.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{94F936CA-A62C-41B7-9D9A-55B673BC5C87}|BANCOEMPLEOJAC.WebAssembly\\BANCOEMPLEOJAC.WebAssembly.csproj|solutionrelative:bancoempleojac.webassembly\\pages\\admin\\usuarios.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4ACC3773-2593-45B1-A70E-D083192D3804}|BANCOEMPLEOJAC.Servicio\\BANCOEMPLEOJAC.Servicio.csproj|i:\\e\\bancoempleo\\proyectos\\bancoempleojac\\codigo\\bancoempleojac01\\bancoempleojac\\bancoempleojac.servicio\\implementacion\\categoriaservicio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4ACC3773-2593-45B1-A70E-D083192D3804}|BANCOEMPLEOJAC.Servicio\\BANCOEMPLEOJAC.Servicio.csproj|solutionrelative:bancoempleojac.servicio\\implementacion\\categoriaservicio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
-      "Orientation": 1,
+      "Orientation": 0,
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedHeight": 172,
-          "SelectedChildIndex": -1,
+          "DockedWidth": 204,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CategoriaServicio.cs",
+              "DocumentMoniker": "I:\\e\\bancoempleo\\Proyectos\\BANCOEMPLEOJAC\\CODIGO\\BANCOEMPLEOJAC01\\BANCOEMPLEOJAC\\BANCOEMPLEOJAC.Servicio\\Implementacion\\CategoriaServicio.cs",
+              "RelativeDocumentMoniker": "BANCOEMPLEOJAC.Servicio\\Implementacion\\CategoriaServicio.cs",
+              "ToolTip": "I:\\e\\bancoempleo\\Proyectos\\BANCOEMPLEOJAC\\CODIGO\\BANCOEMPLEOJAC01\\BANCOEMPLEOJAC\\BANCOEMPLEOJAC.Servicio\\Implementacion\\CategoriaServicio.cs",
+              "RelativeToolTip": "BANCOEMPLEOJAC.Servicio\\Implementacion\\CategoriaServicio.cs",
+              "ViewState": "AQIAACEAAAAAAAAAAAAywHgAAABIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-21T16:10:39.201Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Usuarios.razor",
+              "DocumentMoniker": "I:\\e\\bancoempleo\\Proyectos\\BANCOEMPLEOJAC\\CODIGO\\BANCOEMPLEOJAC01\\BANCOEMPLEOJAC\\BANCOEMPLEOJAC.WebAssembly\\Pages\\Admin\\Usuarios.razor",
+              "RelativeDocumentMoniker": "BANCOEMPLEOJAC.WebAssembly\\Pages\\Admin\\Usuarios.razor",
+              "ToolTip": "I:\\e\\bancoempleo\\Proyectos\\BANCOEMPLEOJAC\\CODIGO\\BANCOEMPLEOJAC01\\BANCOEMPLEOJAC\\BANCOEMPLEOJAC.WebAssembly\\Pages\\Admin\\Usuarios.razor",
+              "RelativeToolTip": "BANCOEMPLEOJAC.WebAssembly\\Pages\\Admin\\Usuarios.razor",
+              "ViewState": "AQIAAA8AAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-02-21T19:21:52.332Z",
+              "EditorCaption": ""
             }
           ]
         },
         {
-          "DockedHeight": 448,
+          "DockedWidth": 216,
           "SelectedChildIndex": -1,
           "Children": [
             {
