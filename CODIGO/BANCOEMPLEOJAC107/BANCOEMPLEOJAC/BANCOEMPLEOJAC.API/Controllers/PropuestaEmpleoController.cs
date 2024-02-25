@@ -39,7 +39,7 @@ namespace BANCOEMPLEOJAC.API.Controllers
         public async Task<IActionResult> Catalogo(int categoria, string buscar = "NA")
         {
             var response = new ResponseDTO<List<PropuestaEmpleoDTO>>();
-
+            
             try
             {
                 //if (categoria.ToLower() == "todos") categoria = "";

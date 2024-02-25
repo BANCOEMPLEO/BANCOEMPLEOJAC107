@@ -26,14 +26,11 @@
                     <DataAnnotationsValidator></DataAnnotationsValidator>
 
                     <div class="input-group mt-3">
-                        <span class="input-group-text bg-light" id="basic-addon3">Nombre</span>
-                        <input type="text" class="form-control" @bind-value="modelo.Nombre">
+                        <h1 class="display-5 fw-bolder">@modelo.Nombre</h1>
                     </div>
-                    <ValidationMessage For="@(()=>modelo.Nombre)" />
 
                     <div class="input-group  mt-3">
-                        <span class="input-group-text bg-light">Descripcion</span>
-                        <input type="text" class="form-control" @bind-value="modelo.Descripcion"></input>
+                        <p class="lead">@modelo.Descripcion</p>
 
                     </div>
                     <ValidationMessage For="@(()=>modelo.Descripcion)" />
@@ -88,7 +85,7 @@
 
                     <div class="mt-3">
                         <button type="submit" class="btn btn-primary" style="width:130px">@boton</button>
-                        <a href="/empleos" class="btn btn-secondary" style="width:130px">Volver</a>
+                        <a href="/ofertasempleos" class="btn btn-secondary" style="width:130px">Volver</a>
                     </div>
                 </EditForm>
 

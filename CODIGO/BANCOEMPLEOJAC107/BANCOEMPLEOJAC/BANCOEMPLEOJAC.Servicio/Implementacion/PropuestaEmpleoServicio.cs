@@ -18,6 +18,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
     public class PropuestaEmpleoServicio : IPropuestaEmpleoServicio
     {
         private readonly IGenericoRepositorio<PropuestaEmpleo> _modeloRepositorio;
+        private readonly IGenericoRepositorio<Empleo> _empleoRepositorio;
         private readonly IMapper _mapper;
 
         public PropuestaEmpleoServicio(IGenericoRepositorio<PropuestaEmpleo> modeloRepositorio, IMapper mapper)
@@ -161,6 +162,8 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
             {
 
                 var consulta = _modeloRepositorio.Consultar();
+                consulta = consulta.Include("Empleo");
+                // consulta.
                 //if (buscar != null)
                 //    consulta = consulta.Where(c => c.Nombre.Contains(buscar) || c.Requisitos.Contains(buscar));
                 //if (categoria > 0)

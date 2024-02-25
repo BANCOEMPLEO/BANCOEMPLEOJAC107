@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MimeKit" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BANCOEMPLEOJAC.DTO\BANCOEMPLEOJAC.DTO.csproj" />
     <ProjectReference Include="..\BANCOEMPLEOJAC.Modelo\BANCOEMPLEOJAC.Modelo.csproj" />
     <ProjectReference Include="..\BANCOEMPLEOJAC.Repositorio\BANCOEMPLEOJAC.Repositorio.csproj" />

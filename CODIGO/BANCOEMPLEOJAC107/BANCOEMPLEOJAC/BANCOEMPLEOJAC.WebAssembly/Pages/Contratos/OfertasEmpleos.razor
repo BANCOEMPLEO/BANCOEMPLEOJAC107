@@ -84,7 +84,8 @@
                                     <!-- Product name-->
                                     <h5 class="fw-bolder">@item.Nombre</h5>
                                     <!-- Product price-->
-                                        <span>S /.@item.Valor</span>
+                                    <span>S /.@item.Valor</span>
+                                    <h4>Empleador @item.EmpleoId</h4>
                                 </div>
                             </div>
                             <!-- Product actions-->
@@ -129,6 +130,7 @@
     private async Task ObtenerCatalogo()
     {
         var response = await propuestaempleoServicio.Catalogo(categoriaSeleccionada, buscar);
+        
         if (response.EsCorrecto)
         {
             listaProducto = (List<PropuestaEmpleoDTO>)response.Resultado!;
