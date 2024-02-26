@@ -18,5 +18,6 @@ namespace BANCOEMPLEOJAC.DTO
 
         public string? Observaciones { get; set; }
 
+        public virtual UsuarioDTO Usuario {  get; set; }
     }
 }

@@ -56,6 +56,7 @@ namespace BANCOEMPLEOJAC.DTO
 
         public virtual ICollection<PropuestaEmpleoDTO> InversePropuestaEmpleoAnterior { get; set; } = new List<PropuestaEmpleoDTO>();
         public virtual EmpleoDTO? Empleo { get; set; }
+        public virtual EmpleadoDTO? Emplado { get; set; }
 
         public virtual PropuestaEmpleoDTO? PropuestaEmpleoAnterior { get; set; }
 

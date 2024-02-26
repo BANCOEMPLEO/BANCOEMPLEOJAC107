@@ -13,6 +13,7 @@ namespace BANCOEMPLEOJAC.DTO
         public bool? Vacante { get; set; }
         public DateTime? FechaHoraCreacion { get; set; }
         public string? Observaciones { get; set; }
+        public virtual UsuarioDTO? Usuario { get; set; }
 
     }
 }

@@ -43,9 +43,9 @@ public partial class Empleo
 
     public virtual Empleado? Empleado { get; set; }
 
-    public virtual Empleador Empleador { get; set; } = null!;
+    public virtual Empleador? Empleador { get; set; } = null!;
 
-    public virtual PerfilCargo PerfilCargo { get; set; } = null!;
+    public virtual PerfilCargo? PerfilCargo { get; set; } = null!;
 
     public virtual ICollection<PropuestaEmpleo> PropuestaEmpleos { get; set; } = new List<PropuestaEmpleo>();
 }

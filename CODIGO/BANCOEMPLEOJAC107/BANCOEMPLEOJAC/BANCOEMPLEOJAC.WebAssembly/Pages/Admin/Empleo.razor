@@ -1,7 +1,10 @@
 ﻿@page "/empleo"
 @page "/empleo/{Id:int}"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IEmpleoServicio empleoServicio
 @inject IPerfilCargoServicio perfilcargoServicio
 @inject IToastService toastService
@@ -51,12 +54,12 @@
                 <label class="form-check-label" for="flexSwitchCheckDefault">Activo</label>
             </div>
             <div class="form-floating mt-3">
-                <input class="form-control" id="inputFechaHoraInicio" type="datetime" placeholder="" @bind-value="modelo.FechaHoraInicio" autocomplete="off" />
+                <input class="form-control" id="inputFechaHoraInicio" type="datetime-local" placeholder="" @bind-value="modelo.FechaHoraInicio" autocomplete="off" />
                 <label for="inputEmail">Fecha Hora Inicio Empleo</label>
             </div>
             <ValidationMessage For="@(()=>modelo.FechaHoraInicio)" />
             <div class="form-floating mt-3">
-                <input class="form-control" id="inputFechaHoraFin" type="datetime" placeholder="" @bind-value="modelo.FechaHoraFin" autocomplete="off" />
+                <input class="form-control" id="inputFechaHoraFin" type="datetime-local" placeholder="" @bind-value="modelo.FechaHoraFin" autocomplete="off" />
                 <label for="inputEmail">Fecha Hora Finaliza Empleo</label>
             </div>
             <ValidationMessage For="@(()=>modelo.FechaHoraFin)" />
@@ -84,25 +87,32 @@
             </div>
             <ValidationMessage For="@(()=>modelo.PrecioOferta)" />
             <div class="form-floating mt-3">
-                <input class="form-control" id="inputFechaHoraActiva" type="datetime" placeholder="" @bind-value="modelo.FechaHoraActiva" autocomplete="off" />
+                <input class="form-control" id="inputFechaHoraActiva" type="datetime-local" placeholder="" @bind-value="modelo.FechaHoraActiva" autocomplete="off" />
                 <label for="inputEmail">Fecha Hora Activa Empleo</label>
             </div>
             <ValidationMessage For="@(()=>modelo.FechaHoraActiva)" />
             <div class="form-floating mt-3">
-                <input class="form-control" id="inputFechaHoraFin" type="datetime" placeholder="" @bind-value="modelo.FechaHoraInactiva" autocomplete="off" />
+                <input class="form-control" id="inputFechaHoraFin" type="datetime-local" placeholder="" @bind-value="modelo.FechaHoraInactiva" autocomplete="off" />
                 <label for="inputEmail">Fecha Hora Inactiva Empleo</label>
             </div>
             <ValidationMessage For="@(()=>modelo.FechaHoraInactiva)" />
+
+            <!--Como empleador o Empleado-->
             <div class="input-group mt-3">
-                <span class="input-group-text bg-light" id="basic-addon3">Empleador Id</span>
-                <input type="text" class="form-control" @bind-value="modelo.EmpleadorId">
+                <label class="input-group-text bg-light" for="inputGroupSelect01">Actúa como :</label>
+                <select class="form-control" @onchange="CambiarTipo" id="selTipo">
+                    <option value="true" selected="@empleador">Empleador</option>
+                    <option value="false" selected="@(!empleador)">Empleado</option>
+                </select>
             </div>
-            <ValidationMessage For="@(()=>modelo.EmpleadorId)" />
-            <div class="input-group mt-3">
-                <span class="input-group-text bg-light" id="basic-addon3">Empleado Id</span>
-                <input type="text" class="form-control" @bind-value="modelo.EmpleadoId">
-            </div>
-            <ValidationMessage For="@(()=>modelo.EmpleadoId)" />
+            @if (empleador)
+            {
+                <input type="hidden" @bind-value="modelo.EmpleadorId" />
+            }
+            else
+            {
+                <input type="hidden" @bind-value="modelo.EmpleadoId" />
+            }
             <div class="input-group mt-3">
                 <span class="input-group-text bg-light" id="basic-addon3">Observaciones</span>
                 <textarea class="form-control" @bind="modelo.Observaciones"></textarea>
@@ -119,15 +129,29 @@
 
 
 @code {
+    // HECHO : SE PUSO SOLAMENTE EL USUARIO SI ESCOJE VER EL EMPLEO COMO EMPLEADO O COMO EMPLEADOR. FINALIZA 25/FEB/2024 7:48PM
+    // POR HACER : HACER QUE SE VEAN SOLO LOS EMPLEOS QUE CREA EL USUARIO
+    // POR HACER : HACER QUE SE VEA EN OFERTA TODOS LOS EMPLEOS DE LA JAC LOCAL.
+
     [Parameter]
     public int Id { get; set; }
     private string Titulo = "Nuevo Empleo";
     private string boton = "Crear";
     private List<PerfilCargoDTO> listaPerfilCargo = new List<PerfilCargoDTO>();
     private EmpleoDTO modelo = new EmpleoDTO();
+    private bool empleador;
+    private string userId;
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
+        }
         var response = await perfilcargoServicio.Lista("");
         if (response.EsCorrecto)
         {
@@ -138,10 +162,6 @@
             }
         }
     }
-
-    // POR HACER : HACER QUE SE VEAN SOLO LOS EMPLEOS QUE CREA EL USUARIO
-    // POR HACER : HACER QUE SE VEA EN OFERTA TODOS LOS EMPLEOS DE LA JAC LOCAL.
-
 
     protected override async Task OnParametersSetAsync()
     {
@@ -154,6 +174,11 @@
             if (response.EsCorrecto)
             {
                 modelo = (EmpleoDTO)response.Resultado!;
+                if (modelo.EmpleadorId != null)
+                    empleador = true;
+                else
+                    empleador = false;
+
             }
             else
             {
@@ -167,7 +192,21 @@
         modelo.PerfilCargoId = Convert.ToInt32(e.NewValue.ToString());
 
     }
+    void CambiarTipo(ChangeEventArgs e)
+    {
+        empleador = Convert.ToBoolean(e.Value.ToString());
+        if (empleador)
+        {
+            modelo.EmpleadorId = Convert.ToInt32(userId);
+            modelo.EmpleadoId = null;
+        }
+        else
+        {
+            modelo.EmpleadoId = Convert.ToInt32(userId);
+            modelo.EmpleadorId = null;
+        }
 
+    }
     // async Task OnFileChange(InputFileChangeEventArgs e)
     // {
     //     FileInfo fileInfo = new FileInfo(e.File.Name);

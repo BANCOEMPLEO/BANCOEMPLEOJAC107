@@ -37,13 +37,19 @@ namespace BANCOEMPLEOJAC.DTO
         [Required(ErrorMessage = "Ingrese Fecha y Hora en que se Inactiva el Empleo")]
         [DataType(DataType.DateTime, ErrorMessage = "Formato de fecha no válido")]
         public DateTime FechaHoraInactiva { get; set; } = DateTime.Now;
-        public int EmpleadorId { get; set; }
+        public int? EmpleadorId { get; set; }
         public int? EmpleadoId { get; set; }
         [Required(ErrorMessage = "Ingrese El Perfil o Cargo del Empleo Ofrecido")]
         public int PerfilCargoId { get; set; }
         public DateTime? FechaHoraCreacion { get; set; } = DateTime.Now;
 
         public string Observaciones { get; set; } = null!;
+
+        public virtual EmpleadoDTO? Empleado { get; set; }
+
+        public virtual EmpleadorDTO? Empleador { get; set; } = null!;
+
+        public virtual PerfilCargoDTO? PerfilCargo { get; set; } = null!;
 
     }
 }

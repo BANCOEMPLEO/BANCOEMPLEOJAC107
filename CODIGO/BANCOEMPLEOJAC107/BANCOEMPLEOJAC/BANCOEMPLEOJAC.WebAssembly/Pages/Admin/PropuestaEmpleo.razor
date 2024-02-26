@@ -13,7 +13,7 @@
 <div class="container px-4 px-lg-5 my-5">
 
     <div>
-        <h5>Re Proponer Empleo</h5>
+        <h5>Proponer Cambios</h5>
     </div>
 
     @if (modelo != null)
@@ -40,12 +40,12 @@
                     </div>
                     <ValidationMessage For="@(()=>modelo.Requisitos)" />
                     <div class="form-floating mt-3">
-                        <input class="form-control" id="inputFechaHoraInicio" type="datetime" placeholder="" @bind-value="modelo.FechaHoraInicio" autocomplete="off" />
+                        <input class="form-control" id="inputFechaHoraInicio" type="datetime-local" placeholder="" @bind-value="modelo.FechaHoraInicio" autocomplete="off" />
                         <label for="inputEmail">Fecha Hora Inicio Empleo</label>
                     </div>
                     <ValidationMessage For="@(()=>modelo.FechaHoraInicio)" />
                     <div class="form-floating mt-3">
-                        <input class="form-control" id="inputFechaHoraFin" type="datetime" placeholder="" @bind-value="modelo.FechaHoraFin" autocomplete="off" />
+                        <input class="form-control" id="inputFechaHoraFin" type="datetime-local" placeholder="" @bind-value="modelo.FechaHoraFin" autocomplete="off" />
                         <label for="inputEmail">Fecha Hora Finaliza Empleo</label>
                     </div>
                     <ValidationMessage For="@(()=>modelo.FechaHoraFin)" />
@@ -73,10 +73,10 @@
                     </div>
                     <ValidationMessage For="@(()=>modelo.EmpleadoId)" />
                     <div class="input-group mt-3">
-                        <span class="input-group-text bg-light" id="basic-addon3">Empleado Id</span>
-                        <input type="text" class="form-control" @bind-value="modelo.EmpleadoId">
+                        <span class="input-group-text bg-light" id="basic-addon3">Empleador Id</span>
+                        <input type="text" class="form-control" @bind-value="modelo.Empleo.EmpleadorId">
                     </div>
-                    <ValidationMessage For="@(()=>modelo.EmpleadoId)" />
+                    <ValidationMessage For="@(()=>modelo.Empleo.EmpleadorId)" />
                     <div class="input-group mt-3">
                         <span class="input-group-text bg-light" id="basic-addon3">Observaciones</span>
                         <textarea class="form-control" @bind="modelo.Observaciones"></textarea>
@@ -111,7 +111,7 @@
     public int idPropuestaEmpleo { get; set; }
     public PropuestaEmpleoDTO? modelo = new PropuestaEmpleoDTO();
     private string Titulo = "Nueva Propuesta Empleo";
-    private string boton = "Crear";
+    private string boton = "Proponer Cambios";
 
     private int cantidad = 1;
     private List<PerfilCargoDTO>? listaPerfilCargo = null;

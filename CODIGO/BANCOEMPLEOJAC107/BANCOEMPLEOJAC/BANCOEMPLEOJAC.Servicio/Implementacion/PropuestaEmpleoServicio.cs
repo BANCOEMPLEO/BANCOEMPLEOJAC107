@@ -18,7 +18,9 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
     public class PropuestaEmpleoServicio : IPropuestaEmpleoServicio
     {
         private readonly IGenericoRepositorio<PropuestaEmpleo> _modeloRepositorio;
-        private readonly IGenericoRepositorio<Empleo> _empleoRepositorio;
+        //private readonly IGenericoRepositorio<Empleo> _empleoRepositorio;
+        private readonly IGenericoRepositorio<Empleador> _empleadorRepositorio;
+        private readonly IGenericoRepositorio<Empleado> _empleadoRepositorio;
         private readonly IMapper _mapper;
 
         public PropuestaEmpleoServicio(IGenericoRepositorio<PropuestaEmpleo> modeloRepositorio, IMapper mapper)
@@ -123,6 +125,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 );
 
                 consulta = consulta.Include(c => c.Empleo);
+                    //.Where(p => p.Empleo.Activo == true);
 
                 List<PropuestaEmpleoDTO> lista = _mapper.Map<List<PropuestaEmpleoDTO>>(await consulta.ToListAsync());
                 return lista;
@@ -138,8 +141,22 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         {
             try
             {
-                var consulta = _modeloRepositorio.Consultar(p => p.IdPropuestaEmpleo == id);
-                consulta = consulta.Include(c => c.Empleo);
+                var consulta = _modeloRepositorio.Consultar(p => p.IdPropuestaEmpleo == id)
+                    .Include(c => c.Empleo);
+
+                // Si no tiene EmpleadoId la propuesta la hace un Empleador 
+                if (consulta.Select(e => e.Empleado == null).FirstOrDefault()) {
+                    var empleadoid = consulta.Select(e => e.EmpleadoId).FirstOrDefault();
+                    //consulta.SingleOrDefault().Empleado = (Empleado)_empleadoRepositorio.Consultar(em => em.IdEmpleado == empleadoid);
+
+                    //consulta = consulta.Where(e => e.Empleo.EmpleadoId == )Include("Empleado").Where(e => e.Empleado.IdEmpleado == consulta.Where(e => e.Empleo.EmpleadoId));
+                      }
+                    //.Include(e => e.Empleo.Empleador);
+                    //.Include(u => u.Empleo.Empleador.Usuario);
+                    //.Include(us => us.Empleado)
+                    //.Include(us => us.Empleado.Usuario);
+                //consulta = consulta.Include(c => c.Empleo).Where(e => e.EmpleadoId == )
+                // .FirstOrDefault();
 
                 var fromDbModelo = await consulta.FirstOrDefaultAsync();
 
@@ -189,7 +206,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         {
             try
             {
-                var consulta = _modeloRepositorio.Consultar();
+                var consulta = _modeloRepositorio.Consultar().Where(pe => pe.Empleo.Activo == true);
                 if (buscar != null)
                     consulta = consulta.Where(c => c.Nombre.Contains(buscar) || c.Requisitos.Contains(buscar));
                 if (categoria > 0)
