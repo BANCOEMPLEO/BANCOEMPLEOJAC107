@@ -10,7 +10,7 @@
 @inject IToastService toastService
 @inject NavigationManager _navServicio
 
-@attribute [Authorize(Roles = "1")]
+@attribute [Authorize(Roles = "1,2,3,4,5")]
 
 
 
@@ -132,6 +132,10 @@
     // HECHO : SE PUSO SOLAMENTE EL USUARIO SI ESCOJE VER EL EMPLEO COMO EMPLEADO O COMO EMPLEADOR. FINALIZA 25/FEB/2024 7:48PM
     // POR HACER : HACER QUE SE VEAN SOLO LOS EMPLEOS QUE CREA EL USUARIO
     // POR HACER : HACER QUE SE VEA EN OFERTA TODOS LOS EMPLEOS DE LA JAC LOCAL.
+    // VOY : SE DEBE QUITAR LAS TABLAS "EMPLEADO" Y "EMPLEADOR" YA QUE NO CONTIENEN DATOS PROPIOS : INICIO : 26/FEB/2024 5:07PM 
+    // VOY : REVISANDO CAMBIOS EN TABLAS DE "EMPLEO", "SERVICIO", "PROPUESTAEMPLEO" Y "PROPUESTASERVICIO" : INICIO : 26/FEB/2024 5:07PM
+    // VOY : AGREGAR EL CAMPO IdEmpleado A "PROPUESTAEMPLEO" : INICIO : 26/FEB/2024 5:07PM
+    // VOY : HACER SCAFFOLDING DE NUEVO A LA BASE DE DATOS Y PASAR DATOS A REPOSITORIO. INICIO : 26/FEB/2024 5:10PM
 
     [Parameter]
     public int Id { get; set; }
@@ -139,7 +143,7 @@
     private string boton = "Crear";
     private List<PerfilCargoDTO> listaPerfilCargo = new List<PerfilCargoDTO>();
     private EmpleoDTO modelo = new EmpleoDTO();
-    private bool empleador;
+    private bool empleador = true;
     private string userId;
 
     protected override async Task OnInitializedAsync()

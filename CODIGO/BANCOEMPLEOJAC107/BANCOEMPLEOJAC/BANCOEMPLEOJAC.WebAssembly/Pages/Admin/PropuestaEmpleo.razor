@@ -1,4 +1,5 @@
-﻿@page "/propuestaempleo/{idPropuestaEmpleo:int}"
+﻿@page "/propuestaempleo"
+@page "/propuestaempleo/{idPropuestaEmpleo:int}"
 @using Microsoft.AspNetCore.Authorization
 
 @inject IPropuestaEmpleoServicio propuestaEmpleoServicio;
@@ -8,7 +9,7 @@
 @inject SweetAlertService Swal
 @inject NavigationManager _navServicio
 
-@attribute [Authorize(Roles = "1,2,3,4,5")]
+@attribute [Authorize(Roles = "1")]
 
 <div class="container px-4 px-lg-5 my-5">
 
@@ -16,22 +17,27 @@
         <h5>Proponer Cambios</h5>
     </div>
 
-    @if (modelo != null)
+@*     @if (modelo != null)
     {
-        <div class="row gx-4 gx-lg-5 align-items-center">
+ *@        <div class="row gx-4 gx-lg-5 align-items-center">
             <div class="col-md-6">
 
                 <EditForm Model="modelo" OnValidSubmit="GuardarCambios">
-
                     <DataAnnotationsValidator></DataAnnotationsValidator>
 
-@*                     <div class="input-group mt-3">
+                    <div class="input-group mt-3">
                         <h1 class="display-5 fw-bolder">@modelo.Nombre</h1>
+                        <input type="text" hidden class="form-control" @bind-value="modelo.Nombre">
                     </div>
+                    <ValidationMessage For="@(()=>modelo.Nombre)" />
+
                     <div class="input-group  mt-3">
                         <p class="lead">@modelo.Descripcion</p>
+                        <input type="text" hidden class="form-control" @bind-value="modelo.Descripcion">
                     </div>
- *@                    <div class="input-group mt-3">
+                    <ValidationMessage For="@(()=>modelo.Descripcion)" />
+
+                    <div class="input-group mt-3">
                         <span class="input-group-text bg-light" id="basic-addon3">Requisitos</span>
                         <input type="text" class="form-control" @bind-value="modelo.Requisitos">
                     </div>
@@ -85,25 +91,21 @@
                         <a href="/ofertasempleos" class="btn btn-secondary" style="width:130px">Volver</a>
                     </div>
                 </EditForm>
-
-
-
-
             </div>
         </div>
-    }
+@*     }
     else
     {
         <div class="spinner-border" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
     }
-
+ *@
 
 
 </div>
 @code {
-    // VOY : HACER QUE SE PUEDAN EDITAR LOS DATOS DE LA REPROPUESTA DE EMPLEO Y SE PUEDA GUARDAR LOS NUEVOS DATOS E INFORMAR AL EMPLEADOR Y/O EMPLEADO 24/FEB/2024 1:04PM
+    // VOY : HACER QUE SE PUEDAN EDITAR LOS DATOS DE LA REPROPUESTA DE EMPLEO Y SE PUEDA GUARDAR LOS NUEVOS DATOS E INFORMAR AL EMPLEADOR Y/O EMPLEADO 24/FEB/2024 1:04PM : INICIO : 26/FEB/2024 10:12AM
     [Parameter]
     public int idPropuestaEmpleo { get; set; }
     public PropuestaEmpleoDTO? modelo = new PropuestaEmpleoDTO();
@@ -118,18 +120,26 @@
         var response = await propuestaEmpleoServicio.Obtener(idPropuestaEmpleo);
         if (response.EsCorrecto)
              modelo = (PropuestaEmpleoDTO)response.Resultado!;
-             
+        else
+            toastService.ShowWarning(response.Mensaje);
+
+        // StateHasChanged();
+
     }
     protected override async Task OnInitializedAsync()
     {
+        // var response = await propuestaEmpleoServicio.Obtener(idPropuestaEmpleo);
+        // if (response.EsCorrecto)
+        //     modelo = (PropuestaEmpleoDTO)response.Resultado!;
+        // StateHasChanged();
         await ObtenerPerfilesCargos();
     }
 
-    private async Task ReProponerEmpleo(PropuestaEmpleoDTO modelo)
-    {
-        //await propuestaEmpleoServicio.Crear(modelo);
+    // private async Task ReProponerEmpleo(PropuestaEmpleoDTO modelo)
+    // {
+    //     //await propuestaEmpleoServicio.Crear(modelo);
 
-    }
+    // }
 
     private async Task ObtenerPerfilesCargos(string Valor = "")
     {

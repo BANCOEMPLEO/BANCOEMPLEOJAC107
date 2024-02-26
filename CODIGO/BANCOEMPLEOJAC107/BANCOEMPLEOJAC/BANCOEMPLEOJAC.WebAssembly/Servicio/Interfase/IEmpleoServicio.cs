@@ -4,7 +4,7 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Interfase
 {
     public interface IEmpleoServicio
     {
-        Task<ResponseDTO<List<EmpleoDTO>>> Lista(string buscar);
+        Task<ResponseDTO<List<EmpleoDTO>>> Lista(string idUser,string buscar);
         Task<ResponseDTO<List<EmpleoDTO>>> Catalogo(string categoria,string buscar);
         Task<ResponseDTO<EmpleoDTO>> Obtener(int Id);
         Task<ResponseDTO<EmpleoDTO>> Crear(EmpleoDTO modelo);

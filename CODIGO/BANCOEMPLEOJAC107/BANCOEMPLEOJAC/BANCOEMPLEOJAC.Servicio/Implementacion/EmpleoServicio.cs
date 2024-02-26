@@ -203,16 +203,19 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
             }
         }
 
-        public async Task<List<EmpleoDTO>> Lista(string buscar)
+        public async Task<List<EmpleoDTO>> Lista(string idUsuario, string buscar)
         {
             try
             {
+
                 var consulta = _modeloRepositorio.Consultar(p =>
                 p.Descripcion.ToLower().Contains(buscar.ToLower())
                 );
-
                 consulta = consulta.Include(c => c.PerfilCargo);
-
+                if (idUsuario != null && idUsuario != "0")
+                {
+                    consulta = consulta.Where(u => u.EmpleadoId == Convert.ToInt32(idUsuario) || u.EmpleadorId == Convert.ToInt32(idUsuario));
+                }
                 List<EmpleoDTO> lista = _mapper.Map<List<EmpleoDTO>>(await consulta.ToListAsync());
                 return lista;
             }

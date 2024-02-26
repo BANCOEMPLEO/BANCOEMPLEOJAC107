@@ -56,8 +56,10 @@
                     <Authorized>
                         <li class="nav-item"><NavLink class="nav-link" href="empleos">Empleos</NavLink></li>
                         <li class="nav-item"><NavLink class="nav-link" href="servicios">Servicios</NavLink></li>
-                        <li class="nav-item"><NavLink class="nav-link" href="ofertas"> Ofertas<br />Empleo</NavLink></li>
-                        <li class="nav-item"><NavLink class="nav-link" href="ofertas"> Ofertas<br />Servicios</NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="ofertasempleos"> Empleos<br />Público</NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="ofertasservicios"> Productos<br />Público</NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="contratosempleos"> Empleos<br />Contratados</NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="contratosservicios"> Productos<br />Contratados</NavLink></li>
                     </Authorized>
                 </AuthorizeView>
                 <AuthorizeView>
@@ -107,7 +109,6 @@
 @code {
     // HECHO : SE REORGANIZO EL MENU PARA QUE MOSTRARA EL NOMBRE DE LA JAC DEBAJO DEL TITULO BANCOEMPLEOJAC Y EL NOMBRE DE USUARIO. INICIO: 12:00AM 26/FEB/2024 FIN: 26/FEB/2024 12:58AM
     // HECHO : QUE SE VEA EL NOMBRE DE LA JAC A LA QUE PERTENECE EL USUARIO 23/FEB/2024 2:00PM INICIO : 11:00PM 23/FEB/2024 : FIN 12:00AM 24/FEB/2024
-    // VOY : HACER FILTRO DE EMPLEOS CREADOS Y SERVICIOS CREADOS POR EL USUARIO 23/FEB/2024 2:00PM
     // VOY : HACER FILTRO DE SERVICIOS CREADOS POR EL USUARIO 23/FEB/2024 2:00PM
 
     private List<JacDTO> listaJac = new List<JacDTO>();

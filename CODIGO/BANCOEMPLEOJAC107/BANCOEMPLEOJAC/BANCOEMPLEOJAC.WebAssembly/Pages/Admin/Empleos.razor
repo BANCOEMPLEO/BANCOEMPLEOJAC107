@@ -4,7 +4,11 @@
 @inject IEmpleoServicio empleoServicio
 @inject IToastService toastService
 @inject SweetAlertService Swal
-@attribute [Authorize(Roles = "1")]
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider autenticacionProvider;
+
+@attribute [Authorize(Roles = "1,2,3,4,5")]
 
 <PerfilesCargos />
 
@@ -93,12 +97,19 @@
 </div>
 @code {
     // HECHO : DESDE LAS 2PM DEL 23/FEB/2024 YA SE PUEDEN PONER COMO PROPUESTAS LOS EMPLEOS Y QUEDAN EN EL LISTADO DE PUBLICOS FALTAS LAS REPROPUESTAS DE EMPLEO 24/FEB/2024 12.28AM
+    // VOY : HACER FILTRO DE EMPLEOS CREADOS POR EL USUARIO 23/FEB/2024 2:00PM
+
     private List<EmpleoDTO>? lista = null;
     private string buscar = "";
 
     private async Task ObtenerEmpleos(string Valor = "")
     {
-        var response = await empleoServicio.Lista(Valor);
+        var authState = await autenticacionProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var idUsuario = user.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault().ToString();
+
+        var response = await empleoServicio.Lista(idUsuario,Valor);
         if (response.EsCorrecto)
         {
             lista = (List<EmpleoDTO>)response.Resultado!;

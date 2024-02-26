@@ -15,8 +15,8 @@ namespace BANCOEMPLEOJAC.API.Controllers
         {
             _empleoServicio = empleoServicio;
         }
-        [HttpGet("Lista/{buscar?}")]
-        public async Task<IActionResult> Lista(string buscar = "NA")
+        [HttpGet("Lista/{idUsuario?}/{buscar?}")]
+        public async Task<IActionResult> Lista(string idUsuario, string buscar = "NA")
         {
             var response = new ResponseDTO<List<EmpleoDTO>>();
 
@@ -25,7 +25,7 @@ namespace BANCOEMPLEOJAC.API.Controllers
                 if (buscar == "NA") buscar = "";
 
                 response.EsCorrecto = true;
-                response.Resultado = await _empleoServicio.Lista(buscar);
+                response.Resultado = await _empleoServicio.Lista(idUsuario, buscar);
             }
             catch (Exception ex)
             {

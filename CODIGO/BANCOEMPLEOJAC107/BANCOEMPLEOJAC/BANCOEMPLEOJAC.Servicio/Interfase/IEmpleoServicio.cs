@@ -9,7 +9,7 @@ namespace BANCOEMPLEOJAC.Servicio.Contrato
 {
     public interface IEmpleoServicio
     {
-        Task<List<EmpleoDTO>> Lista(string buscar);
+        Task<List<EmpleoDTO>> Lista(string idUsuario, string buscar);
         Task<List<EmpleoDTO>> Catalogo(string categoria, string buscar);
         Task<EmpleoDTO> Obtener(int id);
         Task<EmpleoDTO> Crear(EmpleoDTO modelo);
