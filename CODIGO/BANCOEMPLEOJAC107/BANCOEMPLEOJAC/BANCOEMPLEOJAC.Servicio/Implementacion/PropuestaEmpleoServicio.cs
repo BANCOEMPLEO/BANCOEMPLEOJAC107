@@ -144,19 +144,6 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 var consulta = _modeloRepositorio.Consultar(p => p.IdPropuestaEmpleo == id)
                     .Include(c => c.Empleo);
 
-                // Si no tiene EmpleadoId la propuesta la hace un Empleador 
-                if (consulta.Select(e => e.Empleado == null).FirstOrDefault()) {
-                    var empleadoid = consulta.Select(e => e.EmpleadoId).FirstOrDefault();
-                    //consulta.SingleOrDefault().Empleado = (Empleado)_empleadoRepositorio.Consultar(em => em.IdEmpleado == empleadoid);
-
-                    //consulta = consulta.Where(e => e.Empleo.EmpleadoId == )Include("Empleado").Where(e => e.Empleado.IdEmpleado == consulta.Where(e => e.Empleo.EmpleadoId));
-                      }
-                    //.Include(e => e.Empleo.Empleador);
-                    //.Include(u => u.Empleo.Empleador.Usuario);
-                    //.Include(us => us.Empleado)
-                    //.Include(us => us.Empleado.Usuario);
-                //consulta = consulta.Include(c => c.Empleo).Where(e => e.EmpleadoId == )
-                // .FirstOrDefault();
 
                 var fromDbModelo = await consulta.FirstOrDefaultAsync();
 

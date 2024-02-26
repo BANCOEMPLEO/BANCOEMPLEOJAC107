@@ -10,14 +10,35 @@
 @using Microsoft.AspNetCore.Components.Authorization;
 @using System.Security.Claims;
 @inject AuthenticationStateProvider autenticacionProvider;
-
+<div class="container d-sm-inline-flex">
+</div>
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-light">
+
     <div class="container">
-        <a class="navbar-brand" runat="server" href="#">BANCOEMPLEOJAC</a>
+        <div>
+            <AuthorizeView>
+                <Authorized>
+                    <h5>
+                        <span class="@NavMenuCssClass d-flex flex-column" runat="server">
+                            <a href="#" style="text-decoration: none; color: inherit; font-weight: bold;">
+                                BANCOEMPLEOJAC
+                            </a>
+                        </span>
+                    </h5>
+                    <h6 style="font-size: 0.75rem;">@jac.Nombre</h6>
+                </Authorized>
+                <NotAuthorized>
+                    <a class="@NavMenuCssClass d-flex flex-column" runat="server" href="#">
+                        BANCOEMPLEOJAC
+                    </a>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>  
         <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Alternar navegación" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
+  
         <div class="@NavMenuCssClass navbar-collapse d-sm-inline-flex justify-content-between">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                 <AuthorizeView Roles="1">
@@ -52,29 +73,25 @@
 
             <AuthorizeView>
                 <Authorized>
-                    <span class="navbar-text me-3">
-                        @context.User.Claims.Where(c => c.Type == ClaimTypes.Name).Select(c => c.Value).SingleOrDefault()
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                        <span class="navbar-text me-3" style="font-size: 0.9rem; text-decoration: none; color: inherit; font-weight: bold;">
+                            @context.User.Claims.Where(c => c.Type == ClaimTypes.Name).Select(c => c.Value).SingleOrDefault()
+                            <br />
+                            @context.User.Claims.Where(c => c.Type == ClaimTypes.Surname).Select(c => c.Value).SingleOrDefault()
+                        </span>
                         <br />
-                        @context.User.Claims.Where(c => c.Type == ClaimTypes.Surname).Select(c => c.Value).SingleOrDefault()
-                        <br />
-                        Localidad : @context.User.Claims.Where(c => c.Type == ClaimTypes.Locality).Select(c => c.Value).SingleOrDefault()
-                        @*                          Localidad : @context.User.Claims.Where(c => c.Type == ClaimTypes.StateOrProvince).Select(c => c.Value).SingleOrDefault()
-                                               Localidad : @context.User.Claims.Where(c => c.Type == "NombreJac").Select(c => c.Value).SingleOrDefault()
- *@
-                    </span>
+                    </ul>
+
+                </Authorized>
+            </AuthorizeView>
+
+            <AuthorizeView>
+                <Authorized>
                     <a class="btn btn-outline-dark ms-auto ms-md-0 me-3" href="/canasta">
                         <i class="bi-cart-fill me-1"></i>
                         Canasta
                         <span class="badge bg-dark text-white ms-1 rounded-pill">@mostrarCantidadCarrito()</span>
                     </a>
-
-                </Authorized>
-            </AuthorizeView>
-
-
-
-            <AuthorizeView>
-                <Authorized>
                     <button class="btn btn-outline-dark ms-auto ms-md-0 me-3" type="button" @onclick="CerrarSesion">Salir</button>
                 </Authorized>
                 <NotAuthorized>
@@ -82,17 +99,19 @@
                 </NotAuthorized>
             </AuthorizeView>
 
-
-
         </div>
-    </div>
+     </div>
+
+
 </nav>
 @code {
+    // HECHO : SE REORGANIZO EL MENU PARA QUE MOSTRARA EL NOMBRE DE LA JAC DEBAJO DEL TITULO BANCOEMPLEOJAC Y EL NOMBRE DE USUARIO. INICIO: 12:00AM 26/FEB/2024 FIN: 26/FEB/2024 12:58AM
+    // HECHO : QUE SE VEA EL NOMBRE DE LA JAC A LA QUE PERTENECE EL USUARIO 23/FEB/2024 2:00PM INICIO : 11:00PM 23/FEB/2024 : FIN 12:00AM 24/FEB/2024
+    // VOY : HACER FILTRO DE EMPLEOS CREADOS Y SERVICIOS CREADOS POR EL USUARIO 23/FEB/2024 2:00PM
+    // VOY : HACER FILTRO DE SERVICIOS CREADOS POR EL USUARIO 23/FEB/2024 2:00PM
 
-    // VOY : QUE SE VEA EL NOMBRE DE LA JAC A LA QUE PERTENECE EL USUARIO PARA HACER FILTRO DE EMPLEOS CREADOS Y SERVICIOS CREADOS 23/FEB/2024 2:00PM
-
-    private List<JacDTO> listaJac = new List<JacDTO>(); 
-
+    private List<JacDTO> listaJac = new List<JacDTO>();
+    private JacDTO jac = new JacDTO();
     private string Localidad { get; set; } = "";
 
     private bool collapseNavMenu = true;
@@ -104,9 +123,19 @@
         collapseNavMenu = !collapseNavMenu;
     }
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
+        await base.OnInitializedAsync();
 
+        var authState = await autenticacionProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        Localidad = user.Claims.Where(c => c.Type == ClaimTypes.Locality).Select(c => c.Value).SingleOrDefault();
+
+        if (!string.IsNullOrEmpty(Localidad))
+        {
+            await ObtenerJac(int.Parse(Localidad));
+        }
         carritoServicio.MostrarItems += StateHasChanged;
     }
 
@@ -122,6 +151,20 @@
         {
             listaJac = new List<JacDTO>();
         }
+    }
+    private async Task ObtenerJac(int id)
+    {
+        var response = await jacServicio.Obtener(id);
+
+        if (response.EsCorrecto!)
+        {
+            jac = response.Resultado!;
+        }
+        else
+        {
+            jac = new JacDTO();
+        }
+        StateHasChanged();
     }
 
     public void Dispose()

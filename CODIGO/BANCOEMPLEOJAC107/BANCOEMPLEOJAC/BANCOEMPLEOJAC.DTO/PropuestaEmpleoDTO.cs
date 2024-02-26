@@ -15,9 +15,7 @@ namespace BANCOEMPLEOJAC.DTO
         public int? EmpleoId { get; set; }
 
         public int? Orden { get; set; }
-        [Required(ErrorMessage = "Ingrese Nombre de Empleo Propuesto")]
         public string? Nombre { get; set; }
-        [Required(ErrorMessage = "Ingrese Descripción de Empleo Propuesta")]
         public string? Descripcion { get; set; }
         [Required(ErrorMessage = "Ingrese Requisitos de Empleo Propuestos")]
         public string? Requisitos { get; set; }
@@ -34,14 +32,8 @@ namespace BANCOEMPLEOJAC.DTO
         [Required(ErrorMessage = "Ingrese Valor Propuesta de Empleo")]
         public decimal? Valor { get; set; }
         public int? EmpleadoId { get; set; }
-        [Required(ErrorMessage = "Ingrese Fecha y Hora Revisá Empleador")]
-        [DataType(DataType.DateTime, ErrorMessage = "Formato de fecha no válido")]
         public DateTime? FechaHoraRevisaEmpleador { get; set; }
-        [Required(ErrorMessage = "Ingrese Fecha y Hora en que RePropone Empleador")]
-        [DataType(DataType.DateTime, ErrorMessage = "Formato de fecha no válido")]
-        public DateTime? FechaHoraReProponeEmpleador { get; set; }
-        [Required(ErrorMessage = "Ingrese Fecha y Hora en que Acepta Prouesta Empleador")]
-        [DataType(DataType.DateTime, ErrorMessage = "Formato de fecha no válido")]
+        public DateTime? FechaHoraReProponeEmpleador { get; set; } = DateTime.Now;
         public DateTime? FechaHoraAceptaEmpleador { get; set; }
 
         public bool? RePropone { get; set; }
@@ -52,11 +44,11 @@ namespace BANCOEMPLEOJAC.DTO
 
         public string? Observaciones { get; set; }
 
-        public virtual ICollection<DetallePropuestaDTO> DetallePropuesta { get; set; } = new List<DetallePropuestaDTO>();
+        public virtual ICollection<DetallePropuestaDTO>? DetallePropuesta { get; set; } = new List<DetallePropuestaDTO>();
 
-        public virtual ICollection<PropuestaEmpleoDTO> InversePropuestaEmpleoAnterior { get; set; } = new List<PropuestaEmpleoDTO>();
+        public virtual ICollection<PropuestaEmpleoDTO>? InversePropuestaEmpleoAnterior { get; set; } = new List<PropuestaEmpleoDTO>();
         public virtual EmpleoDTO? Empleo { get; set; }
-        public virtual EmpleadoDTO? Emplado { get; set; }
+        public virtual EmpleadoDTO? Empleado { get; set; }
 
         public virtual PropuestaEmpleoDTO? PropuestaEmpleoAnterior { get; set; }
 

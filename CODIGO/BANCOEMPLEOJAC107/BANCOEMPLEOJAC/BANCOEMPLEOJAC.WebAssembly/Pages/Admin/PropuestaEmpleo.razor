@@ -25,16 +25,13 @@
 
                     <DataAnnotationsValidator></DataAnnotationsValidator>
 
-                    <div class="input-group mt-3">
+@*                     <div class="input-group mt-3">
                         <h1 class="display-5 fw-bolder">@modelo.Nombre</h1>
                     </div>
-
                     <div class="input-group  mt-3">
                         <p class="lead">@modelo.Descripcion</p>
-
                     </div>
-                    <ValidationMessage For="@(()=>modelo.Descripcion)" />
-                    <div class="input-group mt-3">
+ *@                    <div class="input-group mt-3">
                         <span class="input-group-text bg-light" id="basic-addon3">Requisitos</span>
                         <input type="text" class="form-control" @bind-value="modelo.Requisitos">
                     </div>
