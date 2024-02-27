@@ -1,0 +1,133 @@
+﻿@page "/servicios"
+@using Microsoft.AspNetCore.Authorization
+
+@inject IServicioServicio productoServicio
+@inject IToastService toastService
+@inject SweetAlertService Swal
+@attribute [Authorize(Roles = "1")]
+
+<Categorias />
+
+<div class="row justify-content-center  mt-3">
+    <div class="col-sm-6 col-md-4 col-xl-3 mb-4">
+        <div class="d-grid gap-1 col-12 mx-auto">
+            <a class="btn btn-primary" href="/producto">Nuevo producto</a>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-8 col-xl-9 mb-4">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Buscar producto..." @bind-value="buscar">
+            <button class="btn btn-outline-secondary" type="button" @onclick="(async()=> await ObtenerProductos(buscar))">
+                <i class="oi oi-magnifying-glass"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="row gx-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 justify-content-start mt-2">
+
+    @if (lista != null)
+    {
+        foreach (var item in lista)
+        {
+            <div class="col mb-5">
+                <div class="card h-100">
+                    <!-- Sale badge-->
+                    @if(DateTime.Now < item.FechaHoraCreacion.AddDays(30))
+                    {
+                      <div class="badge bg-primary text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Nuevo</div>
+                    }
+                    <!-- Product image-->
+                    <img class="card-img-top border-dark border-1" src="@item.Foto">
+                    <!-- Product details-->
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <!-- Product name-->
+                            <h5 class="fw-bolder">@item.Nombre</h5>
+                            <!-- Product price-->
+                            @if(item.PrecioOferta != 0 && item.PrecioOferta < item.Precio)
+                            {
+                                <span class="text-danger text-decoration-line-through">$COL/. @item.Precio</span>
+                                <span>$COL /.@item.PrecioOferta</span>
+                            }
+                            else
+                            {
+                                <span>$COL /.@item.Precio</span>
+                            }
+                        </div>
+                    </div>
+                    <!-- Product actions-->
+                    <div class="card-footer bg-transparent">
+                        <div class="row justify-content-between">
+                            <a class="col-5 btn btn-sm btn-outline-primary mt-auto" href="/producto/@item.IdServicio"><i class="oi oi-pencil fs-5"></i></a>
+                            <button class="col-5 btn btn-sm btn-outline-danger mt-auto" @onclick="(async () => await Eliminar(item))">
+                                <i class="oi oi-trash fs-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          }
+  }
+    else
+    {
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    }
+
+
+</div>
+@code {
+    // POR HACER : HACER QUE SE VEAN SOLO LOS SERVICIOS QUE CREA EL USUARIO
+    // POR HACER : HACER QUE SE VEA EN OFERTA TODOS LOS SERVICIOS DE LA JAC LOCAL.
+
+    // VOY : HACER QUE SE LOS SERVICIOS SE PUEDAN PONER COMO PROPUESTAS DE SERVICIO Y SUBSIGUIENTES 24/FEB/2024 12.34AM
+
+
+    private List<ServicioDTO>? lista = null;
+    private string buscar = "";
+
+    private async Task ObtenerProductos(string Valor = "")
+    {
+        var response = await productoServicio.Lista(Valor);
+        if (response.EsCorrecto)
+        {
+            lista = (List<ServicioDTO>)response.Resultado!;
+        }
+        else
+        {
+            lista = new List<ServicioDTO>();
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await ObtenerProductos();
+    }
+    private async Task Eliminar(ServicioDTO modelo)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Esta seguro?",
+                Text = $"Eliminar Producto: {modelo.Nombre}",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Si, eliminar",
+                CancelButtonText = "No, volver",
+            });
+        if (result.IsConfirmed)
+        {
+            var response = await productoServicio.Eliminar(modelo.IdServicio);
+            if (response.EsCorrecto)
+            {
+                await ObtenerProductos();
+                toastService.ShowSuccess("Producto fue eliminado");
+            }
+            else
+            {
+                toastService.ShowWarning(response.Mensaje);
+            }
+        }
+    }
+
+}

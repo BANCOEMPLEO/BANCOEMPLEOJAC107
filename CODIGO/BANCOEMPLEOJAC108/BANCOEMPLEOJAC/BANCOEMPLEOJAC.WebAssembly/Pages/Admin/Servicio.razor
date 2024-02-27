@@ -1,0 +1,219 @@
+﻿@page "/servicio"
+@page "/producto"
+@page "/producto/{Id:int}"
+@using Microsoft.AspNetCore.Authorization
+
+@inject IServicioServicio productoServicio
+@inject ICategoriaServicio categoriaServicio
+@inject IToastService toastService
+@inject NavigationManager _navServicio
+
+@attribute [Authorize(Roles = "1")]
+
+
+<div class="row justify-content-center  mt-3">
+    <p class="col-sm-12 col-md-8 col-xl-10 h4 mt-2">@Titulo</p>
+</div>
+<div class="row justify-content-center  mt-3">
+    <div class="col-sm-12 col-md-8 col-xl-10">
+
+        <EditForm Model="modelo" OnValidSubmit="GuardarCambios">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+
+            <div class="input-group mt-3">
+                <label class="input-group-text bg-light" for="inputGroupSelect01">Categoria</label>
+                <select class="form-control" @bind="@modelo.CategoriaId">
+                    @foreach (var item in listaCategoria)
+                    {
+                        <option value="@item.IdCategoria">@item.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Nombre</span>
+                <input type="text" class="form-control" @bind-value="modelo.Nombre">
+            </div>
+            <ValidationMessage For="@(()=>modelo.Nombre)" />
+
+            <div class="input-group  mt-3">
+                <span class="input-group-text bg-light">Descripcion</span>
+                <input type="text" class="form-control" @bind-value="modelo.Descripcion"></input>
+
+            </div>
+            <ValidationMessage For="@(()=>modelo.Descripcion)" />
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Características</span>
+                <input type="text" class="form-control" @bind-value="modelo.Caracteristicas">
+            </div>
+            <ValidationMessage For="@(()=>modelo.Caracteristicas)" />
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Empleoado Id</span>
+                <input type="text" class="form-control" @bind-value="modelo.EmpleadoId">
+            </div>
+            <ValidationMessage For="@(()=>modelo.EmpleadoId)" />
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Empleador Id</span>
+                <input type="text" class="form-control" @bind-value="modelo.EmpleadorId">
+            </div>
+            <ValidationMessage For="@(()=>modelo.EmpleadorId)" />
+
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Cantidad</span>
+                <input type="number" class="form-control" @bind-value="modelo.Cantidad">
+            </div>
+            <ValidationMessage For="@(()=>modelo.Cantidad)" />
+
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Precio</span>
+                <input type="number" class="form-control" @bind-value="modelo.Precio">
+            </div>
+            <ValidationMessage For="@(()=>modelo.Precio)" />
+
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Precio Oferta</span>
+                <input type="number" class="form-control" @bind-value="modelo.PrecioOferta">
+            </div>
+            <ValidationMessage For="@(()=>modelo.PrecioOferta)" />
+   
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Ubicación</span>
+                <input type="text" class="form-control" @bind-value="modelo.Ubicacion">
+            </div>
+            <ValidationMessage For="@(()=>modelo.Ubicacion)" />
+
+
+            <div class="input-group mt-3">
+                <div class="input-group-text form-control bg-secondary text-light justify-content-center" id="basic-addon3">Foto</div>
+                @if (modelo.Foto != "")
+                {
+                    <div class="input-group mt-3 justify-content-center">
+                        <img class="card-img-top border-dark border-1" src="@modelo.Foto" style="width:250px;height:250px">
+                    </div>
+                }
+                <div class="input-group mt-3 justify-content-center  bg-secondary text-light">
+                    <InputFile type="file" class="row form-control" accept="image/png, image/gif, image/jpeg" OnChange="OnFileChange"></InputFile>
+                </div>
+            </div>
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light" id="basic-addon3">Observaciones</span>
+                <input type="text" class="form-control" @bind-value="modelo.Observaciones">
+            </div>
+            <ValidationMessage For="@(()=>modelo.Observaciones)" />
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary" style="width:130px">@boton</button>
+                <a href="/servicios" class="btn btn-secondary" style="width:130px">Volver</a>
+            </div>
+        </EditForm>
+
+
+
+
+    </div>
+
+</div>
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private string Titulo = "Nuevo Producto";
+    private string boton = "Crear";
+    private List<CategoriaDTO> listaCategoria = new List<CategoriaDTO>();
+    private ServicioDTO modelo = new ServicioDTO();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await categoriaServicio.Lista("");
+        if (response.EsCorrecto)
+        {
+            listaCategoria = (List<CategoriaDTO>)response.Resultado!;
+            if (listaCategoria.Any() && Id == 0)
+            {
+                modelo.CategoriaId = listaCategoria.First().IdCategoria;
+            }
+        }
+    }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != 0)
+        {
+            Titulo = "Editar Producto";
+            boton = "Actualizar";
+
+            var response = await productoServicio.Obtener(Id);
+            if (response.EsCorrecto)
+            {
+                modelo = (ServicioDTO)response.Resultado!;
+            }
+            else
+            {
+                toastService.ShowWarning(response.Mensaje);
+            }
+        }
+        StateHasChanged();
+    }
+    void CambiarCategoria(ChangedEventArgs e)
+    {
+        modelo.CategoriaId = Convert.ToInt32(e.NewValue.ToString());
+
+    }
+
+    async Task OnFileChange(InputFileChangeEventArgs e)
+    {
+        FileInfo fileInfo = new FileInfo(e.File.Name);
+        if (fileInfo.Extension.ToLower().Contains(".jpg") || fileInfo.Extension.ToLower().Contains(".png"))
+        {
+            var format = $"image/{fileInfo.Extension.Replace(".", "")}";
+            var resizeImage = await e.File.RequestImageFileAsync(format, 450, 300);
+            var buffer = new byte[resizeImage.Size];
+            await resizeImage.OpenReadStream().ReadAsync(buffer);
+            var imagenData = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+            modelo.Foto = imagenData;
+        }
+
+    }
+
+    private async Task GuardarCambios()
+    {
+        bool respuesta = true;
+        string mensaje = string.Empty;
+        StateHasChanged();
+        if (Id != 0)
+        {
+            var response = await productoServicio.Editar(modelo);
+            if (response.EsCorrecto)
+            {
+                mensaje = "Producto fue modificado";
+            }
+            else
+            {
+                respuesta = false;
+                mensaje = "No ser pudo editar";
+            }
+        }
+        else
+        {
+            var response = await productoServicio.Crear(modelo);
+            if (response.EsCorrecto)
+            {
+                mensaje = "Producto fue creado";
+            }
+            else
+            {
+                respuesta = false;
+                mensaje = "No se pudo crear";
+            }
+        }
+        if (respuesta)
+        {
+            toastService.ShowSuccess(mensaje);
+            _navServicio.NavigateTo("/servicios");
+        }
+        else
+            toastService.ShowWarning(mensaje);
+    }
+
+}

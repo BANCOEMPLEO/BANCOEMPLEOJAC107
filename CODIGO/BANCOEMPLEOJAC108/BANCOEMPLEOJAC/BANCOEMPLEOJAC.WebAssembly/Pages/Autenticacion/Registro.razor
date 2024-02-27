@@ -1,0 +1,187 @@
+﻿@page "/registro"
+@using BANCOEMPLEOJAC.DTO
+@using BANCOEMPLEOJAC.WebAssembly.Servicio.Interfase
+@layout EntradaLayout
+
+@inject IUsuarioServicio _usuarioServicio
+@inject NavigationManager _navService
+@inject IToastService toastService
+@inject IJacServicio _jacServicio
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthenticationStateProvider
+
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card rounded-lg mt-5">
+                <div class="card-header"><h3 class="text-center font-weight-light my-4">Crear Cuenta</h3></div>
+                <div class="card-body">
+
+                    <EditForm Model="modelo" OnValidSubmit="GuardarCambios">
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="inputIdentificacion" type="number" placeholder="79999999" @bind-value="modelo.Identificacion" autocomplete="off" />
+                            <label for="inputEmail">Identificacion</label>
+                            <ValidationMessage For="@(()=>modelo.Identificacion)" />
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="inputNombres" type="text" placeholder="Nombres" @bind-value="modelo.Nombres" autocomplete="off" />
+                            <label for="inputEmail">Nombres</label>
+                            <ValidationMessage For="@(()=>modelo.Nombres)" />
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="inputApellidos" type="text" placeholder="Apellidos" @bind-value="modelo.Apellidos" autocomplete="off" />
+                            <label for="inputEmail">Apellidos</label>
+                            <ValidationMessage For="@(()=>modelo.Nombres)" />
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="inputCelular" type="number" placeholder="3001234567" @bind-value="modelo.Celular" autocomplete="off" />
+                            <label for="inputEmail">Celular WhatsApp</label>
+                            <ValidationMessage For="@(()=>modelo.Celular)" />
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="inputEmail" type="email" placeholder="name@example.com" @bind-value="modelo.Correo" autocomplete="off" />
+                            <label for="inputEmail">Correo</label>
+                            <ValidationMessage For="@(()=>modelo.Correo)" />
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="inputFechaNacimiento" type="date" placeholder="" @bind-value="modelo.FechaNacimiento" autocomplete="off" />
+                            <label for="inputEmail">Fecha Nacimiento</label>
+                            <ValidationMessage For="@(()=>modelo.FechaNacimiento)" />
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="inputRedes" type="text" placeholder="redes sociales" @bind-value="modelo.Redes" autocomplete="off" />
+                            <label for="inputEmail">Redes Sociales (LinkedIn - Facebook - Instagram Etc)</label>
+                            <ValidationMessage For="@(()=>modelo.Redes)" />
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <input class="form-control" id="inputPassword" type="password" placeholder="Create a password" @bind-value="modelo.Clave" autocomplete="off" />
+                                    <label for="inputPassword">Contraseña</label>
+                                    <ValidationMessage For="@(()=>modelo.Clave)" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <input class="form-control" id="inputPasswordConfirm" type="password" placeholder="Confirm password" @bind-value="modelo.ConfirmarClave" autocomplete="off" />
+                                    <label for="inputPasswordConfirm">Confirmar Contraseña</label>
+                                    <ValidationMessage For="@(()=>modelo.ConfirmarClave)" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="input-group-text bg-light justify-content-center" for="inputGroupSelect01">Junta de Acción Comunal Local</label>
+                            <select class="form-control" @bind="@modelo.JacId">
+                                @foreach (var item in listaJac)
+                                {
+                                    <option value="@item.IdJac">@item.Nombre</option>
+                                }
+                            </select>
+                            <ValidationMessage For="@(()=>modelo.JacId)" />
+                        </div>
+                        <div class="form-floating mb-3">
+                            <label class="input-group-text bg-light justify-content-center">Foto</label>
+                            <InputFile type="file" class="form-control" accept="image/png, image/gif, image/jpeg" OnChange="OnFileChange"></InputFile>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="inputObservaciones" type="text" placeholder="Observaciones" @bind-value="modelo.Observaciones" autocomplete="off" />
+                            <label for="inputEmail">Observaciones</label>
+                            <ValidationMessage For="@(()=>modelo.Observaciones)" />
+                        </div>
+                            <div class="mt-4 mb-0">
+                                <div class="d-grid"><button class="btn btn-primary btn-block" type="submit">Registrarse</button></div>
+                            </div>
+                    </EditForm>
+
+                </div>
+                @if (!isAuthenticated)
+                {
+                    <div class="card-footer text-center py-3">
+                        <div class="small"><a href="/entrada">Tienes una cuenta? ir a Entrada</a></div>
+                    </div>
+                }
+                else
+                {
+                    <div class="card-footer text-center">
+                    <a href="/usuarios" class="btn btn-secondary float-end" style="width:130px">Volver</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    public bool isAuthenticated  = false;
+    private UsuarioDTO modelo = new UsuarioDTO();
+
+    private List<JacDTO> listaJac = new List<JacDTO>();
+    private string buscar = "";
+    private bool clientes = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            isAuthenticated = authState.User.Identity.IsAuthenticated;
+
+            var response = await _jacServicio.Lista("NA");
+            if (response.EsCorrecto)
+            {
+                listaJac = (List<JacDTO>)response.Resultado!;
+                if (listaJac.Any() && Id == 0)
+                {
+                    modelo.JacId = listaJac.First().IdJac;
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
+    }
+
+
+    private async Task GuardarCambios()
+    {
+        if (modelo.Clave != modelo.ConfirmarClave)
+        {
+            toastService.ShowWarning("Las contraseñas no coinciden");
+            return;
+        }
+
+        var response = await _usuarioServicio.Crear(modelo);
+
+        if (response.EsCorrecto)
+        {
+            toastService.ShowSuccess("Su cuenta ha sido creada");
+            _navService.NavigateTo("/entrada");
+        }
+        else
+        {
+            toastService.ShowError("No se pudo crar su cuenta, intente mas tarde");
+        }
+    }
+
+    async Task OnFileChange(InputFileChangeEventArgs e)
+    {
+        FileInfo fileInfo = new FileInfo(e.File.Name);
+        if (fileInfo.Extension.ToLower().Contains(".jpg") || fileInfo.Extension.ToLower().Contains(".png"))
+        {
+            var format = $"image/{fileInfo.Extension.Replace(".", "")}";
+            var resizeImage = await e.File.RequestImageFileAsync(format, 450, 300);
+            var buffer = new byte[resizeImage.Size];
+            await resizeImage.OpenReadStream().ReadAsync(buffer);
+            var imagenData = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+            modelo.Foto = imagenData;
+        }
+
+    }
+}

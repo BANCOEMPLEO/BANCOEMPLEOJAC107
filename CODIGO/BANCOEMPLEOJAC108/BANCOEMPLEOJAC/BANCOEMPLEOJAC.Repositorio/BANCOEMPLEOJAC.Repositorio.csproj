@@ -10,8 +10,4 @@
     <ProjectReference Include="..\BANCOEMPLEOJAC.Modelo\BANCOEMPLEOJAC.Modelo.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DBContext\" />
-  </ItemGroup>
-
 </Project>

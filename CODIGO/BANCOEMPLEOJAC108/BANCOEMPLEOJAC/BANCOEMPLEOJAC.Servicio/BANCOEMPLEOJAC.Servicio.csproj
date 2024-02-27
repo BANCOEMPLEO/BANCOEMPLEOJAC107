@@ -7,11 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BANCOEMPLEOJAC.DTO\BANCOEMPLEOJAC.DTO.csproj" />
     <ProjectReference Include="..\BANCOEMPLEOJAC.Modelo\BANCOEMPLEOJAC.Modelo.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DBContext\" />
+    <ProjectReference Include="..\BANCOEMPLEOJAC.Repositorio\BANCOEMPLEOJAC.Repositorio.csproj" />
+    <ProjectReference Include="..\BANCOEMPLEOJAC.Utilidades\BANCOEMPLEOJAC.Utilidades.csproj" />
   </ItemGroup>
 
 </Project>

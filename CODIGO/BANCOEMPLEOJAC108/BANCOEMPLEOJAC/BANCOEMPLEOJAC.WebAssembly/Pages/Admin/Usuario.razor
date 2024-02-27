@@ -1,0 +1,232 @@
+﻿@page "/usuario"
+@page "/usuario/{Id:int}"
+@using BANCOEMPLEOJAC.DTO
+@using BANCOEMPLEOJAC.WebAssembly.Servicio.Interfase
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization;
+
+@inject IUsuarioServicio usuarioServicio
+@inject IToastService toastService
+@inject NavigationManager _navServicio
+@inject IJacServicio _jacServicio
+@attribute [Authorize(Roles = "1")]
+
+
+<div class="row justify-content-center  mt-3">
+    <p class="col-sm-12 col-md-8 col-xl-10 h4 mt-2">@Titulo</p>
+</div>
+<div class="row justify-content-center  mt-3">
+    <div class="col-sm-12 col-md-8 col-xl-10">
+        <EditForm Model="modelo" OnValidSubmit="GuardarCambios">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+
+            <div class="input-group mt-3">
+                <span class="input-group-text  bg-secondary text-light" id="basic-addon3">Identificación</span>
+                <input type="text" class="form-control" @bind-value="modelo.Identificacion">
+            </div>
+            <ValidationMessage For="@(()=>modelo.Identificacion)" />
+            <div class="input-group mt-3">
+                <span class="input-group-text  bg-secondary text-light" id="basic-addon3">Nombres</span>
+                <input type="text" class="form-control" @bind-value="modelo.Nombres">
+            </div>
+            <ValidationMessage For="@(()=>modelo.Nombres)" />
+            <div class="input-group mt-3">
+                <span class="input-group-text  bg-secondary text-light" id="basic-addon3">Apellidos</span>
+                <input type="text" class="form-control" @bind-value="modelo.Apellidos">
+            </div>
+            <ValidationMessage For="@(()=>modelo.Apellidos)" />
+
+            <div class="input-group mt-3">
+                <span class="input-group-text  bg-secondary text-light" id="basic-addon3">Correo</span>
+                <input type="text" class="form-control" @bind-value="modelo.Correo">
+            </div>
+            <ValidationMessage For="@(()=>modelo.Correo)" />
+            <div class="input-group mt-3">
+                <span class="input-group-text  bg-secondary text-light" id="basic-addon3">Celular WhastApp</span>
+                <input type="text" class="form-control" @bind-value="modelo.Celular">
+            </div>
+            <ValidationMessage For="@(()=>modelo.Celular)" />
+            <div class="input-group mt-3">
+                <span class="input-group-text  bg-secondary text-light" id="basic-addon3">Redes</span>
+                <input type="text" class="form-control" @bind-value="modelo.Redes"><br />
+            </div>
+            <ValidationMessage For="@(()=>modelo.Redes)" />
+
+            <div class="input-group mt-3">
+                <span class="input-group-text  bg-secondary text-light" id="">Contraseña</span>
+                <input type="password" class="form-control" @bind-value="modelo.Clave">
+            </div>
+            <ValidationMessage For="@(()=>modelo.Clave)" />
+
+            <div class="input-group mt-3">
+                <span class="input-group-text  bg-secondary text-light" id="basic-addon3">Confirmar Contraseña</span>
+                <input type="password" class="form-control" @bind-value="modelo.ConfirmarClave">
+            </div>
+            <ValidationMessage For="@(()=>modelo.ConfirmarClave)" />
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-secondary text-light" id="basic-addon3">Rol</span>
+                <input type="text" class="form-control" @bind-value="modelo.Rol"><br />
+            </div>
+                <ValidationMessage For="@(()=>modelo.Rol)" />
+            <div class="mt-3">
+                <span class="input-group-text bg-secondary text-light" id="basic-addon3">Fecha Nacimiento</span>
+                <input type="text" class="form-control" @bind-value="modelo.FechaNacimiento"><br />
+            </div>
+            <ValidationMessage For="@(()=>modelo.FechaNacimiento)" />
+            <div class="mb-3">
+                <label class="input-group-text bg-secondary text-light justify-content-center" for="inputGroupSelect01">Junta de Acción Comunal Local</label>
+                <select class="form-control" @bind="@modelo.JacId">
+                    @foreach (var item in listaJac)
+                    {
+                        <option value="@item.IdJac">@item.Nombre</option>
+                    }
+                </select>
+                <ValidationMessage For="@(()=>modelo.JacId)" />
+            </div>
+            <div class="input-group mt-3">
+                <div class="input-group-text form-control bg-secondary text-light justify-content-center" id="basic-addon3">Foto</div>
+                    @if (modelo.Foto != "")
+                    {
+                    <div class="input-group mt-3 justify-content-center">
+                            <img class="card-img-top border-dark border-1" src="@modelo.Foto" style="width:250px;height:250px">
+                        </div>
+                    }
+                <div class="input-group mt-3 justify-content-center  bg-secondary text-light">
+                    <InputFile type="file" class="row form-control" accept="image/png, image/gif, image/jpeg" OnChange="OnFileChange"></InputFile>
+                </div>
+            </div>
+            <ValidationMessage For="@(()=>modelo.Foto)" />
+            <div class="input-group mt-3">
+                <span class="input-group-text  bg-secondary text-light" id="basic-addon3">Observaciones</span>
+                <input type="text" class="form-control" @bind-value="modelo.Observaciones"><br />
+            </div>
+            <ValidationMessage For="@(()=>modelo.Observaciones)" />
+
+            <div class="mt-3 justify-content-center">
+                <button type="submit" class="btn btn-primary" style="width:130px">@boton</button>
+                <a href="/usuarios" class="btn btn-secondary float-end" style="width:130px">Volver</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private List<JacDTO> listaJac = new List<JacDTO>();
+
+    private string Titulo = "Nuevo Usuario";
+    private string boton = "Crear";
+    private UsuarioEditaDTO modelo = new UsuarioEditaDTO();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            modelo.Clave = "";
+            modelo.ConfirmarClave = "";
+
+            var response = await _jacServicio.Lista("NA");
+            if (response.EsCorrecto)
+            {
+                listaJac = (List<JacDTO>)response.Resultado!;
+                if (listaJac.Any() && Id == 0)
+                {
+                    modelo.JacId = listaJac.First().IdJac;
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != 0)
+        {
+            Titulo = "Editar usuario";
+            boton = "Actualizar";
+            var response = await usuarioServicio.Obtener(Id);
+            if (response.EsCorrecto)
+            {
+                modelo = (UsuarioEditaDTO)response.Resultado!;
+                modelo.Clave = "";
+                modelo.ConfirmarClave = "";
+                //modelo.ConfirmarClave = modelo.Clave;
+            }
+            else
+            {
+                toastService.ShowWarning(response.Mensaje);
+            }
+        }
+        else
+        {
+            modelo.Clave = "";
+            modelo.ConfirmarClave = "";
+        }
+    }
+    async Task OnFileChange(InputFileChangeEventArgs e)
+    {
+        FileInfo fileInfo = new FileInfo(e.File.Name);
+        if (fileInfo.Extension.ToLower().Contains(".jpg") || fileInfo.Extension.ToLower().Contains(".png"))
+        {
+            var format = $"image/{fileInfo.Extension.Replace(".", "")}";
+            var resizeImage = await e.File.RequestImageFileAsync(format, 450, 300);
+            var buffer = new byte[resizeImage.Size];
+            await resizeImage.OpenReadStream().ReadAsync(buffer);
+            var imagenData = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+            modelo.Foto = imagenData;
+        }
+
+    }
+    private async Task GuardarCambios()
+    {
+        if (modelo.Clave != modelo.ConfirmarClave)
+        {
+            toastService.ShowWarning("Las constraseñas no coinciden");
+            return;
+        }
+
+        bool respuesta = true;
+        string mensaje = string.Empty;
+        if (Id != 0)
+        {
+            var response = await usuarioServicio.Editar(modelo);
+            if (response.EsCorrecto)
+            {
+                mensaje = "Usuario fue modificado";
+            }
+            else
+            {
+                respuesta = false;
+                mensaje = "No ser pudo editar";
+            }
+        }
+        else
+        {
+            // modelo.Rol = 1;
+            // modelo = _map.Map<UsuarioEditaDTO>(modelo);
+            // var response = await usuarioServicio.Crear(modelo);
+            // if (response.EsCorrecto)
+            // {
+            //     mensaje = "Usuario fue creado";
+            // }
+            // else
+            // {
+            //     respuesta = false;
+            //     mensaje = "No se pudo crear";
+            // }
+        }
+        if (respuesta)
+        {
+            toastService.ShowSuccess(mensaje);
+            _navServicio.NavigateTo("/usuarios");
+        }
+        else
+        {
+            toastService.ShowWarning(mensaje);
+        }
+    }
+}
