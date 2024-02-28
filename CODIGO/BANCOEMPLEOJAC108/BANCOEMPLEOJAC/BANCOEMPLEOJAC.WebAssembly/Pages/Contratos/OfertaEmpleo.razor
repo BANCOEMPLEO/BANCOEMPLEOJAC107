@@ -17,6 +17,11 @@
                     <span>$COL /.@modelo.Valor</span>
                 </div>
                 <p class="lead">@modelo.Descripcion</p>
+                <p class="lead">Requisitos : @modelo.Requisitos</p>
+                <p class="lead">Ubicación : @modelo.Ubicacion</p>
+                <p class="lead">Fecha Hora Inicia : @modelo.FechaHoraInicio</p>
+                <p class="lead">Fecha Hora Finaliza : @modelo.FechaHoraFin</p>
+                <p class="lead">Empleador : @modelo.EmpleadorId</p>
                 <div class="d-flex">
                     <input class="form-control text-center me-3" type="number" min="1" style="width:60px" @bind-value="cantidad">
 
@@ -47,6 +52,7 @@
 
 </div>
 @code {
+    // VOY : VER MAS DETALLES EN OFERTAEMPLEO LOS QUE SON DE INTERES PARA CONTRATAR. FECHA: 26/FEB/2024 9:44PM
     // VOY : QUE NO SALGA EL BOTON DE PROPONER SI EL AUTOR DEL EMPLEO ES QUIEN LO VE, SOLO PARA OTROS : 26/FEB/2024 8:39PM :
     // HECHO : QUE SE PUEDAN CREAR REPROPUESTAS DE EMPLEO 24/FEB/2024 12:27AM : INICIO : 24/FEB/2024 12:55PM FIN : 26/FEB/2024 8:40PM
     // RESOLVER : QUE NO APAREZCA ERROR DE DISPLAY AL VER LA REPROUESTA DE EMPLEO. 26/FEB/2024 8:41PM 

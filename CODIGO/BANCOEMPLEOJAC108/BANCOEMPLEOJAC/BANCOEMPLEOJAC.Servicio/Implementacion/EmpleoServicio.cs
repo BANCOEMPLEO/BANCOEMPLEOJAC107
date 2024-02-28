@@ -123,6 +123,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                         propuestaEmpleo.Cantidad = modelo.Cantidad;
                         propuestaEmpleo.Valor = modelo.Precio;
                         propuestaEmpleo.EmpleadoId = modelo.EmpleadoId;
+                        propuestaEmpleo.EmpleadorId = modelo.EmpleadorId;
                         var propuestacreada = await _propuestaEmpleoRepositorio.Crear(propuestaEmpleo);
                         if (propuestacreada == null)
                         {
@@ -161,6 +162,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                     fromDbModelo.FechaHoraInactiva = DateTime.Now;
                     fromDbModelo.EmpleadorId = modelo.EmpleadorId;
                     fromDbModelo.EmpleadoId = modelo.EmpleadoId;
+                    fromDbModelo.EmpleadorId = modelo.EmpleadorId;
                     fromDbModelo.Observaciones = modelo.Observaciones + " " + "Desctivado en : " + DateTime.Now.ToString();
                     var respuesta = await _modeloRepositorio.Editar(fromDbModelo);
 

@@ -60,6 +60,21 @@
                         <div class="text-center">
                             <h4>Cantidad : @item.Cantidad</h4>
                         </div>
+                        <div class="text-center">
+                            Creado como :<h4>
+                                <u>
+                                    @if (item.EmpleadorId != null)
+                                    {
+                                        @("Empleador")
+                                    }
+                                    else
+                                    {
+                                        @("Empleado")
+                                    }
+                                </u>
+                            </h4>
+                        </div>
+
                     </div>
                     <!-- Product actions-->
                     <div class="card-footer bg-transparent">
@@ -96,6 +111,8 @@
 
 </div>
 @code {
+    // POR HACER : QUE NO SE PUEDA BORRAR LOS EMPLEOS QUE TENGAN CONTRATOS ELABORADOS FECHA: 27/FEB/2024 5:04PM
+    // POR HACER : QUE AL BORRAR LOS EMPLEOS SE ADVIERTA QUE SE BORRARÁN LAS PROUESTAS QUE TENGA ESE EMPLEO. FECHA: 27/FEB/2024 5:05PM
     // HECHO : DESDE LAS 2PM DEL 23/FEB/2024 YA SE PUEDEN PONER COMO PROPUESTAS LOS EMPLEOS Y QUEDAN EN EL LISTADO DE PUBLICOS FALTAS LAS REPROPUESTAS DE EMPLEO 24/FEB/2024 12.28AM
     // HECHO : HACER FILTRO DE EMPLEOS CREADOS POR EL USUARIO 23/FEB/2024 2:00PM : INICIO : 26/FEB/2024 8:00PM : FIN : 26/FEB/2024 8:33PM
 

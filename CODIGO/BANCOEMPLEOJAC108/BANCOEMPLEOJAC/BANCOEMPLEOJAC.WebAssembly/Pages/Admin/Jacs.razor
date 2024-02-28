@@ -1,6 +1,125 @@
 ﻿@page "/jacs"
-<h3>Jacs</h3>
+@using Microsoft.AspNetCore.Authorization
+@inject IJacServicio jacServicio
+@inject IToastService toastService
+@inject SweetAlertService Swal
+
+@attribute [Authorize(Roles = "1")]
+
+
+<div class="row justify-content-center  mt-3">
+    <div class="col-sm-6 col-md-4 col-xl-3 mb-4">
+        <div class="d-grid gap-1 col-12 mx-auto">
+            <a class="btn btn-primary" href="/jac">Nueva JAC</a>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-8 col-xl-9 mb-4">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Buscar jac..." @bind-value="buscar">
+            <button class="btn btn-outline-secondary" type="button" @onclick="(async()=> await ObtenerJacs(buscar))">
+                <i class="oi oi-magnifying-glass"></i>
+            </button>
+        </div>
+    </div>
+
+</div>
+<div class="row gx-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 justify-content-start mt-2">
+
+    @if (lista != null)
+    {
+        foreach (var item in lista)
+        {
+            <div class="col mb-5">
+                <div class="card h-100">
+                    <div class="card-body p-4">
+                        <div class="text-start">
+                            <p class="m-1"><b>Nombre: </b>@item.Nombre</p>
+                            <p class="m-1"><b>Número Personería Jurídica: </b>@item.NumeroPersoneriaJuridica</p>
+                            <p class="m-1"><b>Fecha de Registro Personería Jurídca: </b>@item.FechaRegistroPersoneriaJuridica</p>
+                            <p class="m-1"><b>Nombre Presidente: </b>@item.NombrePresidente</p>
+                            <p class="m-1"><b>Delimitación: </b>@item.Delimitacion</p>
+                        </div>
+                        <div class="text-center">
+                            @if (item.Foto != null)
+                            {
+                                <img class="card-img-top border-dark border-1" src="@item.Foto" style="width:150px;height:150px">
+
+                            }
+                            else
+                            {
+                                <i class="oi oi-image" style="font-size:50px"></i>
+
+                            }
+                        </div>
+
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="row justify-content-between">
+                            <a class="col-5 btn btn-sm btn-outline-primary mt-auto" href="/jac/@item.IdJac"><i class="oi oi-pencil fs-5"></i></a>
+                            <button class="col-5 btn btn-sm btn-outline-danger mt-auto" type="button" @onclick="(async () => await Eliminar(item))">
+                                <i class="oi oi-trash fs-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    }
+
+</div>
+
 
 @code {
+    // HECHO : QUE SE VEAN LAS JUNTAS DE ACCION COMUNAL INSCRITAS FECHA: 26/FEB/2024 9:52PM  : FIN : 28/FEB/2024 12:02PM
+    private List<JacDTO>? lista = null;
+    private string buscar = "";
 
+    private async Task ObtenerJacs(string Valor = "")
+    {
+        var response = await jacServicio.Lista(Valor);
+
+        if (response.EsCorrecto!)
+        {
+            lista = (List<JacDTO>)response.Resultado!;
+        }
+        else
+        {
+            lista = new List<JacDTO>();
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await ObtenerJacs();
+    }
+    private async Task Eliminar(JacDTO modelo)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Esta seguro?",
+                Text = $"Eliminar JAC: {modelo.Nombre}",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Si, eliminar",
+                CancelButtonText = "No, volver",
+            });
+        if (result.IsConfirmed)
+        {
+            var response = await jacServicio.Eliminar(modelo.IdJac);
+            if (response.EsCorrecto)
+            {
+                await ObtenerJacs();
+                toastService.ShowSuccess("JAC fue eliminada");
+            }
+            else
+            {
+                toastService.ShowWarning(response.Mensaje);
+            }
+        }
+    }
 }

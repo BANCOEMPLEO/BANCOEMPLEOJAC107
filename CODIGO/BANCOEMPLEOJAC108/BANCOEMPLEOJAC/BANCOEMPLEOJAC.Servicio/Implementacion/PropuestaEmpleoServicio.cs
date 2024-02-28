@@ -68,6 +68,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                     fromDbModelo.Observaciones = modelo.Observaciones;
                     fromDbModelo.Valor = modelo.Valor;
                     fromDbModelo.EmpleadoId = modelo.EmpleadoId;
+                    fromDbModelo.EmpleadorId = modelo.EmpleadorId;
                     fromDbModelo.FechaHoraRevisaEmpleador = modelo.FechaHoraRevisaEmpleador;
                     fromDbModelo.FechaHoraReProponeEmpleador = modelo.FechaHoraReProponeEmpleador;
                     fromDbModelo.RePropone = modelo.RePropone;
@@ -253,6 +254,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                     fromDbModelo.Observaciones = modelo.Observaciones;
                     fromDbModelo.Valor = modelo.Valor;
                     fromDbModelo.EmpleadoId = modelo.EmpleadoId;
+                    fromDbModelo.EmpleadorId = modelo.EmpleadorId;
                     fromDbModelo.FechaHoraRevisaEmpleador = modelo.FechaHoraRevisaEmpleador;
                     fromDbModelo.FechaHoraReProponeEmpleador = modelo.FechaHoraReProponeEmpleador;
                     fromDbModelo.RePropone = modelo.RePropone;

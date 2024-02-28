@@ -84,8 +84,21 @@
                                     <!-- Product name-->
                                     <h5 class="fw-bolder">@item.Nombre</h5>
                                     <!-- Product price-->
-                                    <span>S /.@item.Valor</span>
-                                    <h4>Empleador @item.EmpleoId</h4>
+                                    <span>COL$ /.@item.Valor</span>
+                                    <div class="text-center">
+                                        Creado como :<h4>
+                                            <u>
+                                                @if (item.EmpleadorId != null)
+                                                {
+                                                    @("Empleador")
+                                                }
+                                                else
+                                                {
+                                                    @("Empleado")
+                                                }
+                                            </u>
+                                        </h4>
+                                    </div>
                                 </div>
                             </div>
                             <!-- Product actions-->

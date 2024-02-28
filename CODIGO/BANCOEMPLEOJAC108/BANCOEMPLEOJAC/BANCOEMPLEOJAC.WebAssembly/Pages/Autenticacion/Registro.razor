@@ -1,6 +1,7 @@
 ﻿@page "/registro"
 @using BANCOEMPLEOJAC.DTO
 @using BANCOEMPLEOJAC.WebAssembly.Servicio.Interfase
+@using BANCOEMPLEOJAC.WebAssembly.Pages.Autenticacion
 @layout EntradaLayout
 
 @inject IUsuarioServicio _usuarioServicio
@@ -108,12 +109,14 @@
                     <a href="/usuarios" class="btn btn-secondary float-end" style="width:130px">Volver</a>
                     </div>
                 }
+                <TerminosCondicionesComponent />
             </div>
         </div>
     </div>
 </div>
 
 @code {
+    // POR HACER : PONER PAGINA DE TERMINOS Y CONDICIONES EN EL REGISTRO FECHA : 26/FEB/2024 10:45PM
     [Parameter]
     public int Id { get; set; }
     public bool isAuthenticated  = false;
