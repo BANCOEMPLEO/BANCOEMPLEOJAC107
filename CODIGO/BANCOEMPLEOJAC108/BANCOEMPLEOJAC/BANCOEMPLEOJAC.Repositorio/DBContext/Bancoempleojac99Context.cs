@@ -280,7 +280,6 @@ public partial class Bancoempleojac99Context : DbContext
             entity.Property(e => e.NombreAdminLocal)
                 .HasMaxLength(100)
                 .IsUnicode(false);
-            entity.Property(e => e.NombrePresidente).HasMaxLength(100);
             entity.Property(e => e.Observaciones).IsUnicode(false);
 
             entity.HasOne(d => d.IdZonaVeredaNavigation).WithMany(p => p.Jacs)

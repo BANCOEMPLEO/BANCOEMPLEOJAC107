@@ -11,6 +11,16 @@
     {
         <div class="row gx-4 gx-lg-5 align-items-center">
             <div class="col-md-6">
+                <p class="lead">
+                    @if (modelo.EmpleadorId != null)
+                    {
+                        @("EMPLEADOR NECESITA:")
+                    }
+                    else
+                    {
+                        @("EMPLEADO OFRECE:")
+                    }
+                </p>
                 <h1 class="display-5 fw-bolder">@modelo.Nombre</h1>
                 <div class="fs-5 mb-5">
 
@@ -21,7 +31,6 @@
                 <p class="lead">Ubicación : @modelo.Ubicacion</p>
                 <p class="lead">Fecha Hora Inicia : @modelo.FechaHoraInicio</p>
                 <p class="lead">Fecha Hora Finaliza : @modelo.FechaHoraFin</p>
-                <p class="lead">Empleador : @modelo.EmpleadorId</p>
                 <div class="d-flex">
                     <input class="form-control text-center me-3" type="number" min="1" style="width:60px" @bind-value="cantidad">
 

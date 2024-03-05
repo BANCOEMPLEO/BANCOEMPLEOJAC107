@@ -34,21 +34,15 @@
                     <div class="card-body p-4">
                         <div class="text-start">
                             <p class="m-1"><b>Nombre: </b>@item.Nombre</p>
-                            <p class="m-1"><b>Número Personería Jurídica: </b>@item.NumeroPersoneriaJuridica</p>
-                            <p class="m-1"><b>Fecha de Registro Personería Jurídca: </b>@item.FechaRegistroPersoneriaJuridica</p>
-                            <p class="m-1"><b>Nombre Presidente: </b>@item.NombrePresidente</p>
-                            <p class="m-1"><b>Delimitación: </b>@item.Delimitacion</p>
                         </div>
-                        <div class="text-center">
+                        <div class="text-center d-flex align-items-center justify-content-center" style="height: 150px;">
                             @if (item.Foto != null)
                             {
                                 <img class="card-img-top border-dark border-1" src="@item.Foto" style="width:150px;height:150px">
-
                             }
                             else
                             {
-                                <i class="oi oi-image" style="font-size:50px"></i>
-
+                                <i class="oi oi-map" style="font-size:50px"></i>
                             }
                         </div>
 
@@ -77,6 +71,8 @@
 
 @code {
     // HECHO : QUE SE VEAN LAS JUNTAS DE ACCION COMUNAL INSCRITAS FECHA: 26/FEB/2024 9:52PM  : FIN : 28/FEB/2024 12:02PM
+    // HECHO : SE PUEDEN EDITAR TODOS LOS CAMPOS DE LA JAC FECHA: 29/FEB/2024 3:05PM.
+    // POR HACER : QUE SEPUEDA CREAR NUEVAS JAC FECHA: 29/FEB/2024 3:08PM
     private List<JacDTO>? lista = null;
     private string buscar = "";
 

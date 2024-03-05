@@ -33,11 +33,6 @@
             <ValidationMessage For="@(()=>modelo.Nombre)" />
 
             <div class="input-group mt-3">
-                <span class="input-group-text  bg-secondary text-light" id="basic-addon3">Presidente : </span>
-                <input type="text" class="form-control" @bind-value="modelo.NombrePresidente">
-            </div>
-            <ValidationMessage For="@(()=>modelo.NombrePresidente)" />
-            <div class="input-group mt-3">
                 <span class="input-group-text  bg-secondary text-light" id="basic-addon3">Número Registro Personería Jurídica</span>
                 <input type="text" class="form-control" @bind-value="modelo.NumeroPersoneriaJuridica">
             </div>
@@ -50,8 +45,8 @@
 
 
             <div class="input-group mt-3">
-                <span class="input-group-text  bg-secondary text-light" id="basic-addon3">delimitación:</span>
-                <input type="text" class="form-control" @bind-value="modelo.Delimitacion">
+                <span class="input-group-text  bg-secondary text-light" id="basic-addon3">Delimitación:</span>
+                <textarea class="form-control" @bind="modelo.Delimitacion"></textarea>
             </div>
             <div class="input-group mt-3">
                 <div class="input-group-text form-control bg-secondary text-light justify-content-center" id="basic-addon3">Foto</div>
@@ -68,7 +63,7 @@
             <ValidationMessage For="@(()=>modelo.Foto)" />
             <div class="input-group mt-3">
                 <span class="input-group-text  bg-secondary text-light" id="basic-addon3">Observaciones</span>
-                <input type="text" class="form-control" @bind-value="modelo.Observaciones"><br />
+                <textarea class="form-control" @bind="modelo.Observaciones"></textarea><br />
             </div>
             <ValidationMessage For="@(()=>modelo.Observaciones)" />
 
@@ -123,7 +118,6 @@
             if (response.EsCorrecto)
             {
                 modelo = (JacDTO)response.Resultado!;
-                //modelo.ConfirmarClave = modelo.Clave;
             }
             else
             {

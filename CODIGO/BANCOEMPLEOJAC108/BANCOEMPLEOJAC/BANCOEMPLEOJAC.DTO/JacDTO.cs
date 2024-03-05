@@ -18,8 +18,6 @@ namespace BANCOEMPLEOJAC.DTO
         public string? IdZonaVereda { get; set; }
         [Required(ErrorMessage = "Ingrese Delimitación")]
         public string? Delimitacion { get; set; }
-        [Required(ErrorMessage = "Ingrese Apellidos y Nombres Completos de Presidente")]
-        public string? NombrePresidente { get; set; }
         [Required(ErrorMessage = "Ingrese Número Personeria Juridica")]
         public int? NumeroPersoneriaJuridica { get; set; }
         [Required(ErrorMessage = "Ingrese Fecha Registro Personeria Juridica")]

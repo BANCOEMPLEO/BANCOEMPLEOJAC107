@@ -15,9 +15,7 @@ public partial class Jac
 
     public string? Delimitacion { get; set; }
 
-    public string? NombrePresidente { get; set; }
-
-    public int? NúmeroPersoneriaJuridica { get; set; }
+    public int? NumeroPersoneriaJuridica { get; set; }
 
     public DateTime? FechaRegistroPersoneriaJuridica { get; set; }
 
@@ -34,6 +32,8 @@ public partial class Jac
     public virtual ICollection<Administrador> Administradors { get; set; } = new List<Administrador>();
 
     public virtual ZonaVereda? IdZonaVeredaNavigation { get; set; }
+
+    public virtual Usuario? IdPresidenteNavigation { get; set; }
 
     public virtual ICollection<PerfilCargo> PerfilCargos { get; set; } = new List<PerfilCargo>();
 

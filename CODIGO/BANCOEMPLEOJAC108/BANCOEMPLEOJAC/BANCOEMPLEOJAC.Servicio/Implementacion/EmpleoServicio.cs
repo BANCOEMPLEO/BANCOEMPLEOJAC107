@@ -114,6 +114,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                         // Crea la PropuestaEmpleo
                         PropuestaEmpleo propuestaEmpleo = new PropuestaEmpleo();
                         propuestaEmpleo.EmpleoId = modelo.IdEmpleo;
+                        propuestaEmpleo.Orden = 1;
                         propuestaEmpleo.Nombre = modelo.Nombre;
                         propuestaEmpleo.Descripcion = modelo.Descripcion;
                         propuestaEmpleo.Requisitos = modelo.Requisitos;
@@ -211,8 +212,8 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
             {
 
                 var consulta = _modeloRepositorio.Consultar(p =>
-                p.Descripcion.ToLower().Contains(buscar.ToLower())
-                );
+                p.Descripcion.ToLower().Contains(buscar.ToLower())); 
+                consulta = consulta.Include(pe => pe.PropuestaEmpleos);
                 consulta = consulta.Include(c => c.PerfilCargo);
                 if (idUsuario > 0)
                 {

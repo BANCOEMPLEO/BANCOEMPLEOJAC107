@@ -17,9 +17,9 @@
         <h5>Proponer Cambios</h5>
     </div>
 
-@*     @if (modelo != null)
+    @if (modelo != null)
     {
- *@        <div class="row gx-4 gx-lg-5 align-items-center">
+        <div class="row gx-4 gx-lg-5 align-items-center">
             <div class="col-md-6">
 
                 <EditForm Model="modelo" OnValidSubmit="GuardarCambios">
@@ -75,12 +75,12 @@
                         <input type="text" class="form-control" @bind-value="modelo.EmpleadoId">
                     </div>
                     <ValidationMessage For="@(()=>modelo.EmpleadoId)" />
-                    <div class="input-group mt-3">
+@*                     <div class="input-group mt-3">
                         <span class="input-group-text bg-light" id="basic-addon3">Empleador Id</span>
                         <input type="text" class="form-control" @bind-value="modelo.Empleo.EmpleadorId">
                     </div>
                     <ValidationMessage For="@(()=>modelo.Empleo.EmpleadorId)" />
-                    <div class="input-group mt-3">
+ *@                    <div class="input-group mt-3">
                         <span class="input-group-text bg-light" id="basic-addon3">Observaciones</span>
                         <textarea class="form-control" @bind="modelo.Observaciones"></textarea>
                     </div>
@@ -93,14 +93,14 @@
                 </EditForm>
             </div>
         </div>
-@*     }
+    }
     else
     {
         <div class="spinner-border" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
     }
- *@
+
 
 
 </div>

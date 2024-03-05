@@ -55,8 +55,8 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 {
                     fromDbModelo.Nit = modelo.Nit;
                     fromDbModelo.Nombre = modelo.Nombre;
-                    fromDbModelo.NombrePresidente = modelo.NombrePresidente;
                     fromDbModelo.Delimitacion = modelo.Delimitacion;
+                    fromDbModelo.NumeroPersoneriaJuridica = modelo.NumeroPersoneriaJuridica;
                     fromDbModelo.FechaRegistroPersoneriaJuridica = modelo.FechaRegistroPersoneriaJuridica;
                     fromDbModelo.IdAdministradorLocal = modelo.IdAdministradorLocal;
                     fromDbModelo.NombreAdminLocal = modelo.NombreAdminLocal;

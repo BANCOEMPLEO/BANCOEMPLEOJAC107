@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BANCOEMPLEOJAC.Modelo;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -48,6 +49,14 @@ namespace BANCOEMPLEOJAC.DTO
         public virtual UsuarioDTO? Usuario { get; set; } = null!;
 
         public virtual PerfilCargoDTO? PerfilCargo { get; set; } = null!;
+
+
+        public virtual ICollection<PropuestaEmpleo2DTO> PropuestaEmpleos { get; set; } = new List<PropuestaEmpleo2DTO>();
+        //public virtual int NumeroPropuestas
+        //{
+        //    get { return PropuestaEmpleos?.Count ?? 0; }
+        //}
+
 
     }
 }

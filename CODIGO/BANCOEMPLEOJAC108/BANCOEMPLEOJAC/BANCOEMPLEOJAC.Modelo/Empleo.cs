@@ -47,5 +47,6 @@ public partial class Empleo
 
     public virtual PerfilCargo? PerfilCargo { get; set; }
 
+    //public virtual int? NumeroPropuestas { get; set; }
     public virtual ICollection<PropuestaEmpleo> PropuestaEmpleos { get; set; } = new List<PropuestaEmpleo>();
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BANCOEMPLEOJAC.DTO
 {
-    public class PropuestaEmpleoDTO
+    public class PropuestaEmpleo2DTO
     {
         public int IdPropuestaEmpleo { get; set; }
 
@@ -48,7 +48,7 @@ namespace BANCOEMPLEOJAC.DTO
         public virtual ICollection<DetallePropuestaDTO>? DetallePropuesta { get; set; } = new List<DetallePropuestaDTO>();
 
        //public virtual ICollection<PropuestaEmpleoDTO>? InversePropuestaEmpleoAnterior { get; set; } = new List<PropuestaEmpleoDTO>();
-        public virtual EmpleoDTO? Empleo { get; set; }
+        //public virtual EmpleoDTO? Empleo { get; set; }
         public virtual UsuarioDTO? Empleado { get; set; }
         public virtual UsuarioDTO? Empleador { get; set; }
 

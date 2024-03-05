@@ -123,8 +123,8 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 p.Descripcion.ToLower().Contains(buscar.ToLower())
                 );
 
-                consulta = consulta.Include(c => c.Empleo);
-                    //.Where(p => p.Empleo.Activo == true);
+                consulta = consulta.Include(c => c.Empleo)
+                    .Where(p => p.Empleo.Activo == true);
 
                 List<PropuestaEmpleoDTO> lista = _mapper.Map<List<PropuestaEmpleoDTO>>(await consulta.ToListAsync());
                 return lista;
@@ -136,12 +136,31 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
             }
         }
 
+        public async Task<List<PropuestaEmpleoDTO>> ListaPorEmpleo(int idEmpleo)
+        {
+            try
+            {
+                var consulta = _modeloRepositorio.Consultar(p => p.EmpleoId == idEmpleo);
+
+//                consulta = consulta.Include(c => c.Empleo);
+
+                List<PropuestaEmpleoDTO> lista = _mapper.Map<List<PropuestaEmpleoDTO>>(await consulta.ToListAsync());
+                return lista;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+
         public async Task<PropuestaEmpleoDTO> Obtener(int id)
         {
             try
             {
-                var consulta = _modeloRepositorio.Consultar(p => p.IdPropuestaEmpleo == id)
-                    .Include(c => c.Empleo);
+                var consulta = _modeloRepositorio.Consultar(p => p.IdPropuestaEmpleo == id);
+                    //.Include(c => c.Empleo);
 
 
                 var fromDbModelo = await consulta.FirstOrDefaultAsync();

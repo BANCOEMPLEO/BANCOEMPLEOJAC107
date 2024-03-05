@@ -35,6 +35,26 @@ namespace BANCOEMPLEOJAC.API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("ListaPorEmpleo/{idEmpleo}")]
+        public async Task<IActionResult> ListaPorEmpleo(int idEmpleo)
+        {
+            var response = new ResponseDTO<List<PropuestaEmpleoDTO>>();
+
+            try
+            {
+
+                response.EsCorrecto = true;
+                response.Resultado = await _propuestaempleoServicio.ListaPorEmpleo(idEmpleo);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
+
         [HttpGet("Catalogo/{categoria?}/{buscar?}")]
         public async Task<IActionResult> Catalogo(int categoria, string buscar = "NA")
         {
