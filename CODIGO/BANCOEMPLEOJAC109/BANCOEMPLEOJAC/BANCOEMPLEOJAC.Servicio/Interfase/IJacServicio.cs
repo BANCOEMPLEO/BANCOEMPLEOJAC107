@@ -15,9 +15,11 @@ namespace BANCOEMPLEOJAC.Servicio.Contrato
         Task<List<MunicipioDTO>> ListaMunicipios(string buscar);
         Task<List<ZonaVeredaDTO>> ListaZonaVeredas(string buscar);
         Task<JacDTO> Obtener(int id);
+        Task<ZonaVeredaDTO> ObtenerZonaVereda(string idZonaVereda);
         Task<JacDTO> Crear(JacDTO modelo);
         Task<ZonaVeredaDTO> CrearZonaVereda(ZonaVeredaDTO modelo);
         Task<bool> Editar(JacDTO modelo);
+        Task<bool> EditarZonaVereda(ZonaVeredaDTO modelo);
         Task<bool> Eliminar(int id);
     }
 }

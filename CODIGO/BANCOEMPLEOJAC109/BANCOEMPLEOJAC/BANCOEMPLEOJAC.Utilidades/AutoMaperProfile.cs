@@ -68,7 +68,9 @@ namespace BANCOEMPLEOJAC.Utilidades
             //    );
 
             CreateMap<Jac, JacDTO>();
-            CreateMap<JacDTO, Jac>();
+            CreateMap<JacDTO, Jac>().ForMember(destino =>
+                destino.IdZonaVeredaNavigation,
+                opt => opt.Ignore());
 
             CreateMap<PropuestaEmpleo, PropuestaEmpleoDTO>();
             CreateMap<PropuestaEmpleoDTO, PropuestaEmpleo>();//.ForMember(destino =>

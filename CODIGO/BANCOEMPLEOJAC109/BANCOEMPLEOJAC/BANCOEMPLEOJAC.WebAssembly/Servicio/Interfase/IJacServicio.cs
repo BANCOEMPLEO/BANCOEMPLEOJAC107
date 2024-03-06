@@ -12,9 +12,11 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Interfase
         Task<ResponseDTO<List<ZonaVeredaDTO>>> ListaZonaVeredas(string buscar);
 
         Task<ResponseDTO<JacDTO>> Obtener(int Id);
+        Task<ResponseDTO<ZonaVeredaDTO>> ObtenerZonaVereda(string IdZonaVereda);
         Task<ResponseDTO<JacDTO>> Crear(JacDTO modelo);
         Task<ResponseDTO<ZonaVeredaDTO>> CrearZonaVereda(ZonaVeredaDTO modelo);
         Task<ResponseDTO<bool>> Editar(JacDTO modelo);
+        Task<ResponseDTO<bool>> EditarZonaVereda(ZonaVeredaDTO modelo);
         Task<ResponseDTO<bool>> Eliminar(int Id);
 
     }

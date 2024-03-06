@@ -31,6 +31,12 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
             var result = await response.Content.ReadFromJsonAsync<ResponseDTO<bool>>();
             return result!;
         }
+        public async Task<ResponseDTO<bool>> EditarZonaVereda(ZonaVeredaDTO modelo)
+        {
+            var response = await _httpClient.PutAsJsonAsync("Jac/EditarZonaVereda", modelo);
+            var result = await response.Content.ReadFromJsonAsync<ResponseDTO<bool>>();
+            return result!;
+        }
 
         public async Task<ResponseDTO<bool>> Eliminar(int Id)
         {
@@ -69,7 +75,11 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
 
         public async Task<ResponseDTO<JacDTO>> Obtener(int Id)
         {
-            return await _httpClient.GetFromJsonAsync<ResponseDTO<JacDTO>>($"Jac/Obtener/{Id}");
+            return await _httpClient.GetFromJsonAsync<ResponseDTO<JacDTO>>($"Jac/Obtener/{Id}/");
+        }
+        public async Task<ResponseDTO<ZonaVeredaDTO>> ObtenerZonaVereda(string IdZonaVereda)
+        {
+            return await _httpClient.GetFromJsonAsync<ResponseDTO<ZonaVeredaDTO>>($"Jac/ObtenerZonaVereda/{IdZonaVereda}");
         }
     }
 }

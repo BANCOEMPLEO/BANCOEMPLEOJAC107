@@ -132,6 +132,25 @@ namespace BANCOEMPLEOJAC.API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("ObtenerZonaVereda/{idZonaVereda}")]
+        public async Task<IActionResult> ObtenerZonaVereda(string idZonaVereda)
+        {
+            var response = new ResponseDTO<ZonaVeredaDTO>();
+
+            try
+            {
+                response.EsCorrecto = true;
+                response.Resultado = await _jacServicio.ObtenerZonaVereda(idZonaVereda);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
+
         [HttpPost("Crear")]
         public async Task<IActionResult> Crear([FromBody] JacDTO modelo)
         {
@@ -186,6 +205,26 @@ namespace BANCOEMPLEOJAC.API.Controllers
             }
             return Ok(response);
         }
+
+        [HttpPut("EditarZonaVereda")]
+        public async Task<IActionResult> EditarZonaVereda([FromBody] ZonaVeredaDTO modelo)
+        {
+            var response = new ResponseDTO<bool>();
+
+            try
+            {
+                response.EsCorrecto = true;
+                response.Resultado = await _jacServicio.EditarZonaVereda(modelo);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
+
 
         [HttpDelete("Eliminar/{id:int}")]
         public async Task<IActionResult> Eliminar(int id)

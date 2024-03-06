@@ -73,6 +73,10 @@
                                 }
                             }
                         </select>
+                        @if (IdZonaVereda.Count() > 0)
+                        {
+                            <a href="/zonavereda/@IdMunicipio/@IdZonaVereda" class="btn btn-secondary float-end oi oi-pencil" style="width:45px"></a>
+                        }
                     </div>
 
                 </Authorized>

@@ -114,6 +114,41 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
             }
         }
 
+        public async Task<bool> EditarZonaVereda(ZonaVeredaDTO modelo)
+        {
+            try
+            {
+                var consulta = _zonaveredaRepositorio.Consultar(p => p.IdzonaVereda == modelo.IdzonaVereda);
+                var fromDbModelo = await consulta.FirstOrDefaultAsync();
+
+                if (fromDbModelo != null)
+                {
+                    fromDbModelo.Nombre = modelo.Nombre;
+                    fromDbModelo.Ubicacion = modelo.Ubicacion;
+                    fromDbModelo.Latitud = modelo.Latitud;
+                    fromDbModelo.Longitud = modelo.Longitud;
+                    fromDbModelo.Observaciones = modelo.Observaciones;
+
+                    var respuesta = await _zonaveredaRepositorio.Editar(fromDbModelo);
+
+                    if (!respuesta)
+                        throw new TaskCanceledException("No se pudo editar");
+                    return respuesta;
+                }
+                else
+                {
+                    throw new TaskCanceledException("No se encontraron resultados");
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+
+
         public async Task<bool> Eliminar(int id)
         {
             try
@@ -240,6 +275,25 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
 
                 if (fromDbModelo != null)
                     return _mapper.Map<JacDTO>(fromDbModelo);
+                else
+                    throw new TaskCanceledException("No se encontraron coincidencias");
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public async Task<ZonaVeredaDTO> ObtenerZonaVereda(string idZonaVereda)
+        {
+            try
+            {
+                var consulta = _zonaveredaRepositorio.Consultar(p => p.IdzonaVereda == idZonaVereda);
+                var fromDbModelo = await consulta.FirstOrDefaultAsync();
+
+                if (fromDbModelo != null)
+                    return _mapper.Map<ZonaVeredaDTO>(fromDbModelo);
                 else
                     throw new TaskCanceledException("No se encontraron coincidencias");
 

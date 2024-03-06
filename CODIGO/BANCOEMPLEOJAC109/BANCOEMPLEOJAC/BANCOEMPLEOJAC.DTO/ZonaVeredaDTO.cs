@@ -9,7 +9,10 @@ namespace BANCOEMPLEOJAC.DTO
 {
     public class ZonaVeredaDTO
     {
-        public string IdzonaVereda { get; set; } = null!;
+        public string IdzonaVereda { get; set; } = "";
+        [Required(ErrorMessage = "Ingrese Municipio")]
+        [MinLength(5, ErrorMessage = "Mínimo 5 Caracteres.")]
+        [StringLength(50, ErrorMessage = "Maximo 50 Caracteres")]
 
         public string? IdMunicipio { get; set; }
         [Required(ErrorMessage = "Ingrese Nombres")]

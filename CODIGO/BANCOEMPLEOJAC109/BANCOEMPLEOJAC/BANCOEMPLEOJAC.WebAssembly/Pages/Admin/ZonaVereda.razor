@@ -1,5 +1,6 @@
 ﻿@page "/zonavereda"
 @page "/zonavereda/{Id}"
+@page "/zonavereda/{Id}/{IdZonaVereda}"
 @using BANCOEMPLEOJAC.DTO
 @using BANCOEMPLEOJAC.WebAssembly.Servicio.Interfase
 @using Microsoft.AspNetCore.Authorization
@@ -52,14 +53,16 @@
 
             <div class="mt-3 justify-content-center">
                 <button type="submit" class="btn btn-primary" style="width:130px">@boton</button>
-                <a href="/usuarios" class="btn btn-secondary float-end" style="width:130px">Volver</a>
+                <a href="/jac" class="btn btn-secondary float-end" style="width:130px">Volver</a>
             </div>
         </EditForm>
     </div>
 </div>
 @code {
     [Parameter]
-    public string Id { get; set; }
+    public string? Id { get; set; } = "";
+    [Parameter]
+    public string? IdZonaVereda { get; set; } = "";
     // [Parameter]
     // public int IdRol { get; set; } = 5;
     // [Parameter]
@@ -95,26 +98,27 @@
     // }
     protected override async Task OnParametersSetAsync()
     {
-        if (Id.Count() > 0)
+        if (IdZonaVereda.Count() == 0)
         {
             modelo.IdzonaVereda = Guid.NewGuid().ToString();
             modelo.IdMunicipio = Id;
-            //     //     Titulo = "Editar usuario";
-    //     //     boton = "Actualizar";
-    //     //     var response = await _jacServicio.Obtener(Id);
-    //     //     if (response.EsCorrecto)
-    //     //     {
-    //     //         modelo = (UsuarioEditaDTO)response.Resultado!;
-    //     //         modelo.Clave = "";
-    //     //         modelo.ConfirmarClave = "";
-    //     //         //modelo.ConfirmarClave = modelo.Clave;
-    //     //     }
-    //     //     else
-    //     //     {
-    //     //         toastService.ShowWarning(response.Mensaje);
-    //     //     }
-          }
-     }
+        }
+        else
+        {
+            Titulo = "Editar Zona Localidad o Vereda";
+            boton = "Actualizar";
+            var response = await _jacServicio.ObtenerZonaVereda(IdZonaVereda);
+            if (response.EsCorrecto)
+            {
+                modelo = (ZonaVeredaDTO)response.Resultado!;
+            }
+            else
+            {
+                toastService.ShowWarning(response.Mensaje);
+            }
+            
+        }
+    }
 
     // private async Task ObtenerRoles(string Valor = "")
     // {
@@ -162,22 +166,21 @@
 
         bool respuesta = true;
         string mensaje = string.Empty;
-        // if (Id != 0)
-        // {
-        //     var response = await usuarioServicio.Editar(modelo);
-        //     if (response.EsCorrecto)
-        //     {
-        //         mensaje = "Usuario fue modificado";
-        //     }
-        //     else
-        //     {
-        //         respuesta = false;
-        //         mensaje = "No ser pudo editar";
-        //     }
-        // }
-        // else
-        // {
-        //modelo.r.Rol = 1;
+        if (IdZonaVereda.Count() > 0)
+        {
+            var response = await _jacServicio.EditarZonaVereda(modelo);
+            if (response.EsCorrecto)
+            {
+                mensaje = "Zona Localidad o Vereda fue modificada";
+            }
+            else
+            {
+                respuesta = false;
+                mensaje = "No ser pudo editar";
+            }
+        }
+        else
+        {
             modelo.IdMunicipio = Id;
             //modelo = _map.Map<ZonaVeredaDTO>(modelo);
             var response = await _jacServicio.CrearZonaVereda(modelo);
@@ -190,7 +193,7 @@
                 respuesta = false;
                 mensaje = "No se pudo crear";
             }
-        // }
+         }
         if (respuesta)
         {
             toastService.ShowSuccess(mensaje);
