@@ -91,6 +91,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                         fromDbModelo.Clave = Encrypt.GetSHA256(modelo.Clave);
                     }
                     fromDbModelo.JacId = modelo.JacId;
+                    fromDbModelo.Rol = modelo.Rol;
                     fromDbModelo.Foto = modelo.Foto;
                     fromDbModelo.Observaciones = modelo.Observaciones;
                     var respuesta = await _modeloRepositorio.Editar(fromDbModelo);

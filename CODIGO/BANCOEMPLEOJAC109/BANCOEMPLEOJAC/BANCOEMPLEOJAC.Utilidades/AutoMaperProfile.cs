@@ -97,6 +97,23 @@ namespace BANCOEMPLEOJAC.Utilidades
             CreateMap<ContratoDTO, Contrato>();
 
 
+            CreateMap<Pais, PaisDTO>();
+            CreateMap<PaisDTO, Pais>();
+
+            CreateMap<Departamento,DepartamentoDTO>();
+            CreateMap<DepartamentoDTO, Departamento>();
+
+            CreateMap<Regiones, RegionesDTO>();
+            CreateMap<RegionesDTO, Regiones>();
+
+
+            CreateMap<Municipio, MunicipioDTO>();
+            CreateMap<MunicipioDTO, Municipio>();
+
+            CreateMap<ZonaVereda, ZonaVeredaDTO>();
+            CreateMap<ZonaVeredaDTO, ZonaVereda>();
+
+
         }
         //static string CalcularNuevoCampo(IGenericoRepositorio<Jac> jacModelo, Usuario origen)
         //{

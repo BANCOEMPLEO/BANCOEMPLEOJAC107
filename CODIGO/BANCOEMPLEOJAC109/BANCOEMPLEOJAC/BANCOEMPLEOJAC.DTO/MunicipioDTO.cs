@@ -22,6 +22,9 @@ namespace BANCOEMPLEOJAC.DTO
         public string? CodigoPostal { get; set; }
         public int? Aptitud { get; set; }
         public string? Observaciones { get; set; }
+        public virtual RegionesDTO? IdRegionNavigation { get; set; }
+
+        public virtual ICollection<ZonaVeredaDTO> ZonaVereda { get; set; } = new List<ZonaVeredaDTO>();
 
     }
 }

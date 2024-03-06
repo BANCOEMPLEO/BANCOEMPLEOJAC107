@@ -33,6 +33,87 @@ namespace BANCOEMPLEOJAC.API.Controllers
             }
             return Ok(response);
         }
+
+        [HttpGet("ListaDepartamentos/{buscar?}")]
+        public async Task<IActionResult> ListaDepartamentos(string buscar = "NA")
+        {
+            var response = new ResponseDTO<List<DepartamentoDTO>>();
+
+            try
+            {
+                if (buscar == "NA") buscar = "";
+
+                response.EsCorrecto = true;
+                response.Resultado = await _jacServicio.ListaDepartamentos(buscar);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
+        [HttpGet("ListaRegiones/{buscar?}")]
+        public async Task<IActionResult> ListaRegiones(string buscar = "NA")
+        {
+            var response = new ResponseDTO<List<RegionesDTO>>();
+
+            try
+            {
+                if (buscar == "NA") buscar = "";
+
+                response.EsCorrecto = true;
+                response.Resultado = await _jacServicio.ListaRegiones(buscar);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
+        [HttpGet("ListaMunicipios/{buscar?}")]
+        public async Task<IActionResult> ListaMunicipios(string buscar = "NA")
+        {
+            var response = new ResponseDTO<List<MunicipioDTO>>();
+
+            try
+            {
+                if (buscar == "NA") buscar = "";
+
+                response.EsCorrecto = true;
+                response.Resultado = await _jacServicio.ListaMunicipios(buscar);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
+        [HttpGet("ListaZonaVeredas/{buscar?}")]
+        public async Task<IActionResult> ListaZonaVeredas(string buscar = "NA")
+        {
+            var response = new ResponseDTO<List<ZonaVeredaDTO>>();
+
+            try
+            {
+                if (buscar == "NA") buscar = "";
+
+                response.EsCorrecto = true;
+                response.Resultado = await _jacServicio.ListaZonaVeredas(buscar);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
         [HttpGet("Obtener/{id:int}")]
         public async Task<IActionResult> Obtener(int id)
         {
@@ -60,6 +141,24 @@ namespace BANCOEMPLEOJAC.API.Controllers
             {
                 response.EsCorrecto = true;
                 response.Resultado = await _jacServicio.Crear(modelo);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
+        [HttpPost("CrearZonaVereda")]
+        public async Task<IActionResult> CrearZonaVereda([FromBody] ZonaVeredaDTO modelo)
+        {
+            var response = new ResponseDTO<ZonaVeredaDTO>();
+
+            try
+            {
+                response.EsCorrecto = true;
+                response.Resultado = await _jacServicio.CrearZonaVereda(modelo);
             }
             catch (Exception ex)
             {

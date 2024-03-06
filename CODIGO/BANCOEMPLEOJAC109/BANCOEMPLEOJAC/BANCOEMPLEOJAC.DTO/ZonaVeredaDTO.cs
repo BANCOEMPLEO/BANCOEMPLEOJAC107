@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BANCOEMPLEOJAC.DTO
 {
-    internal class ZonaVeredaDTO
+    public class ZonaVeredaDTO
     {
         public string IdzonaVereda { get; set; } = null!;
 

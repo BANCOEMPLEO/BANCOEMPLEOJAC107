@@ -35,7 +35,7 @@ namespace BANCOEMPLEOJAC.DTO
         [StringLength(500, ErrorMessage = "Maximo 50 Caracteres")]
         [Compare("Clave", ErrorMessage = "Las claves deben coincidir")]
         public string? ConfirmarClave { get; set; }
-         public int? Rol { get; set; }
+        public int? Rol { get; set; }
         [DataType(DataType.DateTime, ErrorMessage = "Formato de fecha no válido")]
         public DateTime FechaNacimiento { get; set; }
         public int? JacId { get; set; }

@@ -18,6 +18,12 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
             var result = await response.Content.ReadFromJsonAsync<ResponseDTO<JacDTO>>();
             return result!;
         }
+        public async Task<ResponseDTO<ZonaVeredaDTO>> CrearZonaVereda(ZonaVeredaDTO modelo)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Jac/CrearZonaVereda", modelo);
+            var result = await response.Content.ReadFromJsonAsync<ResponseDTO<ZonaVeredaDTO>>();
+            return result!;
+        }
 
         public async Task<ResponseDTO<bool>> Editar(JacDTO modelo)
         {
@@ -34,6 +40,30 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
         public async Task<ResponseDTO<List<JacDTO>>> Lista(string buscar)
         {
             var response = await _httpClient.GetFromJsonAsync<ResponseDTO<List<JacDTO>>>($"Jac/Lista/{buscar}");
+            return response;
+        }
+
+        public async Task<ResponseDTO<List<DepartamentoDTO>>> ListaDepartamentos(string buscar)
+        {
+            var response = await _httpClient.GetFromJsonAsync<ResponseDTO<List<DepartamentoDTO>>>($"Jac/ListaDepartamentos/{buscar}");
+            return response;
+        }
+
+        public async Task<ResponseDTO<List<RegionesDTO>>> ListaRegiones(string buscar)
+        {
+            var response = await _httpClient.GetFromJsonAsync<ResponseDTO<List<RegionesDTO>>>($"Jac/ListaRegiones/{buscar}");
+            return response;
+        }
+
+        public async Task<ResponseDTO<List<MunicipioDTO>>> ListaMunicipios(string buscar)
+        {
+            var response = await _httpClient.GetFromJsonAsync<ResponseDTO<List<MunicipioDTO>>>($"Jac/ListaMunicipios/{buscar}");
+            return response;
+        }
+
+        public async Task<ResponseDTO<List<ZonaVeredaDTO>>> ListaZonaVeredas(string buscar)
+        {
+            var response = await _httpClient.GetFromJsonAsync<ResponseDTO<List<ZonaVeredaDTO>>>($"Jac/ListaZonaVeredas/{buscar}");
             return response;
         }
 
