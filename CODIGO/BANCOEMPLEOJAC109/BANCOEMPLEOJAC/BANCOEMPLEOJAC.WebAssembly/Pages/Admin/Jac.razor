@@ -29,7 +29,14 @@
                             {
                                 @foreach (var item in listaDepartamentos)
                                 {
-                                    <option value="@item.IdDepartamento">@item.Nombre</option>
+                                    if (IdDepartamento != "" && item.IdDepartamento == IdDepartamento)
+                                    {
+                                        <option value="@item.IdDepartamento" selected>@item.Nombre</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.IdDepartamento">@item.Nombre</option>
+                                    }
                                 }
                             }
                         </select>
@@ -41,7 +48,15 @@
                             {
                                 @foreach (var item in listaRegiones)
                                 {
-                                    <option value="@item.IdRegion">@item.Nombre</option>
+                                    if (IdRegion != "" && item.IdRegion == IdRegion)
+                                    {
+                                        <option value="@item.IdRegion" selected>@item.Nombre</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.IdRegion">@item.Nombre</option>
+                                    }
+
                                 }
                             }
                         </select>
@@ -52,32 +67,46 @@
                             @if (listaMunicipios != null)
                             {
                                 @foreach (var item in listaMunicipios)
-                                {
-                                    <option value="@item.IdMunicipio">@item.Nombre</option>
-                                }
+                                    if (IdMunicipio != "" && item.IdMunicipio == IdMunicipio)
+                                    {
+                                        <option value="@item.IdMunicipio" selected>@item.Nombre</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.IdMunicipio">@item.Nombre</option>
+                                    }
                             }
                         </select>
                     </div>
                     <div class="input-group mt-3">
                         @if(IdMunicipio.Count() > 0)
                         {
-                          <a href="/zonavereda/@IdMunicipio" class="btn btn-secondary float-start oi oi-plus" style="width:45px"></a>
+                            <a href="/zonavereda/@IdMunicipio/NA/@Id" class="btn btn-secondary float-start oi oi-plus" style="width:45px; heigh:auto"></a>
                         }
                         <label class="input-group-text bg-secondary text-light justify-content-center" for="inputGroupSelect04">Zona, Localidad o Vereda</label>
-                        <select class="form-control" @bind-value="IdZonaVereda" @bind-value:event="onchange">
+                        <select class="form-control" @onchange="e => SeleccionaZonaVereda(e.Value.ToString())">
                             @if (listaZonaVeredas != null)
                             {
                                 @foreach (var item in listaZonaVeredas)
                                 {
-                                    <option value="@item.IdzonaVereda">@item.Nombre</option>
+                                    if (listaZonaVeredas.Count() == 1 || (IdZonaVereda != "" && item.IdzonaVereda == IdZonaVereda))
+                                    {
+                                        <option value="@item.IdzonaVereda" selected>@item.Nombre</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.IdzonaVereda">@item.Nombre</option>
+                                    }
                                 }
                             }
                         </select>
-                        @if (IdZonaVereda.Count() > 0)
+                        @if (listaZonaVeredas.Count() > 0 && IdZonaVereda.Count() > 0)
                         {
-                            <a href="/zonavereda/@IdMunicipio/@IdZonaVereda" class="btn btn-secondary float-end oi oi-pencil" style="width:45px"></a>
+                            <a href="/zonavereda/@IdMunicipio/@IdZonaVereda/@Id" class="btn btn-secondary float-end oi oi-pencil" style="width:45px"></a>
                         }
+
                     </div>
+                    <ValidationMessage For="@(()=>modelo.IdZonaVereda)" />
 
                 </Authorized>
             </AuthorizeView>
@@ -140,7 +169,7 @@
 @code {
     // HECHO : SE PUEDA EDITAR Y CREAR UNA JAC : FECHA : 26/FEB/2024 9:53PM : FIN : 28/FEB/2024 12:02AM
     [Parameter]
-    public int Id { get; set; }
+    public int Id { get; set; } = 0;
     [Parameter]
     public string IdDepartamento { get; set; } = "";
     [Parameter]
@@ -165,56 +194,90 @@
     {
         try
         {
-
+            // Viene IdZonaVereda : Id(jac): selecciona -> zonavereda, municipio, region, departamento
+            //JAC
             var response = await jacServicio.Lista("NA");
             if (response.EsCorrecto)
             {
                 listaJac = (List<JacDTO>)response.Resultado!;
                 if (listaJac.Any() && Id == 0)
                 {
-                    modelo.IdJac = listaJac.First().IdJac;
+                    Id = modelo.IdJac = listaJac.First().IdJac;
                 }
-            }
-
-            var responseDepartamento = await jacServicio.ListaDepartamentos("NA");
-            if (responseDepartamento.EsCorrecto)
-            {
-                listaDepartamentos = (List<DepartamentoDTO>)responseDepartamento.Resultado!;
-                if (listaDepartamentos.Any() && IdDepartamento == "")
+                if (listaJac.Any() && Id > 0)
                 {
-                    IdDepartamento = listaDepartamentos.First().IdDepartamento;
+                    IdZonaVereda = listaJac.Where(j => j.IdJac == Id).FirstOrDefault().IdZonaVereda;
                 }
             }
 
-            var responseRegion = await jacServicio.ListaRegiones("NA");
-            if (responseRegion.EsCorrecto)
-            {
-                listaRegiones = (List<RegionesDTO>)responseRegion.Resultado!;
-                if (listaRegiones.Any() && IdRegion == "")
-                {
-                    IdRegion = listaRegiones.First().IdRegion;
-                }
-            }
-
-            var responseMunicipio = await jacServicio.ListaMunicipios("NA");
-            if (responseMunicipio.EsCorrecto)
-            {
-                listaMunicipios = (List<MunicipioDTO>)responseMunicipio.Resultado!;
-                if (listaMunicipios.Any() && IdMunicipio == "")
-                {
-                    IdMunicipio = listaMunicipios.First().IdMunicipio;
-                }
-            }
-
+            // Zona Vereda
             var responseZonaVereda = await jacServicio.ListaZonaVeredas("NA");
             if (responseZonaVereda.EsCorrecto)
             {
                 listaZonaVeredas = (List<ZonaVeredaDTO>)responseZonaVereda.Resultado!;
-                if (listaZonaVeredas.Any() && IdMunicipio == "")
+                if (IdZonaVereda == "" && listaZonaVeredas.Any())
                 {
-                    IdZonaVereda = listaZonaVeredas.First().IdzonaVereda;
+                    modelo.IdZonaVereda = IdZonaVereda = listaZonaVeredas.First().IdzonaVereda;
+                }
+                if (listaZonaVeredas.Any() && IdZonaVereda != "")
+                {
+                    IdMunicipio = listaZonaVeredas.Where(z => z.IdzonaVereda == IdZonaVereda).FirstOrDefault().IdMunicipio;
+                    listaZonaVeredas = listaZonaVeredas.Where(l => l.IdMunicipio == IdMunicipio).ToList();
+                    //SeleccionaMunicipio(IdMunicipio);
+
                 }
             }
+
+            // MUNICIPIO
+            var responseMunicipio = await jacServicio.ListaMunicipios("NA");
+            if (responseMunicipio.EsCorrecto)
+            {
+                listaMunicipios = (List<MunicipioDTO>)responseMunicipio.Resultado!;
+                if (IdMunicipio == "" && listaMunicipios.Any() && IdMunicipio == "")
+                {
+                    IdMunicipio = listaMunicipios.First().IdMunicipio;
+                }
+                if (listaMunicipios.Any() && IdMunicipio != "")
+                {
+                    IdRegion = listaMunicipios.Where(m => m.IdMunicipio == IdMunicipio).FirstOrDefault().IdRegion;
+                    listaMunicipios = listaMunicipios.Where(r => r.IdRegion == IdRegion).ToList();
+                    //SeleccionaRegion(IdRegion);
+                }
+            }
+
+            // REGION
+            var responseRegion = await jacServicio.ListaRegiones("NA");
+            if (responseRegion.EsCorrecto)
+            {
+                listaRegiones = (List<RegionesDTO>)responseRegion.Resultado!;
+                if (IdRegion == "" && listaRegiones.Any() && IdRegion == "")
+                {
+                    IdRegion = listaRegiones.First().IdRegion;
+                }
+                if (listaRegiones.Any() && IdMunicipio != "")
+                {
+                    IdDepartamento = listaRegiones.Where(m => m.IdRegion == IdRegion).FirstOrDefault().IdDepartamento;
+                    listaRegiones = listaRegiones.Where(r => r.IdDepartamento == IdDepartamento).ToList();
+                    //SeleccionaDepartamento(IdDepartamento);
+                }
+            }
+
+            // DEPARTAMENTO
+            var responseDepartamento = await jacServicio.ListaDepartamentos("NA");
+            if (responseDepartamento.EsCorrecto)
+            {
+                listaDepartamentos = (List<DepartamentoDTO>)responseDepartamento.Resultado!;
+                if (IdDepartamento == "" && listaDepartamentos.Any() && IdDepartamento == "")
+                {
+                    IdDepartamento = listaDepartamentos.First().IdDepartamento;
+                }
+                // if (listaDepartamentos.Any() && IdRegion != null)
+                // {
+                //     IdDepartamento = listaRegiones.Where(d => d.IdRegion == IdRegion).FirstOrDefault().IdDepartamento;
+                // }
+
+            }
+
 
 
         }
@@ -256,7 +319,7 @@
             listaMunicipios = null;
             IdMunicipio = "";
             listaZonaVeredas = null;
-            IdZonaVereda = "";
+            modelo.IdZonaVereda = IdZonaVereda = "";
         }
         this.IdDepartamento = IdDepartamento;
     }
@@ -273,7 +336,7 @@
                 IdMunicipio = listaMunicipios.First().IdMunicipio;
             }
             listaZonaVeredas = null;
-            IdZonaVereda = "";
+            modelo.IdZonaVereda = IdZonaVereda = "";
         }
         this.IdRegion = IdRegion;
     }
@@ -285,13 +348,16 @@
         if (responseZonaVereda.EsCorrecto)
         {
             listaZonaVeredas = (List<ZonaVeredaDTO>)responseZonaVereda.Resultado!;
-            if (listaZonaVeredas.Any() && IdZonaVereda == "")
+            if (listaZonaVeredas.Any())
             {
-                IdZonaVereda = listaZonaVeredas.First().IdzonaVereda;
-            }
+                modelo.IdZonaVereda = IdZonaVereda = listaZonaVeredas.First().IdzonaVereda;
+           }
         }
         this.IdMunicipio = IdMunicipio;
-        StateHasChanged();
+    }
+    private async Task SeleccionaZonaVereda(string IdZonaVereda)
+    {
+        modelo.IdZonaVereda = this.IdZonaVereda = IdZonaVereda;
     }
 
 

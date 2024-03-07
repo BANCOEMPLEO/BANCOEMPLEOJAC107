@@ -87,6 +87,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
 
                 if (fromDbModelo != null)
                 {
+                    fromDbModelo.IdZonaVereda = modelo.IdZonaVereda;
                     fromDbModelo.Nit = modelo.Nit;
                     fromDbModelo.Nombre = modelo.Nombre;
                     fromDbModelo.Delimitacion = modelo.Delimitacion;
@@ -194,13 +195,21 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         {
             try
             {
-                var consulta = _zonaveredaRepositorio.Consultar(p =>
-                //p.Nombre.ToLower().Contains(buscar.ToLower()));
-                p.IdMunicipio.Equals(buscar)).OrderBy(r => r.Nombre);
+                if (buscar == "")
+                {
+                    var consulta = _zonaveredaRepositorio.Consultar().OrderBy(z => z.Nombre);
 
+                    List<ZonaVeredaDTO> lista = _mapper.Map<List<ZonaVeredaDTO>>(await consulta.ToListAsync());
+                    return lista;
+                }
+                else
+                {
+                    var consulta = _zonaveredaRepositorio.Consultar(p =>
+                    p.IdMunicipio.Equals(buscar)).OrderBy(r => r.Nombre);
 
-                List<ZonaVeredaDTO> lista = _mapper.Map<List<ZonaVeredaDTO>>(await consulta.ToListAsync());
-                return lista;
+                    List<ZonaVeredaDTO> lista = _mapper.Map<List<ZonaVeredaDTO>>(await consulta.ToListAsync());
+                    return lista;
+                }
             }
             catch (Exception ex)
             {
@@ -213,13 +222,21 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         {
             try
             {
-                var consulta = _municipioRepositorio.Consultar(p =>
-                //p.Nombre.ToLower().Contains(buscar.ToLower()));
-                p.IdRegion.Equals(buscar)).OrderBy(r => r.Nombre);
+                if (buscar == "")
+                {
+                    var consulta = _municipioRepositorio.Consultar().OrderBy(r => r.Nombre);
 
+                    List<MunicipioDTO> lista = _mapper.Map<List<MunicipioDTO>>(await consulta.ToListAsync());
+                    return lista;
+                }
+                else
+                {
+                    var consulta = _municipioRepositorio.Consultar(p =>
+                        p.IdRegion.Equals(buscar)).OrderBy(r => r.Nombre);
 
-                List<MunicipioDTO> lista = _mapper.Map<List<MunicipioDTO>>(await consulta.ToListAsync());
-                return lista;
+                    List<MunicipioDTO> lista = _mapper.Map<List<MunicipioDTO>>(await consulta.ToListAsync());
+                    return lista;
+                }
             }
             catch (Exception ex)
             {
@@ -232,14 +249,21 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         {
             try
             {
-                var consulta = _regionRepositorio.Consultar( p =>
-                //p.Nombre.ToLower().Contains(buscar.ToLower()) ||
-                p.IdDepartamento.Equals(buscar)).OrderBy(r => r.Nombre);
-               // if (buscar.Any()) 
-               //     consulta = consulta.Where(r => r.IdRegion == buscar);
+                if (buscar == "")
+                {
+                    var consulta = _regionRepositorio.Consultar().OrderBy(r => r.Nombre);
 
-                List<RegionesDTO> lista = _mapper.Map<List<RegionesDTO>>(await consulta.ToListAsync());
-                return lista;
+                    List<RegionesDTO> lista = _mapper.Map<List<RegionesDTO>>(await consulta.ToListAsync());
+                    return lista;
+                }
+                else
+                {
+                    var consulta = _regionRepositorio.Consultar( p =>
+                    p.IdDepartamento.Equals(buscar)).OrderBy(r => r.Nombre);
+
+                    List<RegionesDTO> lista = _mapper.Map<List<RegionesDTO>>(await consulta.ToListAsync());
+                    return lista;
+                }
             }
             catch (Exception ex)
             {
@@ -252,12 +276,24 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         {
             try
             {
-                var consulta = _departamentoRepositorio.Consultar(p =>
-                p.Nombre.ToLower().Contains(buscar.ToLower()));
-                consulta = consulta.Where(pa => pa.IdPais == "COL").OrderBy(p => p.Nombre);
+                if (buscar == "")
+                {
+                    var consulta = _departamentoRepositorio.Consultar().OrderBy(p => p.Nombre);
 
-                List<DepartamentoDTO> lista = _mapper.Map<List<DepartamentoDTO>>(await consulta.ToListAsync());
-                return lista;
+                    List<DepartamentoDTO> lista = _mapper.Map<List<DepartamentoDTO>>(await consulta.ToListAsync());
+                    return lista;
+
+                }
+                else
+                {
+                    var consulta = _departamentoRepositorio.Consultar(p =>
+                    p.Nombre.ToLower().Contains(buscar.ToLower()));
+                    consulta = consulta.Where(pa => pa.IdPais == "COL").OrderBy(p => p.Nombre);
+
+                    List<DepartamentoDTO> lista = _mapper.Map<List<DepartamentoDTO>>(await consulta.ToListAsync());
+                    return lista;
+
+                }
             }
             catch (Exception ex)
             {
