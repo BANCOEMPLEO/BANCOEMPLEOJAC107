@@ -139,6 +139,8 @@
                 <span class="input-group-text  bg-secondary text-light" id="basic-addon3">Delimitación:</span>
                 <textarea class="form-control" @bind="modelo.Delimitacion"></textarea>
             </div>
+            <ValidationMessage For="@(()=>modelo.Delimitacion)" />
+
             <div class="input-group mt-3">
                 <div class="input-group-text form-control bg-secondary text-light justify-content-center" id="basic-addon3">Foto</div>
                 @if (modelo.Foto != "")
@@ -202,7 +204,7 @@
                 listaJac = (List<JacDTO>)response.Resultado!;
                 if (listaJac.Any() && Id == 0)
                 {
-                    Id = modelo.IdJac = listaJac.First().IdJac;
+                    modelo.IdJac = listaJac.First().IdJac;
                 }
                 if (listaJac.Any() && Id > 0)
                 {
@@ -316,9 +318,9 @@
             {
                 IdRegion = listaRegiones.First().IdRegion;
             }
-            listaMunicipios = null;
+            listaMunicipios.Clear();
             IdMunicipio = "";
-            listaZonaVeredas = null;
+            listaZonaVeredas.Clear();
             modelo.IdZonaVereda = IdZonaVereda = "";
         }
         this.IdDepartamento = IdDepartamento;
@@ -335,7 +337,7 @@
             {
                 IdMunicipio = listaMunicipios.First().IdMunicipio;
             }
-            listaZonaVeredas = null;
+            listaZonaVeredas.Clear();
             modelo.IdZonaVereda = IdZonaVereda = "";
         }
         this.IdRegion = IdRegion;
@@ -351,7 +353,7 @@
             if (listaZonaVeredas.Any())
             {
                 modelo.IdZonaVereda = IdZonaVereda = listaZonaVeredas.First().IdzonaVereda;
-           }
+            }
         }
         this.IdMunicipio = IdMunicipio;
     }
@@ -395,18 +397,18 @@
         }
         else
         {
-            // modelo.Rol = 1;
-            // modelo = _map.Map<UsuarioEditaDTO>(modelo);
-            // var response = await usuarioServicio.Crear(modelo);
-            // if (response.EsCorrecto)
-            // {
-            //     mensaje = "Usuario fue creado";
-            // }
-            // else
-            // {
-            //     respuesta = false;
-            //     mensaje = "No se pudo crear";
-            // }
+            modelo.IdJac = 0;
+            //modelo = _map.Map<JacDTO>(modelo);
+            var response = await jacServicio.Crear(modelo);
+            if (response.EsCorrecto)
+            {
+                 mensaje = "Jac fue creada";
+            }
+            else
+            {
+                 respuesta = false;
+                 mensaje = "No se pudo crear" + response.Mensaje;
+            }
         }
         if (respuesta)
         {

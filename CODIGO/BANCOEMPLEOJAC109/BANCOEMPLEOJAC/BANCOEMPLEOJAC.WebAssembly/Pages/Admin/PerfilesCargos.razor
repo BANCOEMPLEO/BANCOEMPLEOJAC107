@@ -4,6 +4,7 @@
 @using System.Security.Claims;
 
 @inject IPerfilCargoServicio perfilcargoServicio
+@inject IEmpleoServicio empleoServicio
 @inject IToastService toastService
 @inject SweetAlertService Swal
 @inject AuthenticationStateProvider autenticacionProvider;
@@ -51,10 +52,14 @@
                     <div class="card-footer bg-transparent">
                         <div class="row justify-content-between">
                             <a class="col-5 btn btn-sm btn-outline-primary mt-auto" href="/perfilcargo/@item.IdPerfilCargo"><i class="oi oi-pencil fs-5"></i></a>
-                            <button class="col-5 btn btn-sm btn-outline-danger mt-auto" type="button" @onclick="(async () => await Eliminar(item))">
+                            <!-- Si hay Empleos con este Perfil no puede borrarse -->
+@*                             @if (await HayEmpleos(item.IdPerfilCargo))
+                                    {
+ *@                             <button class="col-5 btn btn-sm btn-outline-danger mt-auto" type="button" @onclick="(async () => await Eliminar(item))">
                                 <i class="oi oi-trash fs-5"></i>
                             </button>
-                        </div>
+@*                             }
+ *@                        </div>
                     </div>
                 </div>
             </div>
@@ -74,13 +79,14 @@
     // POR HACER : QUE NO SE PUEDAN BORRAR PERFILES QUE TIENEN EMPLEOS ASOCIADOS. FECHA: 27/FEB/2024 5:06PM
     private List<PerfilCargoDTO>? lista = null;
     private string buscar = "";
+    private int idUsuario { get; set; }
 
     private async Task ObtenerPerfilesCargos(string Valor = "")
     {
         var authState = await autenticacionProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        int idUsuario = Convert.ToInt32(user.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault().ToString());
+        idUsuario = Convert.ToInt32(user.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault().ToString());
 
 
         var response = await perfilcargoServicio.Lista(idUsuario, Valor);
@@ -97,6 +103,18 @@
     {
         await ObtenerPerfilesCargos();
     }
+
+    private async Task<bool> HayEmpleos(int IdPerfil)
+    {
+        var listaEmpleos = empleoServicio.Lista(idUsuario, "").Result.Resultado;
+        listaEmpleos = listaEmpleos.Where(c => c.PerfilCargoId == IdPerfil).ToList();
+        if (listaEmpleos.Count() == 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
     private async Task Eliminar(PerfilCargoDTO modelo)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions

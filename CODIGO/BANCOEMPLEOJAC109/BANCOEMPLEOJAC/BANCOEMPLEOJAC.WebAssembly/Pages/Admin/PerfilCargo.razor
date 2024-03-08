@@ -136,14 +136,8 @@
         IdJAC = Convert.ToInt32(user.Claims.Where(c => c.Type == ClaimTypes.Locality).Select(c => c.Value).SingleOrDefault().ToString());
         modelo.JacId = IdJAC;
 
-        // var resultado = userServicio.Obtener(idUsuario).Result;
-        // if (resultado.EsCorrecto)
-        // {
-        //     var usu = resultado.Resultado;
-        //     IdJAC = (int)usu.JacId;
         ObtenerJac(IdJAC);
-        // }
-        
+
         ObtenerActividadEconomica();
     }
     protected override async Task OnInitializedAsync()
@@ -159,6 +153,7 @@
         if (response.EsCorrecto!)
         {
             listActividadEconomica = (List<ActividadEconomicaDTO>)response.Resultado!;
+            modelo.IdActividadEconomica = listActividadEconomica.FirstOrDefault().IdActividad;
         }
         else
         {
@@ -173,6 +168,7 @@
         if (response.EsCorrecto!)
         {
             listaTipoContrato = (List<TipoContratoDTO>)response.Resultado!;
+            modelo.IdTipoContrato = listaTipoContrato.FirstOrDefault().IdTipoContrato;
         }
         else
         {
@@ -217,16 +213,7 @@
         }
         else
         {
-            // adiciona modelo
-            var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
 
-            // Get the claim value
-            var claimValue = user.FindFirst(c => c.Type == "Locality")?.Value;
-
-            // Add the claim value to the model before creating
-
-            modelo.JacId = 1;// Convert.ToInt32(claimValue); //1;// Convert.ToInt32(user.FindFirst(c => c.Type == "Locality")?.Value);
             var response = await perfilcargoServicio.Crear(modelo);
             if (response.EsCorrecto)
             {
@@ -241,7 +228,7 @@
         if (respuesta)
         {
             toastService.ShowSuccess(mensaje);
-            _navServicio.NavigateTo("/perfilescargos");
+            _navServicio.NavigateTo("/empleos");
         }
         else
         {

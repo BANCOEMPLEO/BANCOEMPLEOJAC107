@@ -80,13 +80,15 @@
                     </div>
                     <!-- Propuestas de producto cantidad  con enlace a detalle -->
                     <div class="text-center">
-                        Cantidad de propuestas: @item.PropuestaEmpleos.Count()
+                        Cantidad de propuestas: @item.PropuestaEmpleos.Count() &nbsp;
+                        @if (@item.PropuestaEmpleos.Count() > 0)
+                        {
+                            
+                            <a class="border-start:5px" href="/ofertaempleo/@item.PropuestaEmpleos.First().IdPropuestaEmpleo">
+                                <i class="oi oi-eye fs-5" title="Ver"></i>
+                             </a>
+                        }
                     </div>
-@*                     @if (item.IdEmpleo > 0)
-                    {
-                        
-                    }
- *@
                     <!-- Product actions-->
                     <div class="card-footer bg-transparent">
                         <div class="row justify-content-between">
@@ -126,11 +128,10 @@
 
 </div>
 @code {
-    // POR HACER : QUE NO SE PUEDA BORRAR LOS EMPLEOS QUE TENGAN CONTRATOS ELABORADOS FECHA: 27/FEB/2024 5:04PM
-    // POR HACER : QUE AL BORRAR LOS EMPLEOS SE ADVIERTA QUE SE BORRARÁN LAS PROUESTAS QUE TENGA ESE EMPLEO. FECHA: 27/FEB/2024 5:05PM
+    // HECHO : QUE NO SE PUEDA BORRAR LOS EMPLEOS QUE TENGAN CONTRATOS ELABORADOS FECHA: 27/FEB/2024 5:04PM :FIN : 8/MAR/2024 10:37AM
     // HECHO : DESDE LAS 2PM DEL 23/FEB/2024 YA SE PUEDEN PONER COMO PROPUESTAS LOS EMPLEOS Y QUEDAN EN EL LISTADO DE PUBLICOS FALTAS LAS REPROPUESTAS DE EMPLEO 24/FEB/2024 12.28AM
     // HECHO : HACER FILTRO DE EMPLEOS CREADOS POR EL USUARIO 23/FEB/2024 2:00PM : INICIO : 26/FEB/2024 8:00PM : FIN : 26/FEB/2024 8:33PM
-    // VOY : HACER QUE SE VEAN LA CANTIDAD DE PROPUESTAS QUE TIENE UN EMPLEO Y SE PUEDA VER CADA UNA DE ELLAS : FECHA : 01/MAR/2024 3:13PM
+    // HECHO : HACER QUE SE VEAN LA CANTIDAD DE PROPUESTAS QUE TIENE UN EMPLEO Y SE PUEDA VER CADA UNA DE ELLAS : FECHA : 01/MAR/2024 3:13PM : FIN : 8/MAR/2024 10:39AM
 
     private List<EmpleoDTO>? lista = null;
     private List<PropuestaEmpleoDTO>? listaPropuestaEmpleo = new List<PropuestaEmpleoDTO>();

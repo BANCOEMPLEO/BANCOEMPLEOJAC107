@@ -276,9 +276,9 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         {
             try
             {
-                if (buscar == "")
+                if (buscar == "" || buscar == "NA")
                 {
-                    var consulta = _departamentoRepositorio.Consultar().OrderBy(p => p.Nombre);
+                    var consulta = _departamentoRepositorio.Consultar().Where(pa => pa.IdPais == "COL").OrderBy(p => p.Nombre);
 
                     List<DepartamentoDTO> lista = _mapper.Map<List<DepartamentoDTO>>(await consulta.ToListAsync());
                     return lista;
