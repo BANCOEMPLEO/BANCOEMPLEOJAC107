@@ -1,5 +1,11 @@
 ﻿@page "/ofertasempleos"
 
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
 @inject IPropuestaEmpleoServicio propuestaempleoServicio
 @inject IPerfilCargoServicio perfilcargoServicio
 @inject NavigationManager _navServicio
@@ -125,10 +131,24 @@
     private List<PropuestaEmpleoDTO>? listaProducto = null;
     private string buscar = "";
     private int categoriaSeleccionada = 0;
+    private int userId { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
+        }
+        await ObtenerPerfilesCargos();
+        await ObtenerCatalogo();
+
+    }
     private async Task ObtenerPerfilesCargos(string Valor = "")
     {
-        var response = await perfilcargoServicio.Lista(Valor);
+        var response = await perfilcargoServicio.Lista(userId,Valor);
         if (response.EsCorrecto)
         {
             listaCategoria = (List<PerfilCargoDTO>)response.Resultado!;
@@ -160,10 +180,5 @@
         await ObtenerCatalogo();
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await ObtenerPerfilesCargos();
-        await ObtenerCatalogo();
-    }
 
 }

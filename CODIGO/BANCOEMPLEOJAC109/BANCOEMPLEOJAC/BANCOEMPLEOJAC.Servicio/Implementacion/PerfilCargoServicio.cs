@@ -18,11 +18,18 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
     public class PerfilCargoServicio : IPerfilCargoServicio
     {
         private readonly IGenericoRepositorio<PerfilCargo> _modeloRepositorio;
+        private readonly IGenericoRepositorio<TipoContrato> _tipoContratoRepositorio;
+        private readonly IGenericoRepositorio<Usuario> _usuarioRepositorio;
         private readonly IMapper _mapper;
 
-        public PerfilCargoServicio(IGenericoRepositorio<PerfilCargo> modeloRepositorio, IMapper mapper)
+        public PerfilCargoServicio(IGenericoRepositorio<PerfilCargo> modeloRepositorio,
+            IGenericoRepositorio<TipoContrato> tipoContratoRepositorio,
+            IGenericoRepositorio<Usuario> usuarioRepositorio,
+            IMapper mapper)
         {
             _modeloRepositorio = modeloRepositorio;
+            _tipoContratoRepositorio = tipoContratoRepositorio;
+            _usuarioRepositorio = usuarioRepositorio;
             _mapper = mapper;
 
         }
@@ -103,16 +110,49 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
             }
         }
 
-        public async Task<List<PerfilCargoDTO>> Lista(string buscar)
+        public async Task<List<PerfilCargoDTO>> Lista(int idUsuario, string buscar)
         {
             try
             {
+                // Se saca la IdJAC del usuario
+                var usuario = _usuarioRepositorio.Consultar(u => u.IdUsuario == idUsuario).FirstOrDefault();
+                var IdJAC = usuario.JacId;
                 var consulta = _modeloRepositorio.Consultar(p =>
                 p.Descripcion!.ToLower().Contains(buscar.ToLower())
-                );
+                ).Where(p => p.JacId == IdJAC);
+                
 
                 List<PerfilCargoDTO> lista = _mapper.Map<List<PerfilCargoDTO>>(await consulta.ToListAsync());
                 return lista;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
+
+        public async Task<List<TipoContratoDTO>> ListaTipoContrato(string buscar)
+        {
+            try
+            {
+                if (buscar == "")
+                {
+                    var consulta = _tipoContratoRepositorio.Consultar().OrderBy(tc => tc.Nombre);
+
+                    List<TipoContratoDTO> lista = _mapper.Map<List<TipoContratoDTO>>(await consulta.ToListAsync());
+                    return lista;
+                }
+                else
+                {
+                    var consulta = _tipoContratoRepositorio.Consultar(p =>
+                    p.Nombre.ToLower().Contains(buscar.ToLower())
+                    ).OrderBy(tc => tc.Nombre);
+
+                    List<TipoContratoDTO> lista = _mapper.Map<List<TipoContratoDTO>>(await consulta.ToListAsync());
+                    return lista;
+                }
             }
             catch (Exception ex)
             {
@@ -127,6 +167,8 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
             try
             {
                 var consulta = _modeloRepositorio.Consultar(p => p.IdPerfilCargo == id);
+                //consulta = consulta.Include(tc => tc.IdTipoContratoNavigation);
+
                 var fromDbModelo = await consulta.FirstOrDefaultAsync();
 
                 if (fromDbModelo != null)

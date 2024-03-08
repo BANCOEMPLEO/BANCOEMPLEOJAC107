@@ -103,9 +103,13 @@
                                         <i class="oi oi-task fs-5"></i>
                                     </button>
                                 }
-                            <button class="col-5 btn btn-sm btn-outline-danger mt-auto" title="Eliminar" @onclick="(async () => await Eliminar(item))">
-                                <i class="oi oi-trash fs-5"></i>
-                            </button>
+                                @if (item.PropuestaEmpleos.Count() ==0)
+                                {
+                                    <button class="col-5 btn btn-sm btn-outline-danger mt-auto" title="Eliminar" @onclick="(async () => await Eliminar(item))">
+                                        <i class="oi oi-trash fs-5"></i>
+                                    </button>
+                                
+                                }
                         </div>
                     </div>
                 </div>
@@ -144,12 +148,6 @@
         var response = await empleoServicio.Lista(idUsuario,Valor);
         if (response.EsCorrecto)
         {
-             // foreach (var item in response.Resultado)
-             // {
-             //     //var propu = propuestaempleoServicio.ListaPorEmpleo(item.IdEmpleo).Result;
-             //     item.PropuestaEmpleos = (ObtenerPropuestasEmpleo(item.IdEmpleo)).Result;
-
-             // }
             lista = (List<EmpleoDTO>)response.Resultado!;
         }
         else

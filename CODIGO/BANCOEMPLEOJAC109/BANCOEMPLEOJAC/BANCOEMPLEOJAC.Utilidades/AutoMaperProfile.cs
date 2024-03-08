@@ -51,8 +51,7 @@ namespace BANCOEMPLEOJAC.Utilidades
             CreateMap<PerfilCargo, PerfilCargoDTO>();
             CreateMap<PerfilCargoDTO, PerfilCargo>().ForMember(destino =>
                 destino.IdActividadEconomicaNavigation,
-                opt => opt.Ignore()
-                ).ForMember(destino => 
+                opt => opt.Ignore()).ForMember(destino => 
                 destino.IdTipoContratoNavigation,
                 opt => opt.Ignore());
 
@@ -97,6 +96,9 @@ namespace BANCOEMPLEOJAC.Utilidades
 
             CreateMap<Contrato, ContratoDTO>();
             CreateMap<ContratoDTO, Contrato>();
+
+            CreateMap<TipoContrato, TipoContratoDTO>();
+            CreateMap<TipoContratoDTO, TipoContrato>();
 
 
             CreateMap<Pais, PaisDTO>();

@@ -31,9 +31,13 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
             return await _httpClient.DeleteFromJsonAsync<ResponseDTO<bool>>($"PerfilCargo/Eliminar/{Id}");
         }
 
-        public async Task<ResponseDTO<List<PerfilCargoDTO>>> Lista(string buscar)
+        public async Task<ResponseDTO<List<PerfilCargoDTO>>> Lista(int idUsuario, string buscar)
         {
-            return await _httpClient.GetFromJsonAsync<ResponseDTO<List<PerfilCargoDTO>>>($"PerfilCargo/Lista/{buscar}");
+            return await _httpClient.GetFromJsonAsync<ResponseDTO<List<PerfilCargoDTO>>>($"PerfilCargo/Lista/{idUsuario}/{buscar}");
+        }
+        public async Task<ResponseDTO<List<TipoContratoDTO>>> ListaTipoContrato(string buscar)
+        {
+            return await _httpClient.GetFromJsonAsync<ResponseDTO<List<TipoContratoDTO>>>($"PerfilCargo/ListaTipoContrato/{buscar}");
         }
 
         public async Task<ResponseDTO<PerfilCargoDTO>> Obtener(int Id)

@@ -1,6 +1,10 @@
 ﻿@page "/propuestaempleo"
 @page "/propuestaempleo/{idPropuestaEmpleo:int}"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 @inject IPropuestaEmpleoServicio propuestaEmpleoServicio;
 @inject IPerfilCargoServicio perfilcargoServicio
@@ -108,6 +112,7 @@
     // VOY : HACER QUE SE PUEDAN EDITAR LOS DATOS DE LA REPROPUESTA DE EMPLEO Y SE PUEDA GUARDAR LOS NUEVOS DATOS E INFORMAR AL EMPLEADOR Y/O EMPLEADO 24/FEB/2024 1:04PM : INICIO : 26/FEB/2024 10:12AM
     [Parameter]
     public int idPropuestaEmpleo { get; set; }
+    public int userId { get; set; }
     public PropuestaEmpleoDTO? modelo = new PropuestaEmpleoDTO();
     private string Titulo = "Nueva Propuesta Empleo";
     private string boton = "Proponer Cambios";
@@ -128,6 +133,15 @@
     }
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+           userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
+        }
+
         // var response = await propuestaEmpleoServicio.Obtener(idPropuestaEmpleo);
         // if (response.EsCorrecto)
         //     modelo = (PropuestaEmpleoDTO)response.Resultado!;
@@ -143,7 +157,7 @@
 
     private async Task ObtenerPerfilesCargos(string Valor = "")
     {
-        var response = await perfilcargoServicio.Lista(Valor);
+        var response = await perfilcargoServicio.Lista(userId,Valor);
         if (response.EsCorrecto)
         {
             listaPerfilCargo = (List<PerfilCargoDTO>)response.Resultado!;

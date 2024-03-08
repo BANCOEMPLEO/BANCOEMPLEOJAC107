@@ -17,8 +17,8 @@ namespace BANCOEMPLEOJAC.API.Controllers
         {
             _perfilCargoServicio = perfilCargoServicio;
         }
-        [HttpGet("Lista/{buscar?}")]
-        public async Task<IActionResult> Lista(string buscar = "NA")
+        [HttpGet("Lista/{idUsuario:int}/{buscar?}")]
+        public async Task<IActionResult> Lista(int idUsuario, string buscar = "NA")
         {
             var response = new ResponseDTO<List<PerfilCargoDTO>>();
 
@@ -27,7 +27,26 @@ namespace BANCOEMPLEOJAC.API.Controllers
                 if (buscar == "NA") buscar = "";
 
                 response.EsCorrecto = true;
-                response.Resultado = await _perfilCargoServicio.Lista(buscar);
+                response.Resultado = await _perfilCargoServicio.Lista(idUsuario, buscar);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+        [HttpGet("ListaTipoContrato/{buscar?}")]
+        public async Task<IActionResult> ListaTipoContrato(string buscar = "NA")
+        {
+            var response = new ResponseDTO<List<TipoContratoDTO>>();
+
+            try
+            {
+                if (buscar == "NA") buscar = "";
+
+                response.EsCorrecto = true;
+                response.Resultado = await _perfilCargoServicio.ListaTipoContrato(buscar);
             }
             catch (Exception ex)
             {

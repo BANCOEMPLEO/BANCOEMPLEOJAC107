@@ -5,14 +5,17 @@
 @using BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims;
 
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject AuthenticationStateProvider authenticationStateProvider
 @inject IActividadEconomicaServicio _actividadEcoServicio
 
 @inject IPerfilCargoServicio perfilcargoServicio
+@inject IUsuarioServicio userServicio
+@inject IJacServicio jacServicio
 @inject IToastService toastService
 @inject NavigationManager _navServicio
-@attribute [Authorize(Roles = "1")]
+@attribute [Authorize(Roles = "1,2,3,4,5")]
 
 
 <div class="row justify-content-center  mt-3">
@@ -48,11 +51,31 @@
             </div>
             <div class="input-group mt-3">
                 <span class="input-group-text bg-light">Tipo Contrato</span>
-                <input type="text" class="form-control" @bind-value="modelo.IdTipoContrato">
+
+                <select class="form-control" @bind-value="modelo.IdTipoContrato" @bind-value:event="onchange">
+                    @if (listaTipoContrato != null)
+                    {
+                        @foreach (var item in listaTipoContrato)
+                        {
+                            if (item.IdTipoContrato == IdTipoContrato)
+                            {
+                                <option value="@item.IdTipoContrato" selected>@item.Nombre</option>
+                            }
+                            else
+                            {
+                                 <option value="@item.IdTipoContrato">@item.Nombre</option>
+                            }
+                        }
+                    }
+                </select>
+
+
+
+
             </div>
-            <div class="input-group mt-3">
-                <span class="input-group-text bg-light">JacId</span>
-                <input type="text" class="form-control" @bind-value="modelo.JacId">
+            <div class="input-group mt-3 text-center">
+                <span class="input-group-text bg-light">JAC</span>
+                <input type="text" class="form-control" disabled value=@jac.Nombre />
             </div>
             <div class="input-group mt-3">
                 <span class="input-group-text bg-light">Observaciones</span>
@@ -74,14 +97,20 @@
     // POR HACER : QUE SE PUEDA SELECCIONAR EL TIPO DE CONTRATO EN LOS PERFILES FECHA: 27/FEB/2024 5:20PM
     [Parameter]
     public int Id { get; set; }
+    public int IdTipoContrato { get; set; }
+    public int IdJAC { get; set; }
+    private JacDTO jac = new JacDTO();
     private string Titulo = "Nuevo Perfil Cargo";
     private string boton = "Crear";
     private PerfilCargoDTO modelo = new PerfilCargoDTO();
     public List<ActividadEconomicaDTO> listActividadEconomica = new List<ActividadEconomicaDTO>();
+    public List<TipoContratoDTO> listaTipoContrato = new List<TipoContratoDTO>();
     protected override async Task OnParametersSetAsync()
     {
         if (Id != 0)
         {
+
+
             Titulo = "Editar Perfil o Cargo";
             boton = "Actualizar";
 
@@ -89,6 +118,8 @@
             if (response.EsCorrecto)
             {
                 modelo = (PerfilCargoDTO)response.Resultado!;
+                IdTipoContrato = (int)modelo.IdTipoContrato;
+                IdJAC = (int)modelo.JacId;
             }
             else
             {
@@ -96,14 +127,29 @@
             }
         }
         // modelo.ActividadEconomicaId = 8;
-        modelo.IdTipoContrato = 1;
-        modelo.JacId = 1;
-        ObtenerActividadEconomica();
+        //modelo.IdTipoContrato = 1;
+        //modelo.JacId = 1;
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
+        int idUsuario = Convert.ToInt32(user.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault().ToString());
+        IdJAC = Convert.ToInt32(user.Claims.Where(c => c.Type == ClaimTypes.Locality).Select(c => c.Value).SingleOrDefault().ToString());
+        modelo.JacId = IdJAC;
+
+        // var resultado = userServicio.Obtener(idUsuario).Result;
+        // if (resultado.EsCorrecto)
+        // {
+        //     var usu = resultado.Resultado;
+        //     IdJAC = (int)usu.JacId;
+        ObtenerJac(IdJAC);
+        // }
+        
+        ObtenerActividadEconomica();
     }
     protected override async Task OnInitializedAsync()
     {
         ObtenerActividadEconomica();
+        ListarTipoContrato();
 
     }
     public async Task ObtenerActividadEconomica(string Valor = "")
@@ -120,6 +166,37 @@
         }
         StateHasChanged();
     }
+    public async Task ListarTipoContrato(string Valor = "")
+    {
+        var response = await perfilcargoServicio.ListaTipoContrato(Valor);
+
+        if (response.EsCorrecto!)
+        {
+            listaTipoContrato = (List<TipoContratoDTO>)response.Resultado!;
+        }
+        else
+        {
+            listaTipoContrato = new List<TipoContratoDTO>();
+        }
+        StateHasChanged();
+    }
+
+    private async Task ObtenerJac(int id)
+    {
+        var response = await jacServicio.Obtener(id);
+
+        if (response.EsCorrecto!)
+        {
+            jac = response.Resultado!;
+        }
+        else
+        {
+            jac = new JacDTO();
+        }
+        StateHasChanged();
+    }
+
+
     private async Task GuardarCambios()
     {
         bool respuesta = true;
@@ -141,7 +218,7 @@
         else
         {
             // adiciona modelo
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
 
             // Get the claim value

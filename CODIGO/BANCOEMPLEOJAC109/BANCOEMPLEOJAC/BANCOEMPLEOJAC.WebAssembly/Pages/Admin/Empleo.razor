@@ -156,7 +156,7 @@
             userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
         }
-        var response = await perfilcargoServicio.Lista("");
+        var response = await perfilcargoServicio.Lista(userId,"");
         if (response.EsCorrecto)
         {
             listaPerfilCargo = (List<PerfilCargoDTO>)response.Resultado!;
