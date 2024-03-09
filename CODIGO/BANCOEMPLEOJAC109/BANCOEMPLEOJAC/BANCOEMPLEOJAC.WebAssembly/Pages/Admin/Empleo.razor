@@ -24,13 +24,23 @@
             <DataAnnotationsValidator></DataAnnotationsValidator>
 
             <div class="input-group mt-3">
+                <a href="/perfilcargo" class="btn btn-secondary float-start oi oi-plus" style="width:45px; heigh:auto"></a>
                 <label class="input-group-text bg-light" for="inputGroupSelect01">Perfil o Cargo</label>
-                <select class="form-control" @bind="@modelo.PerfilCargoId">
+                <select class="form-control" @onchange="CambiarCategoria">
                     @foreach (var item in listaPerfilCargo)
                     {
-                        <option value="@item.IdPerfilCargo">@item.Descripcion</option>
+                        if (item.IdPerfilCargo == IdPerfilCargo)
+                        {
+                             <option value="@item.IdPerfilCargo" selected>@item.Descripcion</option>
+                        }
+                        else
+                        {
+                            <option value="@item.IdPerfilCargo">@item.Descripcion</option>
+                        }
                     }
                 </select>
+                <a href="/perfilcargo/@IdPerfilCargo" class="btn btn-secondary float-end oi oi-pencil" style="width:45px"></a>
+
             </div>
             <div class="input-group mt-3">
                 <span class="input-group-text bg-light" id="basic-addon3">Nombre</span>
@@ -139,6 +149,7 @@
 
     [Parameter]
     public int Id { get; set; }
+    public int IdPerfilCargo { get; set; } = 0;
     private string Titulo = "Nuevo Empleo";
     private string boton = "Crear";
     private List<PerfilCargoDTO> listaPerfilCargo = new List<PerfilCargoDTO>();
@@ -178,6 +189,7 @@
             if (response.EsCorrecto)
             {
                 modelo = (EmpleoDTO)response.Resultado!;
+                IdPerfilCargo = modelo.PerfilCargoId;
                 if (modelo.EmpleadorId != null)
                 {
                     empleador = true;
@@ -198,9 +210,9 @@
         }
         StateHasChanged();
     }
-    void CambiarCategoria(ChangedEventArgs e)
+    private async Task CambiarCategoria(ChangeEventArgs e)
     {
-        modelo.PerfilCargoId = Convert.ToInt32(e.NewValue.ToString());
+       IdPerfilCargo = modelo.PerfilCargoId = Convert.ToInt32(e.Value);
 
     }
     void CambiarTipo(ChangeEventArgs e)
