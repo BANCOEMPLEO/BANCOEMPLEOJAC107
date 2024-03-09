@@ -31,7 +31,9 @@
 
         <div class="card">
             <div class="card-header text-white bg-dark">
-                Perfiles o Cargos
+                Perfiles o Cargos<br />
+                Locales : @Local<br />
+                Externos : @Externo
             </div>
             <div class="card-body">
                 @if (listaCategoria != null)
@@ -104,6 +106,14 @@
                                             </u>
                                         </h4>
                                     </div>
+                                        @if (JACId == item.Empleo.PerfilCargo.JacId)
+                                        {
+                                            <div class="text-center h4">LOCAL</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="text-center h4">EXTERNO</div>
+                                        }
                                 </div>
                             </div>
                             <!-- Product actions-->
@@ -132,22 +142,35 @@
     private string buscar = "";
     private int categoriaSeleccionada = 0;
     private int userId { get; set; }
+    private int JACId { get; set; }
+    [Parameter]
+    public int Local { get; set; } = 0;
+    [Parameter]
+    public int Externo { get; set; } = 0;
+    protected override async Task OnParametersSetAsync()
+    {
+        //Local = Externo = 0;
+    }
+
+
     protected override async Task OnInitializedAsync()
     {
+        //Local = Externo = 0;
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
         if (user.Identity.IsAuthenticated)
         {
             userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
-
+            JACId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.Locality).Value);
         }
         await ObtenerPerfilesCargos();
         await ObtenerCatalogo();
-
+        StateHasChanged();
     }
     private async Task ObtenerPerfilesCargos(string Valor = "")
     {
+
         var response = await perfilcargoServicio.Lista(userId,Valor);
         if (response.EsCorrecto)
         {
@@ -161,20 +184,25 @@
 
     private async Task ObtenerCatalogo()
     {
+
         var response = await propuestaempleoServicio.Catalogo(categoriaSeleccionada, buscar);
-        
+
         if (response.EsCorrecto)
         {
             listaProducto = (List<PropuestaEmpleoDTO>)response.Resultado!;
+            Local = listaProducto.Where(e => e.Empleo.PerfilCargo.JacId == JACId).Count();
+            Externo = listaProducto.Count() - Local;
         }
         else
         {
             listaProducto = new List<PropuestaEmpleoDTO>();
         }
+        StateHasChanged();
     }
 
     private async Task RadioSeleccion(ChangeEventArgs args)
     {
+
         categoriaSeleccionada = Convert.ToInt32(args.Value);
         //buscar = "";
         await ObtenerCatalogo();

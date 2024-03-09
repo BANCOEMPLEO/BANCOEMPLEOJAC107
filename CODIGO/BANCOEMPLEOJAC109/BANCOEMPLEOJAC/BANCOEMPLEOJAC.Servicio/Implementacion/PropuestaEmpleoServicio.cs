@@ -123,7 +123,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 p.Descripcion.ToLower().Contains(buscar.ToLower())
                 );
 
-                consulta = consulta.Include(c => c.Empleo)
+                consulta = consulta.Include(c => c.Empleo).Include(p => p.Empleo.PerfilCargo)
                     .Where(p => p.Empleo.Activo == true);
 
                 List<PropuestaEmpleoDTO> lista = _mapper.Map<List<PropuestaEmpleoDTO>>(await consulta.ToListAsync());
@@ -184,7 +184,8 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
             {
 
                 var consulta = _modeloRepositorio.Consultar();
-                consulta = consulta.Include("Empleo");
+                consulta = consulta.Include(e => e.Empleo).ThenInclude(e => e.PerfilCargo);
+                //consulta = consulta.Include("PerfilCargo");
                 // consulta.
                 //if (buscar != null)
                 //    consulta = consulta.Where(c => c.Nombre.Contains(buscar) || c.Requisitos.Contains(buscar));
@@ -211,7 +212,10 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         {
             try
             {
-                var consulta = _modeloRepositorio.Consultar().Where(pe => pe.Empleo.Activo == true);
+                var consulta = _modeloRepositorio.Consultar().
+                    Include(e => e.Empleo).
+                    ThenInclude(pc => pc.PerfilCargo).
+                    Where(pe => pe.Empleo.Activo == true);
                 if (buscar != null)
                     consulta = consulta.Where(c => c.Nombre.Contains(buscar) || c.Requisitos.Contains(buscar));
                 if (categoria > 0)
