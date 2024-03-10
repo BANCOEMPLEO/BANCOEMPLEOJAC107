@@ -40,6 +40,7 @@ builder.Services.AddScoped<IContratoServicio, ContratoServicio>();
 builder.Services.AddScoped<IDashboardServicio, DashboardServicio>();
 builder.Services.AddScoped<IJacServicio, JacServicio>();
 builder.Services.AddScoped<IRolServicio, RolServicio>();
+builder.Services.AddScoped<IDistanciaServicio, DistanciaServicio>();
 //builder.Services.AddScoped<IEnvioCorreoServicio, EnvioCorreoServicio>();
 
 builder.Services.AddCors(options =>

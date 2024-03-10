@@ -34,6 +34,7 @@ builder.Services.AddScoped<IDashboardServicio, DashboardServicio>();
 builder.Services.AddScoped<ICarritoServicio, CarritoServicio>();
 builder.Services.AddScoped<IJacServicio, JacServicio>();
 builder.Services.AddScoped<IRolServicio, RolServicio>();
+builder.Services.AddScoped<IDistanciaLatLonServicio, DistanciaLatLonServicio>();
 
 //builder.Services.AddScoped<IWhastAppServicio, WhastAppServicio>();
 

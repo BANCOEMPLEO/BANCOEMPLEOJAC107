@@ -5,6 +5,8 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+@using BANCOEMPLEOJAC.Utilidades;
+@using System.Globalization
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IPropuestaEmpleoServicio propuestaEmpleoServicio
@@ -12,6 +14,8 @@
 @inject ICarritoServicio carritoServicio
 @inject NavigationManager navigate
 @inject IToastService toastService
+@inject IJacServicio jacServicio
+
 
 <div class="container px-4 px-lg-5 my-5">
 
@@ -37,9 +41,17 @@
                 </div>
                 <p class="lead">@modelo.Descripcion</p>
                 <p class="lead">Requisitos : @modelo.Requisitos</p>
+                <p class="lead">Tipo Contrato : @nombrecontrato</p>
                 <p class="lead">Ubicación : @modelo.Ubicacion</p>
+                @if (modelo.EmpleadorId != null || modelo.EmpleadoId != null)
+                {
+                    <p class="lead">
+                        Distancia : @calcula.ToString("F2") KM
+                    </p>
+                }
                 <p class="lead">Fecha Hora Inicia : @modelo.FechaHoraInicio</p>
                 <p class="lead">Fecha Hora Finaliza : @modelo.FechaHoraFin</p>
+                <p class="lead">Cantidad Empleo(s) Ofrecido(s) : @modelo.Cantidad</p>
                 <p class="lead">Cantidad Propuestas : @cantidadPropuestas</p>
                 @if (modelo.FechaHoraReProponeEmpleador != null)
                 {
@@ -57,7 +69,6 @@
                 {
                     <p class="lead">Orden Propuesta : @modelo.Orden</p>
                 }
-
                 <p class="lead">Observaciones : @modelo.Observaciones</p>
                 <div class="d-flex">
                     <input class="form-control text-center me-3" type="number" min="1" style="width:60px" @bind-value="cantidad">
@@ -109,20 +120,16 @@
     private int cantidad = 1;
     private int cantidadPropuestas = 0;
     private int userId;
+    private int JACId { get; set; }
+    private double calcula { get; set; }
+    private double localLat { get; set; }
+    private double localLon { get; set; }
+    private string nombrecontrato { get; set; }
+    public DistanciaDTO distanciaDTO = new DistanciaDTO();
 
 
     protected override async Task OnParametersSetAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user.Identity.IsAuthenticated)
-        {
-            userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
-
-        }
-
-
         var response = await propuestaEmpleoServicio.Obtener(Id);
         if (response.EsCorrecto)
             modelo = (PropuestaEmpleoDTO)response.Resultado!;
@@ -130,12 +137,63 @@
         var propuestas = await propuestaEmpleoServicio.ListaPorEmpleo(modelo.EmpleoId.GetValueOrDefault());
         cantidadPropuestas = propuestas.Resultado.Count();
 
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            JACId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.Locality).Value);
+        }
+       
         var TipoContrato = await perfilcargoServicio.ListaTipoContrato("NA");
         if (TipoContrato.EsCorrecto)
         {
             listaTipoContrato = TipoContrato.Resultado;
         }
+
+
+        var response0 = await propuestaEmpleoServicio.Obtener(Id);
+        if (response0.EsCorrecto)
+            modelo = (PropuestaEmpleoDTO)response0.Resultado!;
+        if (modelo.Empleo.PerfilCargo.IdTipoContrato != null)
+            nombrecontrato = listaTipoContrato.Where(c => c.IdTipoContrato == modelo.Empleo.PerfilCargo.IdTipoContrato).FirstOrDefault().Nombre.ToString();
+
+        // localizacion empleo
+        var response1 = await jacServicio.Obtener(modelo.Empleo.PerfilCargo.Jac.IdJac);
+        if (response1.EsCorrecto)
+        {
+            var jac = response1.Resultado!;
+            var zona = await jacServicio.ObtenerZonaVereda(jac.IdZonaVereda);
+            distanciaDTO.latitudPunto1 = double.Parse(zona.Resultado.Latitud, CultureInfo.InvariantCulture);
+            distanciaDTO.longitudPunto1 = double.Parse(zona.Resultado.Longitud, CultureInfo.InvariantCulture);
+        }
+
+        // localizacion local
+        var response = await jacServicio.Obtener(JACId);
+        if (response.EsCorrecto)
+        {
+            var jac = response.Resultado!;
+            var zona = await jacServicio.ObtenerZonaVereda(jac.IdZonaVereda);
+            distanciaDTO.latitudPunto2 = double.Parse(zona.Resultado.Latitud, CultureInfo.InvariantCulture);
+            distanciaDTO.longitudPunto2 = double.Parse(zona.Resultado.Longitud, CultureInfo.InvariantCulture);
+        }
+        calcula = CalculaDis(Convert.ToDouble(distanciaDTO.latitudPunto1), Convert.ToDouble(distanciaDTO.longitudPunto1), Convert.ToDouble(distanciaDTO.latitudPunto2), Convert.ToDouble(distanciaDTO.longitudPunto2)).Result;
     }
+
+    public async Task<double> CalculaDis(double lat1, double lon1, double lat2, double lon2)
+    {
+        distanciaDTO.latitudPunto1 = lat1;
+        distanciaDTO.longitudPunto1 = lon1;
+        distanciaDTO.latitudPunto2 = lat2;
+        distanciaDTO.longitudPunto2 = lon2;
+        calcula = DistanciaLatLon.CalculateDistance(lat1, lon1, lat2, lon2);
+        return calcula;
+    }
+
     private async Task AgregarCarrito(PropuestaEmpleoDTO modelo)
     {
         decimal? precioFinal = (modelo.Valor);
@@ -151,6 +209,7 @@
         await carritoServicio.AgregarCarrito(carrito);
 
     }
+
     private async Task AgregarPropuesta(PropuestaEmpleoDTO modelo)
     {
         decimal? precioFinal = (modelo.Valor);
@@ -164,8 +223,8 @@
             };
 
         await carritoServicio.AgregarCarrito(carrito);
-
     }
+
     private async Task EliminarPropuesta(PropuestaEmpleoDTO modelo)
     {
         var response = await propuestaEmpleoServicio.Eliminar(modelo.IdPropuestaEmpleo);
@@ -176,6 +235,5 @@
         }
         else
             toastService.ShowWarning("No se pudo eliminar:" + response.Mensaje);
-
     }
 }

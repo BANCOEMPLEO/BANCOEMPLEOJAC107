@@ -307,6 +307,8 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
             try
             {
                 var consulta = _modeloRepositorio.Consultar(p => p.IdJac == id);
+                var IdZona = consulta.FirstOrDefault().IdZonaVereda;
+                //consulta.FirstOrDefault().IdZonaVeredaNavigation = _zonaveredaRepositorio.Consultar(z => z.IdzonaVereda == IdZona).FirstOrDefault();
                 var fromDbModelo = await consulta.FirstOrDefaultAsync();
 
                 if (fromDbModelo != null)

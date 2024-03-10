@@ -46,6 +46,11 @@
                         <input type="text" class="form-control" @bind-value="modelo.Requisitos">
                     </div>
                     <ValidationMessage For="@(()=>modelo.Requisitos)" />
+                    <div class="input-group mt-3">
+                        <span class="input-group-text bg-light" id="basic-addon3">Orden</span>
+                        <input type="number" disabled class="form-control" @bind-value="modelo.Orden">
+                    </div>
+                    <ValidationMessage For="@(()=>modelo.Orden)" />
                     <div class="form-floating mt-3">
                         <input class="form-control" id="inputFechaHoraInicio" type="datetime-local" placeholder="" @bind-value="modelo.FechaHoraInicio" autocomplete="off" />
                         <label for="inputEmail">Fecha Hora Inicio Empleo</label>
@@ -73,18 +78,21 @@
                         <input type="number" class="form-control" @bind-value="modelo.Valor">
                     </div>
                     <ValidationMessage For="@(()=>modelo.Valor)" />
-
+                    @if (modelo.EmpleadoId != null)
+                    {
+                        <div class="input-group mt-3">
+                            <span class="input-group-text bg-light" id="basic-addon3">Empleado Id</span>
+                            <input type="text" class="form-control" @bind-value="modelo.EmpleadoId">
+                        </div>
+                    }
+                    @if (modelo.EmpleadorId != null)
+                    {
+                         <div class="input-group mt-3">
+                            <span class="input-group-text bg-light" id="basic-addon3">Empleador Id</span>
+                            <input type="text" class="form-control" @bind-value="modelo.EmpleadorId">
+                        </div>
+                     }
                     <div class="input-group mt-3">
-                        <span class="input-group-text bg-light" id="basic-addon3">Empleado Id</span>
-                        <input type="text" class="form-control" @bind-value="modelo.EmpleadoId">
-                    </div>
-                    <ValidationMessage For="@(()=>modelo.EmpleadoId)" />
-@*                     <div class="input-group mt-3">
-                        <span class="input-group-text bg-light" id="basic-addon3">Empleador Id</span>
-                        <input type="text" class="form-control" @bind-value="modelo.Empleo.EmpleadorId">
-                    </div>
-                    <ValidationMessage For="@(()=>modelo.Empleo.EmpleadorId)" />
- *@                    <div class="input-group mt-3">
                         <span class="input-group-text bg-light" id="basic-addon3">Observaciones</span>
                         <textarea class="form-control" @bind="modelo.Observaciones"></textarea>
                     </div>
@@ -124,7 +132,10 @@
     {
         var response = await propuestaEmpleoServicio.Obtener(idPropuestaEmpleo);
         if (response.EsCorrecto)
-             modelo = (PropuestaEmpleoDTO)response.Resultado!;
+        {
+            modelo = (PropuestaEmpleoDTO)response.Resultado!;
+            modelo.Orden += 1;
+        }
         else
             toastService.ShowWarning(response.Mensaje);
 

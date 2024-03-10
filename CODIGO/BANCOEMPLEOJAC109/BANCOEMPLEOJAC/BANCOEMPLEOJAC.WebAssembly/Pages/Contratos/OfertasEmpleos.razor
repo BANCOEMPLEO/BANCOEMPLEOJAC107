@@ -5,9 +5,10 @@
 @using System.Security.Claims
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
-
+@inject IDistanciaLatLonServicio distancialatlonservicio
 @inject IPropuestaEmpleoServicio propuestaempleoServicio
 @inject IPerfilCargoServicio perfilcargoServicio
+@inject IJacServicio jacServicio
 @inject NavigationManager _navServicio
 
 
@@ -108,12 +109,36 @@
                                     </div>
                                         @if (JACId == item.Empleo.PerfilCargo.JacId)
                                         {
-                                            <div class="text-center h4">LOCAL</div>
-                                        }
-                                        else
+                                        <div class="text-center h4">LOCAL</div>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-center h4">EXTERNO</div>
+                                        <!--Calcula la distancia entre el perfil 
+                                        (latitud longitud)
+                                        y el perfil local del empleo
+                                        (latitud longitud)
+                                        -->
                                         {
-                                            <div class="text-center h4">EXTERNO</div>
+@*                                             CalculaDis(
+                                                Convert.ToDouble(item.Empleo.PerfilCargo.Jac.IdZonaVeredaNavigation.Latitud),
+                                            Convert.ToDouble(item.Empleo.PerfilCargo.Jac.IdZonaVeredaNavigation.Longitud),
+                                            localLon,
+                                            localLat
+                                            );
+ *@
+                                            CalculaDis(
+                                            5.049365,
+                                            -74.407485,
+                                            5.071246,
+                                            -74.374396
+                                            );
+
+                                            <div>
+                                                Distancia Km : @calcula
+                                            </div>
                                         }
+                                    }
                                 </div>
                             </div>
                             <!-- Product actions-->
@@ -134,6 +159,7 @@
     </div>
 </div>
 @code {
+    // VOY : CALCULAR DISTANCIA ENTRE PERFIL DE EMPLEO LOCAL Y EL PERFIL DE EMPLEO EXTERNO E IMPRIMIRLO EN CADA EMPLEO OFRECIDO. INICIA: 9/MAR/2024 12:34AM
     // POR HACER : QUE LA BUSQUEDA DE TODOS PUEDA BUSCAR CON DESCRIPCION TAMBIEN, BUSCA CON PERFIIL SELECCIONADA PERO CON TODOS NO
     // POR HACER : HACER QUE LAS OFERTAS SE VEAN EMPLEOS Y SERVICIOS SOLAMENTE LAS PROPUESTAS 24/FEB/2024 12:35AM
     // HECHO : QUE SE DESACTIVE EN EL "EMPLEOS PUBLICOS" LOS EMPLEOS QUE SE DESACTIVAN EN "EMPLEOS" 24/FEB/2024 12:34 : FIN : 25/FEB/2024 11:03
@@ -147,9 +173,23 @@
     public int Local { get; set; } = 0;
     [Parameter]
     public int Externo { get; set; } = 0;
-    protected override async Task OnParametersSetAsync()
+    private double calcula { get; set; }
+    private double localLat { get; set; }
+    private double localLon { get; set; }
+    public DistanciaDTO distanciaDTO = new DistanciaDTO();
+
+    public async Task CalculaDis(double lat1, double lon1, double lat2, double lon2)
     {
-        //Local = Externo = 0;
+        // distanciaDTO.latitudPunto1 = 5.049365;
+        // distanciaDTO.longitudPunto1 = -74.407485;
+        // distanciaDTO.latitudPunto2 = 5.071246;
+        // distanciaDTO.longitudPunto2 = -74.374396;
+        distanciaDTO.latitudPunto1 = lat1;
+        distanciaDTO.longitudPunto1 = lon1;
+        distanciaDTO.latitudPunto2 = lat2;
+        distanciaDTO.longitudPunto2 = lon2;
+        calcula = distancialatlonservicio.CalcularDistancia(distanciaDTO).Result;
+        StateHasChanged();
     }
 
 
@@ -164,6 +204,7 @@
             userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
             JACId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.Locality).Value);
         }
+        //await ObtenerLatLonLocal();
         await ObtenerPerfilesCargos();
         await ObtenerCatalogo();
         StateHasChanged();
@@ -180,6 +221,24 @@
         {
             listaCategoria = new List<PerfilCargoDTO>();
         }
+    }
+
+    private async Task ObtenerLatLonLocal()
+    {
+
+        var response = await jacServicio.Obtener(JACId);
+
+        if (response.EsCorrecto)
+        {
+            var listaJac = response.Resultado!;
+            // localLat = Convert.ToDouble(listaJac.IdZonaVeredaNavigation.Latitud);
+            // localLon = Convert.ToDouble(listaJac.IdZonaVeredaNavigation.Longitud);
+        }
+        else
+        {
+            listaProducto = new List<PropuestaEmpleoDTO>();
+        }
+        StateHasChanged();
     }
 
     private async Task ObtenerCatalogo()

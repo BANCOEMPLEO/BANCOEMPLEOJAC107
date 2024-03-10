@@ -159,8 +159,8 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         {
             try
             {
-                var consulta = _modeloRepositorio.Consultar(p => p.IdPropuestaEmpleo == id);
-                    //.Include(c => c.Empleo);
+                var consulta = _modeloRepositorio.Consultar(p => p.IdPropuestaEmpleo == id)
+                    .Include(c => c.Empleo).ThenInclude(p => p.PerfilCargo).ThenInclude(j => j.Jac);
 
 
                 var fromDbModelo = await consulta.FirstOrDefaultAsync();
@@ -184,7 +184,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
             {
 
                 var consulta = _modeloRepositorio.Consultar();
-                consulta = consulta.Include(e => e.Empleo).ThenInclude(e => e.PerfilCargo);
+                consulta = consulta.Include(e => e.Empleo).ThenInclude(e => e.PerfilCargo).ThenInclude(j => j.Jac).ThenInclude(z => z.IdZonaVeredaNavigation);
                 //consulta = consulta.Include("PerfilCargo");
                 // consulta.
                 //if (buscar != null)
