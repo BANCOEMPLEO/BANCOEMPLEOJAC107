@@ -32,6 +32,8 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         {
             try
             {
+                if (modelo.IdPropuestaEmpleo == 0)
+                    modelo.IdPropuestaEmpleo = null;
                 var dbModelo = _mapper.Map<PropuestaEmpleo>(modelo);
                 var rspModelo = await _modeloRepositorio.Crear(dbModelo);
 
@@ -177,14 +179,40 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 throw ex;
             }
         }
+        public async Task<int?> ObtenerAnterior(int id)
+        {
+            try
+            {
+                var consulta = _modeloRepositorio.Consultar(p => p.PropuestaEmpleoAnteriorId == id);
+                    //.Include(c => c.Empleo).ThenInclude(p => p.PerfilCargo).ThenInclude(j => j.Jac);
+
+
+                var fromDbModelo = await consulta.FirstOrDefaultAsync();
+                if (fromDbModelo != null)
+                {
+                    var idAnterior = fromDbModelo.IdPropuestaEmpleo;
+                    return idAnterior;
+                }
+                else
+                    return null;
+                    //throw new TaskCanceledException("No se encontraron coincidencias Anterior");
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
 
         public async Task<List<PropuestaEmpleoDTO>> Catalogo(int categoria, string buscar)
         {
             try
             {
 
-                var consulta = _modeloRepositorio.Consultar();
-                consulta = consulta.Include(e => e.Empleo).ThenInclude(e => e.PerfilCargo).ThenInclude(j => j.Jac).ThenInclude(z => z.IdZonaVeredaNavigation);
+                var consulta = _modeloRepositorio.Consultar(r => r.RePropone != true && r.Cantidad > 0);
+                consulta = consulta.Include(e => e.Empleo).ThenInclude(e => e.PerfilCargo)
+                    .ThenInclude(j => j.Jac).ThenInclude(z => z.IdZonaVeredaNavigation);
                 //consulta = consulta.Include("PerfilCargo");
                 // consulta.
                 //if (buscar != null)
@@ -215,7 +243,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 var consulta = _modeloRepositorio.Consultar().
                     Include(e => e.Empleo).
                     ThenInclude(pc => pc.PerfilCargo).
-                    Where(pe => pe.Empleo.Activo == true);
+                    Where(pe => pe.Empleo.Activo == true && pe.RePropone != true && pe.Cantidad > 0);
                 if (buscar != null)
                     consulta = consulta.Where(c => c.Nombre.Contains(buscar) || c.Requisitos.Contains(buscar));
                 if (categoria > 0)

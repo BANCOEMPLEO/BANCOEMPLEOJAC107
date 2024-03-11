@@ -9,7 +9,7 @@ namespace BANCOEMPLEOJAC.DTO
 {
     public class PropuestaEmpleoDTO
     {
-        public int IdPropuestaEmpleo { get; set; }
+        public int? IdPropuestaEmpleo { get; set; }
 
         public int? PropuestaEmpleoAnteriorId { get; set; }
         public int? EmpleoId { get; set; }

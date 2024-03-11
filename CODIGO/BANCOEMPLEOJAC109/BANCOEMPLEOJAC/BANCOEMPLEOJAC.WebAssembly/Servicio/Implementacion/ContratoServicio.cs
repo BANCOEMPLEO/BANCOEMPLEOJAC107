@@ -12,9 +12,15 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
             _httpClient = httpClient;
         }
 
-        public async Task<ResponseDTO<ContratoDTO>> Registrar(ContratoDTO modelo)
+        public async Task<ResponseDTO<ContratoDTO>> RegistrarEmpleo(ContratoDTO modelo)
         {
-            var response = await _httpClient.PostAsJsonAsync("Contrato/Registrar", modelo);
+            var response = await _httpClient.PostAsJsonAsync("Contrato/RegistrarEmpleo", modelo);
+            var result = await response.Content.ReadFromJsonAsync<ResponseDTO<ContratoDTO>>();
+            return result!;
+        }
+        public async Task<ResponseDTO<ContratoDTO>> RegistrarServicio(ContratoDTO modelo)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Contrato/RegistraServicio", modelo);
             var result = await response.Content.ReadFromJsonAsync<ResponseDTO<ContratoDTO>>();
             return result!;
         }

@@ -119,7 +119,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 var IdJAC = usuario.JacId;
                 var consulta = _modeloRepositorio.Consultar(p =>
                 p.Descripcion!.ToLower().Contains(buscar.ToLower())
-                ).Where(p => p.JacId == IdJAC);
+                ).Where(p => p.JacId == IdJAC).OrderBy(L => L.Descripcion);
                 
 
                 List<PerfilCargoDTO> lista = _mapper.Map<List<PerfilCargoDTO>>(await consulta.ToListAsync());

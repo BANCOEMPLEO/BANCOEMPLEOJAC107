@@ -37,31 +37,31 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
                     if (encontradoEmpleo != null)
                         carrito.Remove(encontradoEmpleo);
                 }
-                if (modelo != null && modelo.propuestaServicio.IdPropuestaServicio != null)
-                {
-                    var encontradoServicio = carrito.FirstOrDefault(c => c.propuestaServicio.IdPropuestaServicio == modelo.propuestaServicio.IdPropuestaServicio);
-                    if (encontradoServicio != null)
-                        carrito.Remove(encontradoServicio);
-                }
+                //if (modelo != null && modelo.propuestaServicio.IdPropuestaServicio != null)
+                //{
+                //    var encontradoServicio = carrito.FirstOrDefault(c => c.propuestaServicio.IdPropuestaServicio == modelo.propuestaServicio.IdPropuestaServicio);
+                //    if (encontradoServicio != null)
+                //        carrito.Remove(encontradoServicio);
+                //}
 
                 carrito.Add(modelo);
                 await _localstorageService.SetItemAsync("carrito", carrito);
 
                 if (modelo.propuestaEmpleo.IdPropuestaEmpleo != null)
-                    _toastService.ShowSuccess("Propuesta Empleo fue actualizada en carrito");
+                    _toastService.ShowSuccess("Propuesta Empleo fue actualizada en Canasta");
                 else
-                    _toastService.ShowSuccess("Propuesta Empleo fue agregada al carrito");
+                    _toastService.ShowSuccess("Propuesta Empleo fue agregada al Canasta");
 
-                if (modelo.propuestaServicio.IdPropuestaServicio != null)
-                    _toastService.ShowSuccess("Propuesta Servicio fue actualizada en carrito");
-                else
-                    _toastService.ShowSuccess("Propuesta Servicio fue agregada al carrito");
+                //if (modelo.propuestaServicio.IdPropuestaServicio != null)
+                //    _toastService.ShowSuccess("Propuesta Servicio fue actualizada en carrito");
+                //else
+                //    _toastService.ShowSuccess("Propuesta Servicio fue agregada al carrito");
 
                 MostrarItems.Invoke();
             }
-            catch
+            catch(Exception ex)
             {
-                _toastService.ShowSuccess("No se pudo agregar al carrito");
+                _toastService.ShowError("No se pudo agregar al carrito : " + ex.Message);
             }
         }
 
@@ -94,13 +94,13 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
                         await _localstorageService.SetItemAsync("carrito", carrito);
                         MostrarItems.Invoke();
                     }
-                    var elementoServicio = carrito.FirstOrDefault(c => c.propuestaServicio.IdPropuestaServicio == IdProducto);
-                    if (elementoServicio != null)
-                    {
-                        carrito.Remove(elementoServicio);
-                        await _localstorageService.SetItemAsync("carrito", carrito);
-                        MostrarItems.Invoke();
-                    }
+                    //var elementoServicio = carrito.FirstOrDefault(c => c.propuestaServicio.IdPropuestaServicio == IdProducto);
+                    //if (elementoServicio != null)
+                    //{
+                    //    carrito.Remove(elementoServicio);
+                    //    await _localstorageService.SetItemAsync("carrito", carrito);
+                    //    MostrarItems.Invoke();
+                    //}
 
                 }
             }

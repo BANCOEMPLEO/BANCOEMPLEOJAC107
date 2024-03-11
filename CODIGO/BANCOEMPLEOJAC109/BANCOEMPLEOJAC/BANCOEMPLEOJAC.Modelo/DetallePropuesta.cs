@@ -27,7 +27,7 @@ public partial class DetallePropuesta
 
     public virtual DetallePropuesta? DetallePropuestaAnterior { get; set; }
 
-    public virtual ICollection<DetallePropuesta> InverseDetallePropuestaAnterior { get; set; } = new List<DetallePropuesta>();
+    public virtual ICollection<DetallePropuesta>? InverseDetallePropuestaAnterior { get; set; } = new List<DetallePropuesta>();
 
     public virtual PropuestaEmpleo? PropuestaEmpleo { get; set; }
 

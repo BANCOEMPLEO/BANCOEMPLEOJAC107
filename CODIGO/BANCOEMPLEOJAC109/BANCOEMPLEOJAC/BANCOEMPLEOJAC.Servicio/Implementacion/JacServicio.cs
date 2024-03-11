@@ -96,6 +96,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                     fromDbModelo.IdAdministradorLocal = modelo.IdAdministradorLocal;
                     fromDbModelo.NombreAdminLocal = modelo.NombreAdminLocal;
                     fromDbModelo.Foto = modelo.Foto;
+                    fromDbModelo.Observaciones = modelo.Observaciones;
 
                     var respuesta = await _modeloRepositorio.Editar(fromDbModelo);
 

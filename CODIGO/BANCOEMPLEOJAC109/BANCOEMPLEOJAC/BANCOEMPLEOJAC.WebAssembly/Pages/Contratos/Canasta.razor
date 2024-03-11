@@ -1,6 +1,284 @@
 ﻿@page "/canasta"
-<h3>Canasta</h3>
+@inject ICarritoServicio carritoServicio
+@inject IContratoServicio contratoServicio
+@inject IToastService toastService
+@inject NavigationManager _navServicio
 
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+
+<div class="row mt-4">
+
+    @*    INFORMACION DE LOS PRODUCTOS AGREGADOS EN EL CARRITO*@
+
+    <div class="col-sm-8">
+        <div class="card mb-3">
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm bg-light table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width:102px"></th>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @if (lista.Any())
+                            {
+                                foreach (var item in lista)
+                                {
+                                    <tr>
+@*                                         <td valign="middle">
+                                            <img class="card-img-top" src="@item.propuestaEmpleo.Imagen" style="width:100px">
+                                        </td>
+ *@                                        <td valign="middle">@item.propuestaEmpleo.Nombre</td>
+                                        <td valign="middle">@item.Precio</td>
+                                        <td valign="middle" align="center">
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-outline-dark" @onclick="(() =>Disminuir((int)item.propuestaEmpleo.IdPropuestaEmpleo))">
+                                                    <i class="oi oi-minus"></i>
+                                                </button>
+                                                <input class="form-control" readonly="readonly" style="width:50px" @bind-value="item.Cantidad" />
+                                                <button type="button" class="btn btn-outline-dark" @onclick="(() =>Aumentar((int)item.propuestaEmpleo.IdPropuestaEmpleo))">
+                                                    <i class="oi oi-plus"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td valign="middle">@item.Total</td>
+                                        <td valign="middle">
+                                            <button type="button" class="btn btn-outline-dark" @onclick="(async () => await Eliminar((int)item.propuestaEmpleo.IdPropuestaEmpleo))">
+                                                <i class="oi oi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+
+
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="alert alert-warning" role="alert">
+                                            No hay productos en el carrito
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+
+
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+
+
+        </div>
+    </div>
+
+    @*    SE MUESTRA LA INFORMACION DE TARJETA Y OPCION DE PAGAR*@
+    <div class="col-sm-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <EditForm Model="modelo" OnValidSubmit="ProcesarPago">
+                    <DataAnnotationsValidator></DataAnnotationsValidator>
+
+                <div class="mb-2 text-center">
+                    <label class="form-label text-center h3">Forma de Pago Origen</label>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Nequi</label>
+                    <span class="float-end"><img src="nequi.jpg" width="110px"/></span>
+                    <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Daviplata</label>
+                    <span class="float-end"><img src="daviplata.jpg" width="110px" /></span>
+                    <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
+                </div>
+                    <div class="mb-2">
+                        <label class="form-label">Consignación</label>
+                        <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Codigo Transaccoón</label>
+                        <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
+                    </div>
+                    <div class="input-group mt-3">
+                        <div class="input-group-text form-control bg-light text-secondary justify-content-center" id="basic-addon3">Foto Transacción</div>
+                        @if (modelo.Foto != "")
+                        {
+                            <div class="input-group mt-3 justify-content-center">
+                                <img class="card-img-top border-dark border-1" src="@modelo.Foto" style="width:150px;height:150px">
+                            </div>
+                        }
+                        <div class="input-group mt-3 justify-content-center  bg-secondary text-light">
+                            <InputFile type="file" class="row form-control" accept="image/png, image/gif, image/jpeg" OnChange="OnFileChange"></InputFile>
+                        </div>
+                    </div>
+
+                    <hr />
+                    <div class="d-flex justify-content-between">
+                        <div>Total a pagar:</div>
+                        <div>S/. @(lista.Sum(i => i.Total))</div>
+                    </div>
+                    <div class="mt-2">
+                        <div class="d-grid gap-1">
+                            <button class="btn btn-outline-secondary bg-secondary text-light float-end" type="submit" disabled="@disabled">Procesar pago</button>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="mb-2 text-center">
+                        <label class="form-label text-center h3">Forma de Pago Destino</label>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Nequi</label>
+                        <span class="float-end"><img src="nequi.jpg" width="110px" /></span>
+                        <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Daviplata</label>
+                        <span class="float-end"><img src="daviplata.jpg" width="110px" /></span>
+                        <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Consignación</label>
+                        <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
+                    </div>
+
+                    </EditForm>
+
+                <AuthorizeView>
+                    <NotAuthorized>
+                        <div class="alert alert-danger mt-2" role="alert">
+                            Debe iniciar sesion para poder realizar la compra
+                        </div>
+                    </NotAuthorized>
+                </AuthorizeView>
+
+
+            </div>
+        </div>
+    </div>
+</div>
 @code {
+
+    private bool disabled = true;
+    private List<CarritoDTO> lista = new List<CarritoDTO>();
+    private decimal? TotalPagar = 0;
+    private FormaPagoDTO modelo = new FormaPagoDTO();
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        lista = await carritoServicio.DevolverCarrito();
+
+        var authState = await authenticationState;
+        if (authState.User.Identity.IsAuthenticated)
+            disabled = false;
+    }
+
+    async Task OnFileChange(InputFileChangeEventArgs e)
+    {
+        FileInfo fileInfo = new FileInfo(e.File.Name);
+        if (fileInfo.Extension.ToLower().Contains(".jpg") || fileInfo.Extension.ToLower().Contains(".png"))
+        {
+            var format = $"image/{fileInfo.Extension.Replace(".", "")}";
+            var resizeImage = await e.File.RequestImageFileAsync(format, 450, 300);
+            var buffer = new byte[resizeImage.Size];
+            await resizeImage.OpenReadStream().ReadAsync(buffer);
+            var imagenData = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+            modelo.Foto = imagenData;
+        }
+
+    }
+
+
+    private void Disminuir(int id)
+    {
+        CarritoDTO item = lista.First(p => p.propuestaEmpleo.IdPropuestaEmpleo == id);
+
+        if (item.Cantidad - 1 > 0)
+        {
+            decimal? precioFinal = item.propuestaEmpleo.Valor;
+
+            item.Cantidad--;
+            item.Total = item.Cantidad * precioFinal;
+        }
+    }
+
+    private void Aumentar(int id)
+    {
+        CarritoDTO item = lista.First(p => p.propuestaEmpleo.IdPropuestaEmpleo == id);
+        decimal? precioFinal = item.propuestaEmpleo.Valor;
+
+        item.Cantidad++;
+        item.Total = item.Cantidad * precioFinal;
+    }
+
+    private async Task Eliminar(int IdProducto)
+    {
+        CarritoDTO producto = lista.First(p => p.propuestaEmpleo.IdPropuestaEmpleo == IdProducto);
+
+        if (producto != null)
+        {
+            lista.Remove(producto);
+            await carritoServicio.EliminarCarrito("1",IdProducto);
+        }
+    }
+
+    private async Task ProcesarPago()
+    {
+        if (lista.Count == 0)
+        {
+            toastService.ShowWarning("No se encontraron Productos");
+            return;
+        }
+        List<DetallePropuestaDTO> detalle = new List<DetallePropuestaDTO>();
+
+        foreach (var item in lista)
+        {
+            detalle.Add(new DetallePropuestaDTO()
+                {
+                    PropuestaEmpleoId = item.propuestaEmpleo.IdPropuestaEmpleo,
+                    Cantidad = item.Cantidad,
+                    Total = item.Total
+                });
+        }
+
+        var authState = await authenticationState;
+        string idUsuario = authState.User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).Single();
+
+
+        ContratoDTO modelo = new ContratoDTO()
+            {
+                UsuarioId = Convert.ToInt32(idUsuario),
+                Total = lista.Sum(i => i.Total),
+                DetallePropuesta = detalle
+            };
+
+        var response = await contratoServicio.RegistrarEmpleo(modelo);
+
+        if (response.EsCorrecto)
+        {
+            await carritoServicio.LimpiarCarrito();
+            toastService.ShowSuccess("El contrato ha sido registrado");
+            _navServicio.NavigateTo("/ofertasempleos");
+        }
+        else
+        {
+            toastService.ShowError(response.Mensaje);
+        }
+    }
 
 }

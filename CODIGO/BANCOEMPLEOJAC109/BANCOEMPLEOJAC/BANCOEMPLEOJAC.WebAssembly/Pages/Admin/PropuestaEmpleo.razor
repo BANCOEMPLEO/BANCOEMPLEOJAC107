@@ -46,6 +46,28 @@
                         <input type="text" class="form-control" @bind-value="modelo.Requisitos">
                     </div>
                     <ValidationMessage For="@(()=>modelo.Requisitos)" />
+
+                    <div class="input-group mt-3">
+                        <span class="input-group-text bg-light">Tipo Contrato</span>
+
+                        <select class="form-control" @bind-value="IdTipoContrato" @bind-value:event="onchange">
+                            @if (listaTipoContrato != null)
+                            {
+                                @foreach (var item in listaTipoContrato)
+                                {
+                                    if (item.IdTipoContrato == IdTipoContrato)
+                                    {
+                                        <option value="@item.IdTipoContrato" selected>@item.Nombre</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.IdTipoContrato">@item.Nombre</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+
                     <div class="input-group mt-3">
                         <span class="input-group-text bg-light" id="basic-addon3">Orden</span>
                         <input type="number" disabled class="form-control" @bind-value="modelo.Orden">
@@ -117,9 +139,14 @@
 
 </div>
 @code {
-    // VOY : HACER QUE SE PUEDAN EDITAR LOS DATOS DE LA REPROPUESTA DE EMPLEO Y SE PUEDA GUARDAR LOS NUEVOS DATOS E INFORMAR AL EMPLEADOR Y/O EMPLEADO 24/FEB/2024 1:04PM : INICIO : 26/FEB/2024 10:12AM
+    // HECHO : HACER QUE SE PUEDAN EDITAR LOS DATOS DE LA REPROPUESTA DE EMPLEO Y SE PUEDA GUARDAR LOS NUEVOS DATOS 24/FEB/2024 1:04PM : INICIO : 26/FEB/2024 10:12AM FIN: 11/MAR/2024 12:36AM
+    // POR HACER :  INFORMAR AL EMPLEADOR Y/O EMPLEADO DE LOS CAMBIOS DE REPROPUESTA 11/MAR/2024 12:36AM
+    // POR HACER :  QUE SE PUEDA VER CORRECTAMENTE LAS REPROPUESTAS DE UN EMPLEO SIGUIENTE Y ATRAS 11/MAR/2024 12:36AM
     [Parameter]
     public int idPropuestaEmpleo { get; set; }
+    public List<TipoContratoDTO> listaTipoContrato = new List<TipoContratoDTO>();
+    public int IdTipoContrato { get; set; }
+
     public int userId { get; set; }
     public PropuestaEmpleoDTO? modelo = new PropuestaEmpleoDTO();
     private string Titulo = "Nueva Propuesta Empleo";
@@ -135,6 +162,9 @@
         {
             modelo = (PropuestaEmpleoDTO)response.Resultado!;
             modelo.Orden += 1;
+            IdTipoContrato = (int)modelo.Empleo.PerfilCargo.IdTipoContrato!;
+            //idPropuestaEmpleo = null; 
+            modelo.IdPropuestaEmpleo = null;
         }
         else
             toastService.ShowWarning(response.Mensaje);
@@ -149,7 +179,7 @@
 
         if (user.Identity.IsAuthenticated)
         {
-           userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
         }
 
@@ -158,6 +188,7 @@
         //     modelo = (PropuestaEmpleoDTO)response.Resultado!;
         // StateHasChanged();
         await ObtenerPerfilesCargos();
+        await ListarTipoContrato();
     }
 
     // private async Task ReProponerEmpleo(PropuestaEmpleoDTO modelo)
@@ -179,6 +210,21 @@
         }
     }
 
+    public async Task ListarTipoContrato(string Valor = "")
+    {
+        var response = await perfilcargoServicio.ListaTipoContrato(Valor);
+
+        if (response.EsCorrecto!)
+        {
+            listaTipoContrato = (List<TipoContratoDTO>)response.Resultado!;
+            IdTipoContrato = listaTipoContrato.FirstOrDefault().IdTipoContrato;
+        }
+        else
+        {
+            listaTipoContrato = new List<TipoContratoDTO>();
+        }
+        StateHasChanged();
+    }
 
 
     private async Task GuardarCambios()
@@ -186,32 +232,39 @@
         bool respuesta = true;
         string mensaje = string.Empty;
         //StateHasChanged();
-        if (idPropuestaEmpleo != 0)
-        {
-            var response = await propuestaEmpleoServicio.Editar(modelo);
-            if (response.EsCorrecto)
+        // if (idPropuestaEmpleo != 0)
+        // {
+        //     var response = await propuestaEmpleoServicio.Editar(modelo);
+        //     if (response.EsCorrecto)
+        //     {
+        //         mensaje = "Propuesta Empleo fue modificada";
+        //     }
+        //     else
+        //     {
+        //         respuesta = false;
+        //         mensaje = "No ser pudo editar";
+        //     }
+        // }
+        // else
+        // {
+            if (modelo.IdPropuestaEmpleo == null)
             {
-                mensaje = "Propuesta Empleo fue modificada";
+                
+                modelo.RePropone = true;
+                modelo.FechaHoraReProponeEmpleador = DateTime.Now;
+                modelo.PropuestaEmpleoAnteriorId = idPropuestaEmpleo;
+                var response = await propuestaEmpleoServicio.Crear(modelo);
+                if (response.EsCorrecto)
+                {
+                    mensaje = "RePropuesta Empleo fue creada";
+                }
+                else
+                {
+                    respuesta = false;
+                    mensaje = "No se pudo crear : " + response.Mensaje;
+                }
             }
-            else
-            {
-                respuesta = false;
-                mensaje = "No ser pudo editar";
-            }
-        }
-        else
-        {
-            var response = await propuestaEmpleoServicio.Crear(modelo);
-            if (response.EsCorrecto)
-            {
-                mensaje = "Propuesta Empleo fue creada";
-            }
-            else
-            {
-                respuesta = false;
-                mensaje = "No se pudo crear";
-            }
-        }
+      //  }
         if (respuesta)
         {
             toastService.ShowSuccess(mensaje);

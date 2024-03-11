@@ -72,11 +72,15 @@ namespace BANCOEMPLEOJAC.Utilidades
                 opt => opt.Ignore());
 
             CreateMap<PropuestaEmpleo, PropuestaEmpleoDTO>();
-            CreateMap<PropuestaEmpleoDTO, PropuestaEmpleo>();//.ForMember(destino =>
-                                                             //destino.Empleo,
-                                                             //opt => opt.Ignore());//.ForMember(destino =>
-                                                             //destino.Empleado,
-                                                             //opt => opt.Ignore());
+            CreateMap<PropuestaEmpleoDTO, PropuestaEmpleo>().ForMember(destino =>
+                                                             destino.Empleo,
+                                                             opt => opt.Ignore()).ForMember(destino =>
+                                                             destino.Empleado,
+                                                             opt => opt.Ignore()).ForMember(destino =>
+                                                             destino.Empleador,
+                                                             opt => opt.Ignore()).ForMember(destino =>
+                                                             destino.PropuestaEmpleoAnterior,
+                                                             opt => opt.Ignore());
 
             CreateMap<PropuestaEmpleo, PropuestaEmpleo2DTO>();
             CreateMap<PropuestaEmpleo2DTO, PropuestaEmpleo>();//.ForMember(destino =>

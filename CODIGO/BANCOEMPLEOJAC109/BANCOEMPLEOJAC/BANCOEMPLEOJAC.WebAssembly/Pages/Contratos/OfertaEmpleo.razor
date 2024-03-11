@@ -40,8 +40,8 @@
                     <span>$COL /.@modelo.Valor</span>
                 </div>
                 <p class="lead">@modelo.Descripcion</p>
-                <p class="lead">Requisitos : @modelo.Requisitos</p>
                 <p class="lead">Tipo Contrato : @nombrecontrato</p>
+                <p class="lead">Requisitos : @modelo.Requisitos</p>
                 <p class="lead">Ubicación : @modelo.Ubicacion</p>
                 @if (modelo.EmpleadorId != null || modelo.EmpleadoId != null)
                 {
@@ -52,6 +52,8 @@
                 <p class="lead">Fecha Hora Inicia : @modelo.FechaHoraInicio</p>
                 <p class="lead">Fecha Hora Finaliza : @modelo.FechaHoraFin</p>
                 <p class="lead">Cantidad Empleo(s) Ofrecido(s) : @modelo.Cantidad</p>
+                <p class="lead">Empleador Id : @modelo.EmpleadorId</p>
+                <p class="lead">Empleado Id : @modelo.EmpleadoId</p>
                 <p class="lead">Cantidad Propuestas : @cantidadPropuestas</p>
                 @if (modelo.FechaHoraReProponeEmpleador != null)
                 {
@@ -81,6 +83,23 @@
                         <i class="bi-cart-fill me-1"></i>
                         Contratar
                     </button>
+                    <!-- Si tiene mas de 1 propuesta pone boton siguiente para verla siguente propuesta -->
+                    @if (IdAnterior != null && IdAnterior != Id)
+                    {
+                        <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await Atras((int)IdAnterior))">
+                            <span class="oi oi-media-skip-backward"></span>
+                            Anterior
+                        </button>
+                    }
+                    @if (IdSiguiente != null && IdSiguiente != Id)
+                    {
+                        <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await Adelante((int)IdSiguiente))">
+                            <span class="oi oi-media-skip-forward"></span>
+                            Siguiente
+                        </button>
+                    }
+
+
                     <!-- Si es el creador de la Propuesta Empleo puede Borrarla, de lo contrario no aparece el boton-->
                     @if (userId == modelo.EmpleadorId || userId == modelo.EmpleadoId)
                     {
@@ -108,13 +127,15 @@
 
 </div>
 @code {
-    // VOY : VER MAS DETALLES EN OFERTAEMPLEO LOS QUE SON DE INTERES PARA CONTRATAR. FECHA: 26/FEB/2024 9:44PM
+    // HECHO : VER MAS DETALLES EN OFERTAEMPLEO LOS QUE SON DE INTERES PARA CONTRATAR. FECHA: 26/FEB/2024 9:44PM :FIN : 11/MAR/2024 12:22AM
     // VOY : QUE NO SALGA EL BOTON DE PROPONER SI EL AUTOR DEL EMPLEO ES QUIEN LO VE Y SE MUESTRE EL DE BORRAR, SOLO PARA OTROS : 26/FEB/2024 8:39PM :
     // HECHO : QUE SE PUEDAN CREAR REPROPUESTAS DE EMPLEO 24/FEB/2024 12:27AM : INICIO : 24/FEB/2024 12:55PM FIN : 26/FEB/2024 8:40PM
     // HECHO : QUE NO APAREZCA ERROR DE DISPLAY AL VER LA REPROUESTA DE EMPLEO. 26/FEB/2024 8:41PM : FIN 8/MAR/2024 10:40AM
     // POR HACER : QUE SE VEA INFORMACIÓN DEL EMPLEADOR Y DEL EMPLEADO SI LA HAY POR COMPONENTE Y PARAMETROS 24/FEB/2024 12:24AM
     [Parameter]
     public int Id { get; set; }
+    public int? IdSiguiente { get; set; } = null;
+    public int? IdAnterior { get; set; } = null;
     private PropuestaEmpleoDTO? modelo = null;
     public List<TipoContratoDTO> listaTipoContrato = new List<TipoContratoDTO>();
     private int cantidad = 1;
@@ -128,19 +149,35 @@
     public DistanciaDTO distanciaDTO = new DistanciaDTO();
 
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         var response = await propuestaEmpleoServicio.Obtener(Id);
         if (response.EsCorrecto)
             modelo = (PropuestaEmpleoDTO)response.Resultado!;
 
+        // obtiene el IdSiguiente Propuesta si la hay
+        if (Id != null)
+        {
+            var responseS = await propuestaEmpleoServicio.ObtenerAnterior(Id);
+            if (responseS.EsCorrecto)
+            {
+                if (responseS.Resultado != null )
+                {
+
+                    IdSiguiente = (int)responseS.Resultado;
+                    IdAnterior = Id;
+                    StateHasChanged();
+                }
+                else
+                {
+                    IdSiguiente = null;
+                    StateHasChanged();
+                }
+            }
+        }
         var propuestas = await propuestaEmpleoServicio.ListaPorEmpleo(modelo.EmpleoId.GetValueOrDefault());
         cantidadPropuestas = propuestas.Resultado.Count();
 
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         if (user.Identity.IsAuthenticated)
@@ -148,7 +185,7 @@
             userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
             JACId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.Locality).Value);
         }
-       
+
         var TipoContrato = await perfilcargoServicio.ListaTipoContrato("NA");
         if (TipoContrato.EsCorrecto)
         {
@@ -173,10 +210,10 @@
         }
 
         // localizacion local
-        var response = await jacServicio.Obtener(JACId);
-        if (response.EsCorrecto)
+        var response2 = await jacServicio.Obtener(JACId);
+        if (response2.EsCorrecto)
         {
-            var jac = response.Resultado!;
+            var jac = response2.Resultado!;
             var zona = await jacServicio.ObtenerZonaVereda(jac.IdZonaVereda);
             distanciaDTO.latitudPunto2 = double.Parse(zona.Resultado.Latitud, CultureInfo.InvariantCulture);
             distanciaDTO.longitudPunto2 = double.Parse(zona.Resultado.Longitud, CultureInfo.InvariantCulture);
@@ -194,12 +231,81 @@
         return calcula;
     }
 
+    private async Task Adelante(int IdSiguiente)
+    {
+        navigate.NavigateTo("/ofertaempleo/"+ IdSiguiente);
+        IdAnterior = Id;
+
+        var response = await propuestaEmpleoServicio.Obtener((int)IdSiguiente);
+        if (response.EsCorrecto)
+            modelo = (PropuestaEmpleoDTO)response.Resultado!;
+
+        // obtiene el IdSiguiente Propuesta si la hay
+        if (modelo.IdPropuestaEmpleo != null)
+        {
+            var responseS = await propuestaEmpleoServicio.ObtenerAnterior((int)modelo.IdPropuestaEmpleo);
+            if (responseS.EsCorrecto)
+            {
+                if (responseS.Resultado != null)
+                {
+
+                    this.IdSiguiente = (int)responseS.Resultado;
+                    IdAnterior = modelo.PropuestaEmpleoAnteriorId;
+                    StateHasChanged();
+                }
+                else
+                {
+                    this.IdSiguiente = null;
+                    StateHasChanged();
+                }
+            }
+        }
+
+
+        StateHasChanged();
+        //OnInitializedAsync();
+    }
+    private async Task Atras(int IdAnterior)
+    {
+        navigate.NavigateTo("/ofertaempleo/" + IdAnterior);
+        this.IdAnterior = Id;
+
+        var response = await propuestaEmpleoServicio.Obtener(IdAnterior);
+        if (response.EsCorrecto)
+            modelo = (PropuestaEmpleoDTO)response.Resultado!;
+
+        // obtiene el IdAnterior Propuesta si la hay
+        if (modelo.PropuestaEmpleoAnteriorId != null)
+        {
+            var responseS = await propuestaEmpleoServicio.Obtener((int)modelo.PropuestaEmpleoAnteriorId);
+            if (responseS.EsCorrecto)
+            {
+                if (responseS.Resultado != null)
+                {
+                    modelo = responseS.Resultado;
+                    this.IdSiguiente = modelo.PropuestaEmpleoAnteriorId;// (int)responseS.Resultado;
+                    this.IdAnterior = Id;
+                    StateHasChanged();
+                }
+                else
+                {
+                    this.IdSiguiente = Id;
+                    StateHasChanged();
+                }
+            }
+        }
+
+
+        StateHasChanged();
+        //OnInitializedAsync();
+    }
     private async Task AgregarCarrito(PropuestaEmpleoDTO modelo)
     {
         decimal? precioFinal = (modelo.Valor);
 
         CarritoDTO carrito = new CarritoDTO()
             {
+                propuestaEmpleo = modelo,
                 // Producto = modelo,
                 Cantidad = cantidad,
                 Precio = precioFinal,
@@ -227,7 +333,7 @@
 
     private async Task EliminarPropuesta(PropuestaEmpleoDTO modelo)
     {
-        var response = await propuestaEmpleoServicio.Eliminar(modelo.IdPropuestaEmpleo);
+        var response = await propuestaEmpleoServicio.Eliminar(Id);
         if (response.EsCorrecto)
         {
             toastService.ShowSuccess("Se eliminó la Propuesta Empleo");

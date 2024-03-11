@@ -30,19 +30,24 @@ namespace BANCOEMPLEOJAC.Repositorio.Implementacion
                     {
                         if(tipo == "Empleo")
                         {
+                            // quita de propuestaEmpleo la cantidad contratada
                             PropuestaEmpleo propuestaEmpleo_encontrado = _dbContext.PropuestaEmpleos.Where(p => p.IdPropuestaEmpleo == dp.PropuestaEmpleoId).First();
 
                             propuestaEmpleo_encontrado.Cantidad = propuestaEmpleo_encontrado.Cantidad - dp.Cantidad;
+                            propuestaEmpleo_encontrado.Aceptada = true;
+                            propuestaEmpleo_encontrado.FechaHoraAceptaEmpleador = DateTime.Now;
                             _dbContext.Update(propuestaEmpleo_encontrado);
-                        }
-                        if(tipo == "Servicio")
-                        {
-                            PropuestaServicio propuestaServicio_encontrado = _dbContext.PropuestaServicios.Where(p => p.IdPropuestaServicio == dp.PropuestaServicioId).First();
 
-                            propuestaServicio_encontrado.Cantidad = propuestaServicio_encontrado.Cantidad - dp.Cantidad;
-                            _dbContext.Update(propuestaServicio_encontrado);
-
+                            // HACER : se debe actializar el empleo con el empleadorId y el EmpleadoId y desactivarlo
                         }
+                        //if(tipo == "Servicio")
+                        //{
+                        //    PropuestaServicio propuestaServicio_encontrado = _dbContext.PropuestaServicios.Where(p => p.IdPropuestaServicio == dp.PropuestaServicioId).First();
+
+                        //    propuestaServicio_encontrado.Cantidad = propuestaServicio_encontrado.Cantidad - dp.Cantidad;
+                        //    _dbContext.Update(propuestaServicio_encontrado);
+
+                        //}
                     }
                     await _dbContext.SaveChangesAsync();
 

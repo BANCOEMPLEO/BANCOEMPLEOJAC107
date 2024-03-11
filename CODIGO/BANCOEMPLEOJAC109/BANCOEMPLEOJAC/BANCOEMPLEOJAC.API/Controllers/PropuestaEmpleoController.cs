@@ -94,6 +94,23 @@ namespace BANCOEMPLEOJAC.API.Controllers
             }
             return Ok(response);
         }
+        [HttpGet("ObtenerAnterior/{Id:int?}")]
+        public async Task<IActionResult> ObtenerAnterior(int Id)
+        {
+            var response = new ResponseDTO<int?>();
+            try
+            {
+
+                response.EsCorrecto = true;
+                response.Resultado = await _propuestaempleoServicio.ObtenerAnterior(Id);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
 
         [HttpPost("Crear")]
         public async Task<IActionResult> Crear([FromBody] PropuestaEmpleoDTO modelo)

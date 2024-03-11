@@ -9,8 +9,8 @@ namespace BANCOEMPLEOJAC.DTO
     public class DetallePropuestaDTO
     {
         public int IdDetallePropuesta { get; set; }
-        public int ContratoId { get; set; }
-        public int DetallePropuestaAnteriorId { get; set; }
+        public int? ContratoId { get; set; }
+        public int? DetallePropuestaAnteriorId { get; set; }
 
         public int? PropuestaEmpleoId { get; set; }
 
