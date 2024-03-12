@@ -4,8 +4,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using BANCOEMPLEOJAC.Modelo;
 using BANCOEMPLEOJAC.Repositorio.DBContext;
 using BANCOEMPLEOJAC.Repositorio.Interfase;
+using Microsoft.EntityFrameworkCore;
 
 namespace BANCOEMPLEOJAC.Repositorio.Implementacion
 {

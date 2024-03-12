@@ -174,8 +174,10 @@
             if (listaPerfilCargo.Any() && Id == 0)
             {
                 modelo.PerfilCargoId = listaPerfilCargo.First().IdPerfilCargo;
+                IdPerfilCargo = modelo.PerfilCargoId;
             }
         }
+
     }
 
     protected override async Task OnParametersSetAsync()

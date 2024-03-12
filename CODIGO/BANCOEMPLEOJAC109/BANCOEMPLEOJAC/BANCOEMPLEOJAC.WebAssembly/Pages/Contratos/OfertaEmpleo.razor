@@ -23,96 +23,177 @@
     @if (modelo != null)
     {
         <div class="row gx-4 gx-lg-5 align-items-center">
-            <div class="col-md-6">
-                <p class="lead">
-                    @if (modelo.EmpleadorId != null)
-                    {
-                        @("EMPLEADOR NECESITA:")
-                    }
-                    else
-                    {
-                        @("EMPLEADO OFRECE:")
-                    }
-                </p>
-                <h1 class="display-5 fw-bolder">@modelo.Nombre</h1>
-                <div class="fs-5 mb-5">
+            <div class="col-12">
+   
+                    <div class="container px-4 px-lg-5 my-5">
+                        @if (modelo != null)
+                        {
+                            <div class="row gx-4 gx-lg-5 align-items-center">
+                                    <div >
+                                            <div class="row">
+                                                <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                                                    @if (modelo.EmpleadorId != null)
+                                                    {
+                                                        @("EMPLEADOR NECESITA:")
+                                                    }
+                                                    else
+                                                    {
+                                                        @("EMPLEADO OFRECE:")
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12 display-5 fw-bolder">
+                                                    @modelo.Nombre
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12 lead">@modelo.Descripcion</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col col-6 text-end">Requisitos:</div>
+                                                <div class="col col-6">@modelo.Requisitos</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col col-6 text-end">COL:</div>
+                                                <div class="col col-6">$@($"{modelo.Valor:C0}")</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class ="col col-6 text-end">Tipo Contrato: </div>
+                                                <div class="col col-6">@nombrecontrato</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col col-6 text-end">Ubicación:</div>
+                                                <div class="col col-6">@modelo.Ubicacion</div>
+                                            </div>
+                                                    @if (modelo.EmpleadorId != null || modelo.EmpleadoId != null)
+                                                    {
+                                                    <div class="row">
+                                                        <div class="col col-6 text-end">Distancia :</div>
+                                                        <div class="col col-6">
+                                                            @calcula.ToString("F2") @(" Km"); 
+                                                        </div>
+                                                    </div>
+                                                    }
+                                            <div class="row">
+                                                <div class="col col-6 text-end">Fecha Hora Inicia:</div>
+                                                <div class="col-6">@modelo.FechaHoraInicio</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col col-6 text-end">Fecha Hora Finaliza:</div>
+                                                <div class="col-6">@modelo.FechaHoraFin</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col col-6 text-end">Cantidad Empleo(s) Ofrecido(s):</div>
+                                                <div class="col-6">@modelo.Cantidad</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class ="col col-6 text-end">Empleador Id:</div>
+                                                <div class="col col-6">@modelo.EmpleadorId</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col col-6 text-end">Empleado Id:</div>
+                                                <div class="col col-6">@modelo.EmpleadoId</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col col-6 text-end">Cantidad Propuestas:</div>
+                                                <div class="col col-6">@cantidadPropuestas</div>
+                                            </div>
+                                            @if (modelo.FechaHoraReProponeEmpleador != null)
+                                            {
+                                                <div class="row">
+                                                    <div class="col-6 lead text-end">Fecha Hora Re Propuesta: </div>
+                                                    <div class="col col-6">@modelo.FechaHoraReProponeEmpleador</div>
+                                                </div>
+                                            }
+                                            @if (modelo.FechaHoraRevisaEmpleador != null)
+                                            {
+                                                <div class="row">
+                                                    <div class="col-6 lead text-end">Fecha Hora Revisa Empleador:</div>
+                                                    <div class="col col-6">@modelo.FechaHoraRevisaEmpleador</div>
+                                                </div>
+                                            }
+                                            @if (modelo.FechaHoraAceptaEmpleador != null)
+                                            {
+                                                <div class="row">
+                                                    <div class="col-6 lead text-end">Fecha Hora Acepta Empleador:</div>
+                                                    <div class="col col-6 align-content-center">@modelo.FechaHoraAceptaEmpleador</div>
+                                                </div>
+                                            }
+                                            @if (modelo.Orden != null)
+                                            {
+                                                <div class="row">
+                                                    <div class="col-6 lead text-end">Orden Propuesta:</div>
+                                                    <div class="col col-6">@modelo.Orden</div>
+                                                </div>
+                                           }
+                                            <div class="row">
+                                                <div class="col-6 lead text-end">Observaciones:</div>
+                                                <div class="col col-6">@modelo.Observaciones</div>
+                                           </div>
+                                            <!-- Rest of your table rows -->
+                                    </div>
+                                    <!-- Rest of your code -->
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        }
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-6 text-end">
+                            <label class="text-end">Cantidad de Empleo(s) a Contratar : </label>
+                        </div>
+                        <div class="col-6">
+                            <input class=" form-control text-start me-3" disabled type="number" min="1" style="width:60px" @bind-value="cantidad">
+                        </div>
+                    </div>
+                <hr />
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <a class="btn btn-outline-dark flex-shrink-0" href="/propuestaempleo/@modelo.IdPropuestaEmpleo.ToString()">
+                                <i class="bi-cart-fill me-1"></i>
+                                Proponer Cambios
+                            </a>
+                            <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await AgregarCarrito(modelo))">
+                                <i class="bi-cart-fill me-1"></i>
+                                Contratar
+                            </button>
+                            <!-- Si tiene mas de 1 propuesta pone boton siguiente para verla siguente propuesta -->
+                            @if (IdAnterior != null && IdAnterior != Id)
+                            {
+                                <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await Atras((int)IdAnterior))">
+                                    <span class="oi oi-media-skip-backward"></span>
+                                    Anterior
+                                </button>
+                            }
+                            @if (IdSiguiente != null && IdSiguiente != Id)
+                            {
+                                <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await Adelante((int)IdSiguiente))">
+                                    <span class="oi oi-media-skip-forward"></span>
+                                    Siguiente
+                                </button>
+                            }
 
-                    <span>$COL /.@modelo.Valor</span>
-                </div>
-                <p class="lead">@modelo.Descripcion</p>
-                <p class="lead">Tipo Contrato : @nombrecontrato</p>
-                <p class="lead">Requisitos : @modelo.Requisitos</p>
-                <p class="lead">Ubicación : @modelo.Ubicacion</p>
-                @if (modelo.EmpleadorId != null || modelo.EmpleadoId != null)
-                {
-                    <p class="lead">
-                        Distancia : @calcula.ToString("F2") KM
-                    </p>
-                }
-                <p class="lead">Fecha Hora Inicia : @modelo.FechaHoraInicio</p>
-                <p class="lead">Fecha Hora Finaliza : @modelo.FechaHoraFin</p>
-                <p class="lead">Cantidad Empleo(s) Ofrecido(s) : @modelo.Cantidad</p>
-                <p class="lead">Empleador Id : @modelo.EmpleadorId</p>
-                <p class="lead">Empleado Id : @modelo.EmpleadoId</p>
-                <p class="lead">Cantidad Propuestas : @cantidadPropuestas</p>
-                @if (modelo.FechaHoraReProponeEmpleador != null)
-                {
-                    <p class="lead">Fecha Hora Re Propuesta : @modelo.FechaHoraReProponeEmpleador</p>
-                }
-                @if (modelo.FechaHoraRevisaEmpleador != null)
-                {
-                    <p class="lead">Fecha Hora Revisa Empleador : @modelo.FechaHoraRevisaEmpleador</p>
-                }
-                @if (modelo.FechaHoraAceptaEmpleador != null)
-                {
-                    <p class="lead">Fecha Hora Acepta Empleador : @modelo.FechaHoraAceptaEmpleador</p>
-                }
-                @if (modelo.Orden != null)
-                {
-                    <p class="lead">Orden Propuesta : @modelo.Orden</p>
-                }
-                <p class="lead">Observaciones : @modelo.Observaciones</p>
-                <div class="d-flex">
-                    <input class="form-control text-center me-3" type="number" min="1" style="width:60px" @bind-value="cantidad">
 
-                    <a class="btn btn-outline-dark flex-shrink-0" href="/propuestaempleo/@modelo.IdPropuestaEmpleo.ToString()">
-                        <i class="bi-cart-fill me-1"></i>
-                        Proponer Cambios
-                    </a>
-                    <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await AgregarCarrito(modelo))">
-                        <i class="bi-cart-fill me-1"></i>
-                        Contratar
-                    </button>
-                    <!-- Si tiene mas de 1 propuesta pone boton siguiente para verla siguente propuesta -->
-                    @if (IdAnterior != null && IdAnterior != Id)
-                    {
-                        <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await Atras((int)IdAnterior))">
-                            <span class="oi oi-media-skip-backward"></span>
-                            Anterior
-                        </button>
-                    }
-                    @if (IdSiguiente != null && IdSiguiente != Id)
-                    {
-                        <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await Adelante((int)IdSiguiente))">
-                            <span class="oi oi-media-skip-forward"></span>
-                            Siguiente
-                        </button>
-                    }
-
-
-                    <!-- Si es el creador de la Propuesta Empleo puede Borrarla, de lo contrario no aparece el boton-->
-                    @if (userId == modelo.EmpleadorId || userId == modelo.EmpleadoId)
-                    {
-                        <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await EliminarPropuesta(modelo))">
-                            <i class="oi oi-trash me-1"></i>
-                            Eliminar
-                        </button>
-                    }
-                    <a class="btn btn-outline-dark flex-shrink-0" href="/ofertasempleos">
-                        <i class="bi-cart-fill me-1"></i>
-                        Volver
-                    </a>
-                </div>
+                            <!-- Si es el creador de la Propuesta Empleo puede Borrarla, de lo contrario no aparece el boton-->
+                            @if (userId == modelo.EmpleadorId || userId == modelo.EmpleadoId)
+                            {
+                                <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await EliminarPropuesta(modelo))">
+                                    <i class="oi oi-trash me-1"></i>
+                                    Eliminar
+                                </button>
+                            }
+                            <a class="btn btn-outline-dark flex-shrink-0" href="/ofertasempleos">
+                                <i class="bi-cart-fill me-1"></i>
+                                Volver
+                            </a>
+                        </div>
+                    </div>
             </div>
         </div>
     }

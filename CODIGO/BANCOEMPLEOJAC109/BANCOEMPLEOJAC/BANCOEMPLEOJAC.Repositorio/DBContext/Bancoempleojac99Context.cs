@@ -276,10 +276,6 @@ public partial class Bancoempleojac99Context : DbContext
                 .HasForeignKey(d => d.ContratoId)
                 .HasConstraintName("FK_DetallePropuesta_Contrato");
 
-            entity.HasOne(d => d.DetallePropuestaAnterior).WithMany(p => p.InverseDetallePropuestaAnterior)
-                .HasForeignKey(d => d.DetallePropuestaAnteriorId)
-                .HasConstraintName("FK_DetallePropuesta_DetallePropuesta");
-
             entity.HasOne(d => d.PropuestaEmpleo).WithMany(p => p.DetallePropuesta)
                 .HasForeignKey(d => d.PropuestaEmpleoId)
                 .HasConstraintName("FK_DetallePropuesta_PropuestaEmpleo");

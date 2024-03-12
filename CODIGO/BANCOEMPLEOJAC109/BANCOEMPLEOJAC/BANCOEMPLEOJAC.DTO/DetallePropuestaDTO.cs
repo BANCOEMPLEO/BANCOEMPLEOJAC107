@@ -10,7 +10,6 @@ namespace BANCOEMPLEOJAC.DTO
     {
         public int IdDetallePropuesta { get; set; }
         public int? ContratoId { get; set; }
-        public int? DetallePropuestaAnteriorId { get; set; }
 
         public int? PropuestaEmpleoId { get; set; }
 
@@ -21,6 +20,9 @@ namespace BANCOEMPLEOJAC.DTO
         public decimal? Total { get; set; }
         public string? Observaciones { get; set; }
 
+        public virtual PropuestaEmpleoDTO? PropuestaEmpleo { get; set; }
+
+        public virtual PropuestaServicioDTO? PropuestaServicio { get; set; }
 
     }
 }

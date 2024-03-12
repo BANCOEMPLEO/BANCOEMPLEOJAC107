@@ -10,5 +10,6 @@ namespace BANCOEMPLEOJAC.Servicio.Contrato
     public interface IContratoServicio
     {
         Task<ContratoDTO> Registrar(string tipo, ContratoDTO modelo);
+        Task<List<ContratoDTO>> PerfilCargo(int? UserId, int? categoria, string? buscar);
     }
 }

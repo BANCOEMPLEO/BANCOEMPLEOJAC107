@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using BANCOEMPLEOJAC.DTO;
+using BANCOEMPLEOJAC.Modelo;
 
 namespace BANCOEMPLEOJAC.Servicio.Interfase
 {
@@ -12,6 +13,8 @@ namespace BANCOEMPLEOJAC.Servicio.Interfase
     {
         Task<List<PerfilCargoDTO>> Lista(int idUsuario, string buscar);
         Task<List<TipoContratoDTO>> ListaTipoContrato(string buscar);
+        Task<PerfilCargo> ConsultarPerfilCargoEnPropuestaEmpleo();
+
         Task<PerfilCargoDTO> Obtener(int id);
         Task<PerfilCargoDTO> Crear(PerfilCargoDTO modelo);
         Task<bool> Editar(PerfilCargoDTO modelo);

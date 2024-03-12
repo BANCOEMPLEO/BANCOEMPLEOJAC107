@@ -119,10 +119,15 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 var IdJAC = usuario.JacId;
                 var consulta = _modeloRepositorio.Consultar(p =>
                 p.Descripcion!.ToLower().Contains(buscar.ToLower())
-                ).Where(p => p.JacId == IdJAC).OrderBy(L => L.Descripcion);
-                
+                ////).Where(p => p.JacId == IdJAC).OrderBy(L => L.Descripcion);
+                ////).Where(p => p.IdPerfilCargo in 
+                //).OrderBy(L => L.Descripcion);
+                //).Where(p => p.JacId == IdJAC).OrderBy(L => L.Descripcion);
+                //).Where(p => p.IdPerfilCargo in 
+                ).OrderBy(L => L.Descripcion);
 
-                List<PerfilCargoDTO> lista = _mapper.Map<List<PerfilCargoDTO>>(await consulta.ToListAsync());
+
+                List< PerfilCargoDTO> lista = _mapper.Map<List<PerfilCargoDTO>>(await consulta.ToListAsync());
                 return lista;
             }
             catch (Exception ex)
@@ -132,6 +137,22 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
             }
 
         }
+
+        public async Task<PerfilCargo> ConsultarPerfilCargoEnPropuestaEmpleo()
+        {
+            PerfilCargo perfilCargo = new PerfilCargo();
+            //perfilCargo = (PerfilCargo)(from pc in PerfilCargo
+            //                            join pe in PropuestaEmpleo
+            //                               on pc.IdPerfilCargo equals pe.Empleo.PerfilCargoId
+            //                            from pec in _dbContext.PerfilCargos
+            //                            select new
+            //                            {
+            //                                pec.IdPerfilCargo,
+            //                                pec.Descripcion
+            //                            });
+            return perfilCargo;
+        }
+
 
         public async Task<List<TipoContratoDTO>> ListaTipoContrato(string buscar)
         {

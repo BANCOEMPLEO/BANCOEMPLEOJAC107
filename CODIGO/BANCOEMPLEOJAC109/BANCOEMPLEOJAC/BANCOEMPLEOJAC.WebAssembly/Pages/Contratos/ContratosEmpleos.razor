@@ -1,7 +1,207 @@
 ﻿@page "/contratosempleos"
-<h3>ContratosEmpleos</h3>
 
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IDistanciaLatLonServicio distancialatlonservicio
+@inject IContratoServicio contratoServicio
+@inject IPerfilCargoServicio perfilcargoServicio
+@inject IJacServicio jacServicio
+@inject NavigationManager _navServicio
+
+<div class="row justify-content-center mt-3 mb-4">
+
+    <div class="col-sm-6 col-md-8 col-xl-9">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Buscar Contratos..." @bind-value="buscar">
+                <button class="btn btn-outline-secondary" type="button" @onclick="(async () => await  ObtenerCatalogo())">
+                    <i class="oi oi-magnifying-glass"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3">
+        <div class="card">
+            <div class="card-header text-white bg-dark">
+                Perfiles o Cargos<br />
+                Locales : @Local<br />
+                Externos : @Externo
+            </div>
+            <div class="card-body">
+                @if (listaCategoria != null)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="categoria" id="Todos" value="0"
+                                @onchange="RadioSeleccion"
+                                checked=@(categoriaSeleccionada.Equals(0))>
+                        <label class="form-check-label" for="Todos">
+                            Todos
+                        </label>
+                    </div>
+                    @foreach (var item in listaCategoria)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="categoria" id="@item.IdPerfilCargo" value="@item.IdPerfilCargo"
+                                    @onchange="RadioSeleccion"
+                                    checked=@(categoriaSeleccionada.Equals(item.IdPerfilCargo))>
+                            <label class="form-check-label" for="@item.IdPerfilCargo">
+                                @item.Descripcion
+                            </label>
+                        </div>
+
+                    }
+                }
+                else
+                {
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+    </div>
+    <div class="col-sm-9">
+        <div class="row gx-4 row-cols-1 row-cols-md-3 row-cols-xl-4 justify-content-start">
+            @if (listaContratos != null)
+            {
+                foreach (var item in listaContratos)
+                {
+                    <div class="col mb-5">
+                        <div class="card h-100">
+
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">@item.IdContrato</h5>
+                                    <!-- Product price-->
+                                    <span>COL$ /.@item.Total</span>
+                                    <div class="text-center">
+                                        Creado como : @item.UsuarioId<h4>
+    @*                                             <u>
+                                                @if (item.EmpleadorId != null)
+                                                {
+                                                    @("Empleador")
+                                                }
+                                                else
+                                                {
+                                                    @("Empleado")
+                                                }
+                                            </u>
+    *@                                        </h4>
+                                    </div>
+    @*                                     @if (JACId == item.DetallePropuesta.PerfilCargo.JacId)
+                                    {
+                                        <div class="text-center h4">LOCAL</div>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-center h4">EXTERNO</div>
+                                        <!--Calcula la distancia entre el perfil
+                                        (latitud longitud)
+                                        y el perfil local del empleo
+                                        (latitud longitud)
+                                        -->
+                                        {
+    *@    
+       
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-3 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/contratoempleo/@item.IdContrato">Ver Detalle contrato</a></div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
 @code {
     // VOY : PONER LOS EMPLEOS CONTRATADOS EN LISTADO PARA EL USUARIO EN SESION : 11/MAR/2024 12:22AM
     // VOY : QUE SE PUEDA VER EL DETALLE DE CONTRATACIÓN : 11/MAR/2024 12:22AM
+    private List<PerfilCargoDTO>? listaCategoria = null;
+    private List<ContratoDTO>? listaContratos = null;
+    private string buscar = "";
+    private int categoriaSeleccionada = 0;
+    private int userId { get; set; }
+    private int JACId { get; set; }
+    [Parameter]
+    public int Local { get; set; } = 0;
+    [Parameter]
+    public int Externo { get; set; } = 0;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //Local = Externo = 0;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            JACId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.Locality).Value);
+        }
+        //await ObtenerLatLonLocal();
+        await ObtenerPerfilesCargos();
+        await ObtenerCatalogo();
+        StateHasChanged();
+    }
+    private async Task ObtenerPerfilesCargos(string Valor = "")
+    {
+
+        var response = await perfilcargoServicio.Lista(userId, Valor);
+        if (response.EsCorrecto)
+        {
+            listaCategoria = (List<PerfilCargoDTO>)response.Resultado!;
+        }
+        else
+        {
+            listaCategoria = new List<PerfilCargoDTO>();
+        }
+    }
+
+
+    private async Task ObtenerCatalogo()
+    {
+
+        //var response = await propuestaempleoServicio.Catalogo(categoriaSeleccionada, buscar);
+        var response = await contratoServicio.Catalogo(userId, categoriaSeleccionada, buscar);
+
+        if (response.EsCorrecto)
+        {
+            listaContratos = (List<ContratoDTO>)response.Resultado!;
+            // Local = listaProducto.Where(e => e.Empleo.PerfilCargo.JacId == JACId).Count();
+            // Externo = listaProducto.Count() - Local;
+        }
+        else
+        {
+            listaContratos = new List<ContratoDTO>();
+        }
+        StateHasChanged();
+    }
+
+    private async Task RadioSeleccion(ChangeEventArgs args)
+    {
+
+        categoriaSeleccionada = Convert.ToInt32(args.Value);
+        //buscar = "";
+        await ObtenerCatalogo();
+    }
+
+
 }

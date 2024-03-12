@@ -6,6 +6,7 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Interfase
     {
         Task<ResponseDTO<ContratoDTO>> RegistrarEmpleo(ContratoDTO modelo);
         Task<ResponseDTO<ContratoDTO>> RegistrarServicio(ContratoDTO modelo);
+        Task<ResponseDTO<List<ContratoDTO>>> Catalogo(int? UserId, int Categoria, string? buscar);
 
     }
 }

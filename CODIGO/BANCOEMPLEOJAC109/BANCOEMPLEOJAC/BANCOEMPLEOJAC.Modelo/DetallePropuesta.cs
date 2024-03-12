@@ -9,8 +9,6 @@ public partial class DetallePropuesta
 
     public int? ContratoId { get; set; }
 
-    public int? DetallePropuestaAnteriorId { get; set; }
-
     public int? PropuestaEmpleoId { get; set; }
 
     public int? PropuestaServicioId { get; set; }
@@ -24,10 +22,6 @@ public partial class DetallePropuesta
     public string? Observaciones { get; set; }
 
     public virtual Contrato? Contrato { get; set; }
-
-    public virtual DetallePropuesta? DetallePropuestaAnterior { get; set; }
-
-    public virtual ICollection<DetallePropuesta>? InverseDetallePropuestaAnterior { get; set; } = new List<DetallePropuesta>();
 
     public virtual PropuestaEmpleo? PropuestaEmpleo { get; set; }
 
