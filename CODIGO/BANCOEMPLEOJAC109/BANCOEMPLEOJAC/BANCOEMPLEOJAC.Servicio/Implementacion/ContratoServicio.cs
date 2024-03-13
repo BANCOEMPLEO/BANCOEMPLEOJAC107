@@ -72,7 +72,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         //        throw ex;
         //    }
         //}
-        public async Task<List<ContratoDTO>> PerfilCargo(int? UserId, int? categoria, string? buscar)
+        public async Task<List<ContratoDTO>> PerfilCargo(int UserId, int? categoria, string? buscar)
         {
             try
             {
@@ -92,6 +92,28 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
 
                 throw ex;
             }
+        }
+
+        public async Task<ContratoDTO> Obtener(int id)
+        {
+            try
+            {
+                var consulta = _contratoRepositorio.Consultar(p => p.IdContrato == id);
+                consulta = consulta.Include(c => c.DetallePropuesta);
+                var fromDbModelo = await consulta.FirstOrDefaultAsync();
+
+                if (fromDbModelo != null)
+                    return _mapper.Map<ContratoDTO>(fromDbModelo);
+                else
+                    throw new TaskCanceledException("No se encontraron coincidencias");
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
         }
 
 

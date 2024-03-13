@@ -10,9 +10,10 @@
 @using Microsoft.AspNetCore.Components.Authorization;
 @using System.Security.Claims;
 @inject AuthenticationStateProvider autenticacionProvider;
-<div class="container d-sm-inline-flex">
+<div class="container d-sm-inline-flex d-md-inline-flex">
 </div>
-<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-light">
+<nav class="navbar navbar-expand-sm navbar-expand-md navbar-expand-lg navbar-toggleable-s 
+navbar-toggleable-md avbar-toggleable-lg navbar-light bg-light">
 
     <div class="container">
         <div>
@@ -37,14 +38,14 @@
                     </h5>
                 </NotAuthorized>
             </AuthorizeView>
-        </div>  
+        </div>
         <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Alternar navegación" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
-  
-        <div class="@NavMenuCssClass navbar-collapse d-sm-inline-flex justify-content-between">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+
+        <div class="@NavMenuCssClass navbar-collapse d-sm-inline-flex d-md-inline-flex d-lg-inline-flex justify-content-between">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 mb-md-0 ms-lg-4">
                 <AuthorizeView Roles="1">
                     <Authorized>
                         <li class="nav-item"><NavLink class="nav-link" href="jacs"> JACS</NavLink></li>

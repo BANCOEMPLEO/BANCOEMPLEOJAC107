@@ -24,7 +24,10 @@
                         Valor Contratos
                     </div>
                     <div class="h5 mb-0 fw-bold text-muted">
-                        $COL. @dashboard.TotalIngresos
+                        @if (decimal.TryParse(dashboard.TotalIngresos, out var number))
+                        {
+                            <span> $@($"{number:N0}")</span>
+                        }
                     </div>
                 </div>
                 <div class="col-auto">

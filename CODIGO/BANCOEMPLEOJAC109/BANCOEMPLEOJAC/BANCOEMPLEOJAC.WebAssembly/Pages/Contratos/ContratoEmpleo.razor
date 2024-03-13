@@ -1,7 +1,203 @@
 ﻿@page "/contratoempleo/{ContratoId:int}"
-<h3>ContratoEmpleo Nro.@ContratoId</h3>
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IDistanciaLatLonServicio distancialatlonservicio
+@inject IContratoServicio contratoServicio
+@inject IPropuestaEmpleoServicio propuestaEServicio
+@inject IPerfilCargoServicio perfilcargoServicio
+@inject IJacServicio jacServicio
+@inject NavigationManager _navServicio
+
+<div class="row" style="margin-top:50px;">
+    <div class="col-12 text-center">
+        <h3>ContratoEmpleo Nro.@ContratoId</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col-6 text-end">
+        Por :
+    </div>
+    <div class="col-6">
+        @if (contrato.Total != null)
+        {
+            <span>$@contrato.Total.Value.ToString("N0")</span>
+        }
+    </div>
+</div>
+<div class="row">
+    <div class="col-6 text-end">
+        Fecha Hora Contrato:
+    </div>
+    <div class="col-6">
+        @if (contrato.FechaCreacion != null)
+        {
+            <span>@contrato.FechaCreacion.Value.ToString("F")</span>
+        }
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 text-center">
+        <h3>Detalle Empleo:</h3>
+    </div>
+</div>
+@if (listadp != null)
+{
+    foreach (var item in listadp)
+    {
+        @if (listape != null)
+        {
+            foreach (var itempe in listape)
+            {
+                  if (item.PropuestaEmpleoId == itempe.IdPropuestaEmpleo)
+                {
+                    <div class="row">
+                        <div class="col-6 text-end">
+                            <h3>Empleo Nro:</h3>
+                        </div>
+                        <div class="col-6">
+                            @if (itempe.IdPropuestaEmpleo != null)
+                            {
+                                <span><h3>@itempe.IdPropuestaEmpleo</h3></span>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 text-end">
+                            Nombre
+                        </div>
+                        <div class="col-6">
+                            @if (itempe.Nombre != null)
+                            {
+                                <span>@itempe.Nombre</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 text-end">
+                            Descripcion
+                        </div>
+                        <div class="col-6">
+                            @if (itempe.Descripcion != null)
+                            {
+                                <span>@itempe.Descripcion</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 text-end">
+                            Requisitos
+                        </div>
+                        <div class="col-6">
+                            @if (itempe.Requisitos != null)
+                            {
+                                <span>@itempe.Requisitos</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 text-end">
+                            Fecha Hora Inicia:
+                        </div>
+                        <div class="col-6">
+                            @if (itempe.FechaHoraInicio != null)
+                            {
+                                <span>@itempe.FechaHoraInicio.Value.ToString("F")</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 text-end">
+                            Fecha Hora Finaliza:
+                        </div>
+                        <div class="col-6">
+                            @if (itempe.FechaHoraFin != null)
+                            {
+                                <span>@itempe.FechaHoraFin.Value.ToString("F")</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 text-end">
+                            Cantidad Empleo(s) :
+                        </div>
+                        <div class="col-6">
+                            @if (itempe.Cantidad != null)
+                            {
+                                <span>@itempe.Cantidad.Value.ToString("N0")</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 text-end">
+                            Valor Empleo:
+                        </div>
+                        <div class="col-6">
+                            @if (itempe.Valor != null)
+                            {
+                                <span>$@itempe.Valor.Value.ToString("N0")</span>
+                            }
+                        </div>
+                    </div>
+
+                }
+              
+            }
+        }
+        
+    }
+  
+}
+
 
 @code {
     [Parameter]
     public int ContratoId { get; set; }
+    private int userId { get; set; }
+    private int JACId { get; set; }
+    private ContratoDTO contrato = new ContratoDTO();
+    private List<DetallePropuestaDTO> listadp = new List<DetallePropuestaDTO>();
+    private List<PropuestaEmpleoDTO> listape = new List<PropuestaEmpleoDTO>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        //Local = Externo = 0;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            JACId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.Locality).Value);
+        }
+        //await ObtenerLatLonLocal();
+        await ObtenerContrato(ContratoId);
+    }
+    private async Task ObtenerContrato(int Contrato)
+    {
+
+        var response = await contratoServicio.Obtener(Contrato);
+        if (response.EsCorrecto)
+        {
+            contrato = (ContratoDTO)response.Resultado!;
+            listadp = contrato.DetallePropuesta.Where(dp => dp.ContratoId == contrato.IdContrato).ToList(); 
+            foreach (var item in listadp)
+            {
+                var responsepe = await propuestaEServicio.Obtener(item.PropuestaEmpleoId.Value);
+                if (responsepe.EsCorrecto)
+                {
+                    listape.Add(responsepe.Resultado);
+                }
+            }
+        }
+        else
+        {
+            contrato = new ContratoDTO();
+        }
+        StateHasChanged();
+    }
+
 }

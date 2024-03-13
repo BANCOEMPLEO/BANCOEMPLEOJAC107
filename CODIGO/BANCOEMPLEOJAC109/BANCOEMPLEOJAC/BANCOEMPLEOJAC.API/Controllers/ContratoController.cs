@@ -100,5 +100,23 @@ namespace BANCOEMPLEOJAC.API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("Obtener/{id:int}")]
+        public async Task<IActionResult> Obtener(int id)
+        {
+            var response = new ResponseDTO<ContratoDTO>();
+
+            try
+            {
+                response.EsCorrecto = true;
+                response.Resultado = await _contratoServicio.Obtener(id);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
     }
 }

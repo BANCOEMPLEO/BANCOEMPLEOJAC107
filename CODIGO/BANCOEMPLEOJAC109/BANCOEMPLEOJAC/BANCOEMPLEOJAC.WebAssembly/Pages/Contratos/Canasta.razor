@@ -41,18 +41,18 @@
                                         <td valign="middle">@item.Precio</td>
                                         <td valign="middle" align="center">
                                             <div class="btn-group" role="group">
-                                                <button type="button" class="btn btn-outline-dark" @onclick="(() =>Disminuir((int)item.propuestaEmpleo.IdPropuestaEmpleo))">
+               <button type="button" class="btn btn-outline-dark" @onclick="(() =>Disminuir((int)item.propuestaEmpleo.IdPropuestaEmpleo))">
                                                     <i class="oi oi-minus"></i>
                                                 </button>
                                                 <input class="form-control" readonly="readonly" style="width:50px" @bind-value="item.Cantidad" />
-                                                <button type="button" class="btn btn-outline-dark" @onclick="(() =>Aumentar((int)item.propuestaEmpleo.IdPropuestaEmpleo))">
+               <button type="button" class="btn btn-outline-dark" @onclick="(() =>Aumentar((int)item.propuestaEmpleo.IdPropuestaEmpleo))">
                                                     <i class="oi oi-plus"></i>
                                                 </button>
                                             </div>
                                         </td>
                                         <td valign="middle">@item.Total</td>
                                         <td valign="middle">
-                                            <button type="button" class="btn btn-outline-dark" @onclick="(async () => await Eliminar((int)item.propuestaEmpleo.IdPropuestaEmpleo))">
+           <button type="button" class="btn btn-outline-dark" @onclick="(async () => await Eliminar((int)item.propuestaEmpleo.IdPropuestaEmpleo))">
                                                 <i class="oi oi-trash"></i>
                                             </button>
                                         </td>
@@ -267,9 +267,9 @@
                 DetallePropuesta = detalle
             };
 
-        var response = await contratoServicio.RegistrarEmpleo(modelo);
+        var response2 = await contratoServicio.RegistrarEmpleo(modelo);
 
-        if (response.EsCorrecto)
+        if (response2.EsCorrecto)
         {
             await carritoServicio.LimpiarCarrito();
             toastService.ShowSuccess("El contrato ha sido registrado");
@@ -277,7 +277,7 @@
         }
         else
         {
-            toastService.ShowError(response.Mensaje);
+            toastService.ShowError(response2.Mensaje);
         }
     }
 

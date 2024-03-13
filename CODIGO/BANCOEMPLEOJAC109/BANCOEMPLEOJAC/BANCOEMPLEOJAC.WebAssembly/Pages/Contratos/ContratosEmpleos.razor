@@ -7,6 +7,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IDistanciaLatLonServicio distancialatlonservicio
 @inject IContratoServicio contratoServicio
+@inject IPropuestaEmpleoServicio propuestaEServicio
 @inject IPerfilCargoServicio perfilcargoServicio
 @inject IJacServicio jacServicio
 @inject NavigationManager _navServicio
@@ -79,38 +80,12 @@
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <!-- Product name-->
-                                    <h5 class="fw-bolder">@item.IdContrato</h5>
+                                    <h5 class="fw-bolder">Contrato No. @item.IdContrato</h5>
                                     <!-- Product price-->
-                                    <span>COL$ /.@item.Total</span>
-                                    <div class="text-center">
-                                        Creado como : @item.UsuarioId<h4>
-    @*                                             <u>
-                                                @if (item.EmpleadorId != null)
-                                                {
-                                                    @("Empleador")
-                                                }
-                                                else
-                                                {
-                                                    @("Empleado")
-                                                }
-                                            </u>
-    *@                                        </h4>
-                                    </div>
-    @*                                     @if (JACId == item.DetallePropuesta.PerfilCargo.JacId)
-                                    {
-                                        <div class="text-center h4">LOCAL</div>
-                                    }
-                                    else
-                                    {
-                                        <div class="text-center h4">EXTERNO</div>
-                                        <!--Calcula la distancia entre el perfil
-                                        (latitud longitud)
-                                        y el perfil local del empleo
-                                        (latitud longitud)
-                                        -->
-                                        {
-    *@    
-       
+                                    <span>Por : $@item.Total.Value.ToString("N0")</span>
+                                </div>
+                                <div class="text-center">
+                                    <span>En Fecha Hora: @item.FechaCreacion</span>
                                 </div>
                             </div>
                             <!-- Product actions-->
@@ -135,6 +110,8 @@
     // VOY : QUE SE PUEDA VER EL DETALLE DE CONTRATACIÓN : 11/MAR/2024 12:22AM
     private List<PerfilCargoDTO>? listaCategoria = null;
     private List<ContratoDTO>? listaContratos = null;
+    private List<DetallePropuestaDTO>? listaDetalle = null;
+    private List<PropuestaEmpleoDTO>? listaPropuestas = null;
     private string buscar = "";
     private int categoriaSeleccionada = 0;
     private int userId { get; set; }
@@ -181,10 +158,26 @@
 
         //var response = await propuestaempleoServicio.Catalogo(categoriaSeleccionada, buscar);
         var response = await contratoServicio.Catalogo(userId, categoriaSeleccionada, buscar);
+        var responsePE = await propuestaEServicio.Lista("NA");
 
         if (response.EsCorrecto)
         {
             listaContratos = (List<ContratoDTO>)response.Resultado!;
+
+            if (responsePE.EsCorrecto)
+            {
+                listaPropuestas = (List<PropuestaEmpleoDTO>)responsePE.Resultado;
+            }
+            // foreach (var itemC in listaContratos)
+            // {
+            //     foreach (var itemD in itemC.DetallePropuesta)
+            //     {
+            //         PropuestaEmpleoDTO propuestaEmpleoDTO = new PropuestaEmpleoDTO();
+            //         propuestaEmpleoDTO = listaPropuestas.Where(pe => pe.IdPropuestaEmpleo == itemD.PropuestaEmpleoId).FirstOrDefault();
+            //         itemC.DetallePropuesta.Add(propuestaEmpleoDTO) propuestaEmpleoDTO);
+            //     }
+                
+            // }
             // Local = listaProducto.Where(e => e.Empleo.PerfilCargo.JacId == JACId).Count();
             // Externo = listaProducto.Count() - Local;
         }

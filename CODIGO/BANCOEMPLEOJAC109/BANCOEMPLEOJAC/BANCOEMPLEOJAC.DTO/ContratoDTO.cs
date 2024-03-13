@@ -13,6 +13,8 @@ namespace BANCOEMPLEOJAC.DTO
         public int? UsuarioId { get; set; }
 
         public decimal? Total { get; set; }
+        public DateTime? FechaCreacion { get; set; }
+
 
         public virtual ICollection<DetallePropuestaDTO> DetallePropuesta { get; set; } = new List<DetallePropuestaDTO>();
     }

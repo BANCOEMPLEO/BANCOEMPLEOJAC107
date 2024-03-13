@@ -29,5 +29,10 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
         {
             return await _httpClient.GetFromJsonAsync<ResponseDTO<List<ContratoDTO>>>($"Contrato/Catalogo/{UserId}/{Categoria}/{buscar}");
         }
+
+        public async Task<ResponseDTO<ContratoDTO>> Obtener(int id)
+        {
+            return await _httpClient.GetFromJsonAsync<ResponseDTO<ContratoDTO>>($"Contrato/Obtener/{id}");
+        }
     }
 }
