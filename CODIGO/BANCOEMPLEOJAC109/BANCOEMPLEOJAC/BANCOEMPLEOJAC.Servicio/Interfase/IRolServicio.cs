@@ -9,6 +9,6 @@ namespace BANCOEMPLEOJAC.Servicio.Interfase
 {
     public interface IRolServicio
     {
-        Task<List<RolDTO>> Lista(string buscar);
+        Task<List<RolDTO>> Lista(int UsuarioId, string buscar);
     }
 }

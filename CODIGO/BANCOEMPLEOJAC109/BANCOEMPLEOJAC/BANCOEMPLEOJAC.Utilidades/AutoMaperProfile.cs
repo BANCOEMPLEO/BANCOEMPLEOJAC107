@@ -38,8 +38,8 @@ namespace BANCOEMPLEOJAC.Utilidades
                 opt => opt.Ignore()).ForMember(destino =>
                 destino.Empleador,
                 opt => opt.Ignore());//.ForMember(destino =>
-                //destino.Numero.PropuestaEmpleos,
-                //opt => opt.Ignore()); 
+                                     //destino.Numero.PropuestaEmpleos,
+                                     //opt => opt.Ignore()); 
 
 
             CreateMap<Servicio, ServicioDTO>();
@@ -51,7 +51,7 @@ namespace BANCOEMPLEOJAC.Utilidades
             CreateMap<PerfilCargo, PerfilCargoDTO>();
             CreateMap<PerfilCargoDTO, PerfilCargo>().ForMember(destino =>
                 destino.IdActividadEconomicaNavigation,
-                opt => opt.Ignore()).ForMember(destino => 
+                opt => opt.Ignore()).ForMember(destino =>
                 destino.IdTipoContratoNavigation,
                 opt => opt.Ignore());
 
@@ -73,13 +73,13 @@ namespace BANCOEMPLEOJAC.Utilidades
 
             CreateMap<PropuestaEmpleo, PropuestaEmpleoDTO>();
             CreateMap<PropuestaEmpleoDTO, PropuestaEmpleo>().ForMember(destino =>
-                                                             destino.Empleo,
-                                                             opt => opt.Ignore()).ForMember(destino =>
                                                              destino.Empleado,
                                                              opt => opt.Ignore()).ForMember(destino =>
                                                              destino.Empleador,
                                                              opt => opt.Ignore()).ForMember(destino =>
                                                              destino.PropuestaEmpleoAnterior,
+                                                             opt => opt.Ignore()).ForMember(destino =>
+                                                             destino.DetallePropuesta,
                                                              opt => opt.Ignore());
 
             CreateMap<PropuestaEmpleo, PropuestaEmpleo2DTO>();
@@ -88,15 +88,29 @@ namespace BANCOEMPLEOJAC.Utilidades
             //CreateMap<PropuestaEmpleo, PropuestaEmpleoDTO>();
             //CreateMap<PropuestaEmpleoDTO, PropuestaEmpleo>();
 
-            CreateMap<PropuestaServicioDTO, PropuestaServicio>();
             CreateMap<PropuestaServicio, PropuestaServicioDTO>();
+            CreateMap<PropuestaServicioDTO, PropuestaServicio>();
             //CreateMap<PropuestaEmpleoDTO, PropuestaEmpleo>().ForMember(destino =>
             //     destino.IdPropuestaEmpleo,
             //     opt => opt.Ignore()
             // );
 
-            CreateMap<DetallePropuesta, DetallePropuestaDTO>();
-            CreateMap<DetallePropuestaDTO, DetallePropuesta>();
+            CreateMap<DetallePropuesta, DetallePropuestaDTO>().ForMember(destino =>
+                                                             destino.PropuestaEmpleo,
+                                                             opt => opt.Ignore()).ForMember(destino =>
+                                                             destino.PropuestaServicio,
+                                                             opt => opt.Ignore()); ;
+            CreateMap<DetallePropuestaDTO, DetallePropuesta>().ForMember(destino =>
+                                                             destino.PropuestaEmpleo,
+                                                             opt => opt.Ignore()).ForMember(destino =>
+                                                             destino.PropuestaServicio,
+                                                             opt => opt.Ignore());
+            CreateMap<DetallePropuesta, DetallePropuestaDTO2>();
+            CreateMap<DetallePropuestaDTO2, DetallePropuesta>().ForMember(destino =>
+                                                             destino.PropuestaEmpleo,
+                                                             opt => opt.Ignore()).ForMember(destino =>
+                                                             destino.PropuestaServicio,
+                                                             opt => opt.Ignore());
 
             CreateMap<Contrato, ContratoDTO>();
             CreateMap<ContratoDTO, Contrato>();

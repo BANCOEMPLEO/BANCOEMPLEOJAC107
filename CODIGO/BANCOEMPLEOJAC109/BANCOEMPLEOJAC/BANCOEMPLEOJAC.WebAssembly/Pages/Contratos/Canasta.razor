@@ -244,11 +244,11 @@
             toastService.ShowWarning("No se encontraron Productos");
             return;
         }
-        List<DetallePropuestaDTO> detalle = new List<DetallePropuestaDTO>();
+        List<DetallePropuestaDTO2> detalle = new List<DetallePropuestaDTO2>();
 
         foreach (var item in lista)
         {
-            detalle.Add(new DetallePropuestaDTO()
+            detalle.Add(new DetallePropuestaDTO2()
                 {
                     PropuestaEmpleoId = item.propuestaEmpleo.IdPropuestaEmpleo,
                     Cantidad = item.Cantidad,
@@ -272,8 +272,8 @@
         if (response2.EsCorrecto)
         {
             await carritoServicio.LimpiarCarrito();
-            toastService.ShowSuccess("El contrato ha sido registrado");
-            _navServicio.NavigateTo("/ofertasempleos");
+            toastService.ShowSuccess("El contrato ha sido registrado, puede verlo en la Página redigida.");
+            _navServicio.NavigateTo("/contratosempleos");
         }
         else
         {

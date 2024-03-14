@@ -8,6 +8,9 @@
 @inject IRolServicio rolServicio
 @inject IToastService toastService
 @inject SweetAlertService Swal
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider autenticacionProvider;
 
 @attribute [Authorize(Roles = "1,2,3,4")]
 
@@ -64,7 +67,7 @@
                             <p class="m-1"><b>Nombre: </b>@item.Nombres</p>
                             <p class="m-1"><b>Apellidos: </b>@item.Apellidos</p>
                             <p class="m-1"><b>Correo: </b>@item.Correo</p>
-                            <p class="m-1 fw-bold justify-content-center"><b>Rol: </b>@listaRol.Where(u => u.IdRol == item.Rol).FirstOrDefault().Nombre</p>
+                            <p class="m-1 fw-bold justify-content-center"><b>Rol: </b>@listaRol.Where(u => u.IdRol == item.Rol).FirstOrDefault().Nombre </p>
                         </div>
                     </div>
                     <div class="card-footer bg-transparent">
@@ -91,29 +94,31 @@
     // POR HACER : QUE LOS USUARIOS ADMINISTRADORES SOLO PUEDAN VER LOS USUARIOS ADMINISTRADORES Y OTROS MAYORES DEL ROL AL QUE PERTENECEN 23/FEB/2024 2:00PM
 
     [Parameter]
-    public int IdRol { get; set; } = 5;
+    public int IdRol { get; set; } = 6;
     [Parameter]
     public List<RolDTO>? listaRol { get; set; } = null;
     private List<UsuarioDTO>? lista = null;
     private string buscar = "";
     private bool clientes = false;
+    private int UsuarioId;
+    private int RolId;
 
-    private async Task ObtenerUsuarios(int IdRol = 0,string Valor = "")
+    protected override async Task OnInitializedAsync()
     {
-        var response = await usuarioServicio.Lista(IdRol, Valor);
+        var authState = await autenticacionProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
-        if (response.EsCorrecto!)
-        {
-            lista = (List<UsuarioDTO>)response.Resultado!;
-        }
-        else
-        {
-            lista = new List<UsuarioDTO>();
-        }
+        UsuarioId = Convert.ToInt32(user.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault().ToString());
+        RolId = Convert.ToInt32(user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).SingleOrDefault().ToString());
+
+
+        await ObtenerRoles();
+        await ObtenerUsuarios();
     }
+
     private async Task ObtenerRoles(string Valor = "")
     {
-        var response = await rolServicio.Lista(Valor);
+        var response = await rolServicio.Lista(UsuarioId, Valor);
 
         if (response.EsCorrecto!)
         {
@@ -124,16 +129,28 @@
             listaRol = new List<RolDTO>();
         }
     }
-    protected override async Task OnInitializedAsync()
+
+    private async Task ObtenerUsuarios(int idRol = 0, string Valor = "NA")
     {
-        await ObtenerRoles();
-        await ObtenerUsuarios();
+        if (String.IsNullOrEmpty(Valor)) Valor = "NA";
+        var response = await usuarioServicio.Lista(idRol, Valor, RolId);
+
+        if (response.EsCorrecto!)
+        {
+            lista = (List<UsuarioDTO>)response.Resultado!;
+        }
+        else
+        {
+            lista = new List<UsuarioDTO>();
+        }
     }
+
     void CambiarRoles(ChangedEventArgs e)
     {
         IdRol = Convert.ToInt32(e.NewValue.ToString());
 
     }
+
     private async Task Eliminar(UsuarioDTO modelo)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions

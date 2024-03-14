@@ -16,6 +16,6 @@ namespace BANCOEMPLEOJAC.DTO
         public DateTime? FechaCreacion { get; set; }
 
 
-        public virtual ICollection<DetallePropuestaDTO> DetallePropuesta { get; set; } = new List<DetallePropuestaDTO>();
+        public virtual ICollection<DetallePropuestaDTO2>? DetallePropuesta { get; set; } = new List<DetallePropuestaDTO2>();
     }
 }

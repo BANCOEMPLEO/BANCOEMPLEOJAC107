@@ -12,9 +12,9 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
             _httpClient = httpClient;
         }
 
-        public async Task<ResponseDTO<List<RolDTO>>> Lista(string buscar)
+        public async Task<ResponseDTO<List<RolDTO>>> Lista(int UsuarioId, string buscar)
         {
-            return await _httpClient.GetFromJsonAsync<ResponseDTO<List<RolDTO>>>($"Rol/Lista/{buscar}");
+            return await _httpClient.GetFromJsonAsync<ResponseDTO<List<RolDTO>>>($"Rol/Lista/{UsuarioId}/{buscar}");
         }
     }
 }

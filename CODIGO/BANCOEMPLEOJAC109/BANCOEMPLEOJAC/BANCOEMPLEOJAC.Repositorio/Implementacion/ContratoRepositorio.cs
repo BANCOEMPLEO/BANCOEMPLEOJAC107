@@ -31,7 +31,7 @@ namespace BANCOEMPLEOJAC.Repositorio.Implementacion
                         if(tipo == "Empleo")
                         {
                             // quita de propuestaEmpleo la cantidad contratada
-                            PropuestaEmpleo propuestaEmpleo_encontrado = _dbContext.PropuestaEmpleos.Where(p => p.IdPropuestaEmpleo == dp.PropuestaEmpleoId).First();
+                            PropuestaEmpleo propuestaEmpleo_encontrado = _dbContext.PropuestaEmpleos.Where(p => p.IdPropuestaEmpleo == dp.PropuestaEmpleoId).FirstOrDefault();
 
                             propuestaEmpleo_encontrado.Cantidad = propuestaEmpleo_encontrado.Cantidad - dp.Cantidad;
                             propuestaEmpleo_encontrado.Aceptada = true;

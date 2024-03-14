@@ -10,6 +10,11 @@
 @inject IToastService toastService
 @inject NavigationManager _navServicio
 @inject IJacServicio _jacServicio
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider autenticacionProvider;
+
+
 @attribute [Authorize(Roles = "1,2,3,4,5")]
 
 
@@ -134,6 +139,7 @@
     [Parameter]
     public List<RolDTO>? listaRol { get; set; } = null;
     private List<JacDTO> listaJac = new List<JacDTO>();
+    private int UsuarioId;
 
     private string Titulo = "Nuevo Usuario";
     private string boton = "Crear";
@@ -141,6 +147,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await autenticacionProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        UsuarioId = Convert.ToInt32(user.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault().ToString());
+
         try
         {
             modelo.Clave = "";
@@ -192,7 +203,7 @@
 
     private async Task ObtenerRoles(string Valor = "")
     {
-        var response = await rolServicio.Lista(Valor);
+        var response = await rolServicio.Lista(UsuarioId, Valor);
 
         if (response.EsCorrecto!)
         {

@@ -54,7 +54,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 modelo.Clave = Encrypt.GetSHA256(modelo.Clave);
                 if (modelo.Rol == null)
                 { 
-                    modelo.Rol = 5; 
+                    modelo.Rol = 6; 
                 };
                 var dbModelo = _mapper.Map<Usuario>(modelo);
                 var rspModelo = await _modeloRepositorio.Crear(dbModelo);
@@ -136,19 +136,29 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
 
         }
 
-        public async Task<List<UsuarioDTO>> Lista(int rol, string buscar)
+        public async Task<List<UsuarioDTO>> Lista(int rol, string buscar, int RolId = 0)
         {
             try
             {
                 var consulta = _modeloRepositorio.Consultar();
                 if (rol != 0) {
+                    if (rol < RolId)
+                    {
+                        rol = RolId;
+                    }
                     consulta = consulta.Where(p =>
                     p.Rol == rol &&
                     string.Concat(p.Nombres.ToLower(), p.Apellidos.ToLower(), p.Correo.ToLower()).Contains(buscar.ToLower()));
                 }
                 else
                 {
+                    if (rol < RolId)
+                    {
+                        rol = RolId;
+                    }
+
                     consulta = consulta.Where(p =>
+                    p.Rol >= rol &&
                     string.Concat(p.Nombres.ToLower(), p.Apellidos.ToLower(), p.Correo.ToLower()).Contains(buscar.ToLower()));
 
                 };

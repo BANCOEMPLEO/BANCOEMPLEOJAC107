@@ -47,31 +47,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 throw ex;
             }
         }
-        // VOY : Haciendo lista de contratos por uuario : 11/MAR/2024 3:50AM
-        //public async Task<List<ContratoDTO>> Listar(int? tipo, string buscar)
-        //{
-        //    try
-        //    {
-        //        var consulta = _modeloRepositorio.Consultar();
-        //        if (tipo.HasValue)
-        //        {
-        //            consulta = consulta.Where(p =>
-        //            p.UsuarioId == tipo.Value);
-        //        }
-        //        if (!string.IsNullOrEmpty(buscar))
-        //        {
-        //            consulta = consulta.Where(p =>
-        //            p.DetallePropuesta.Any(b => b.Observaciones.ToLower().Contains(buscar.ToLower())));
-        //        }
-
-        //        List<ContratoDTO> lista = _mapper.Map<List<ContratoDTO>>(await consulta.ToListAsync());
-        //        return lista;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
+        // HECHO : Haciendo lista de contratos por uuario : 11/MAR/2024 3:50AM : FIN : 13/MAR/2024 6:51PM 
         public async Task<List<ContratoDTO>> PerfilCargo(int UserId, int? categoria, string? buscar)
         {
             try

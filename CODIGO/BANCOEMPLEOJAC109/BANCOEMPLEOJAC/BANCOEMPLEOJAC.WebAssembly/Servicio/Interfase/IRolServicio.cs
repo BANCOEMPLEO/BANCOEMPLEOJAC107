@@ -4,7 +4,7 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Interfase
 {
     public interface IRolServicio
     {
-        Task<ResponseDTO<List<RolDTO>>> Lista(string buscar);
+        Task<ResponseDTO<List<RolDTO>>> Lista(int UsuarioId, string buscar);
 
     }
 }
