@@ -27,12 +27,12 @@
         <EditForm Model="modelo" OnValidSubmit="GuardarCambios">
             <DataAnnotationsValidator></DataAnnotationsValidator>
             <div class="input-group mt-3">
-                <span class="input-group-text bg-light">Descripción</span>
+                <span class="input-group-text bg-light">Descripción:</span>
                 <input type="text" class="form-control" @bind-value="modelo.Descripcion">
             </div>
             <ValidationMessage For="@(()=>modelo.Descripcion)" />
             <div class="input-group mt-3">
-                <span class="input-group-text bg-light">Tipo Contrato</span>
+                <span class="input-group-text bg-light">Tipo Contrato:</span>
 
                 <select class="form-control" @bind-value="modelo.IdTipoContrato" @bind-value:event="onchange">
                     @if (listaTipoContrato != null)
@@ -52,12 +52,12 @@
                 </select>
             </div>
             <div class="input-group mt-3">
-                <span class="input-group-text bg-light">Requisitos</span>
+                <span class="input-group-text bg-light">Requisitos:</span>
                 <input type="text" class="form-control" @bind-value="modelo.Requisitos">
             </div>
             <ValidationMessage For="@(()=>modelo.Requisitos)" />
             <div class="input-group mt-3">
-                <span class="input-group-text bg-light">Valor Acumulado</span>
+                <span class="input-group-text bg-light">Valor Promedio Pago:</span>
                 <input type="text" class="form-control" @bind-value="modelo.Compensacion">
             </div>
             <div class="input-group mt-3">
@@ -65,23 +65,23 @@
                 <select class="form-control" @bind="@modelo.IdActividadEconomica">
                     @foreach (var item in listActividadEconomica)
                     {
-                        <option value="@item.IdActividad">@item.Descripcion</option>
+                        <option value="@item.IdActividad">@item.Descripcion:</option>
                     }
                 </select>
             </div>
             <div class="input-group mt-3 text-center">
-                <span class="input-group-text bg-light">JAC</span>
+                <span class="input-group-text bg-light">JAC:</span>
                 <input type="text" class="form-control" disabled value=@jac.Nombre />
             </div>
             <div class="input-group mt-3">
-                <span class="input-group-text bg-light">Observaciones</span>
+                <span class="input-group-text bg-light">Observaciones:</span>
                 <input type="text" class="form-control" @bind-value="modelo.Observaciones">
             </div>
             <ValidationMessage For="@(()=>modelo.Observaciones)" />
 
             <div class="mt-3">
                 <button type="submit" class="btn btn-primary" style="width:130px">@boton</button>
-                <a href="/categorias" class="btn btn-secondary" style="width:130px">Volver</a>
+                <a href="/empleo" class="btn btn-secondary" style="width:130px">Volver</a>
             </div>
         </EditForm>
 

@@ -15,10 +15,14 @@ namespace BANCOEMPLEOJAC.API.Controllers
         {
             _usuarioServicio = usuarioServicio;
         }
-        [HttpGet("Lista/{rol?}/{buscar?}/{RolId:int}")]
-        public async Task<IActionResult> Lista(int rol, string buscar = "NA", int RolId = 0)
+        [HttpGet("Lista/{rol?}/{buscar?}/{UsuarioId:int}")]
+        public async Task<IActionResult> Lista(int rol, string buscar = "NA", int UsuarioId = 0)
         {
             var response = new ResponseDTO<List<UsuarioDTO>>();
+
+            var usuario = await _usuarioServicio.Obtener(UsuarioId);
+            int RolId = (int)usuario.Rol;
+            int JacId = (int)usuario.JacId;
 
             try
             {
@@ -29,7 +33,7 @@ namespace BANCOEMPLEOJAC.API.Controllers
                 if (buscar == "NA") buscar = "";
 
                 response.EsCorrecto = true;
-                response.Resultado = await _usuarioServicio.Lista(rol, buscar, RolId);
+                response.Resultado = await _usuarioServicio.Lista(rol, buscar, RolId, JacId);
             }
             catch (Exception ex)
             {

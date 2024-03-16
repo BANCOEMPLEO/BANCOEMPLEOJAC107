@@ -179,7 +179,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
             try
             {
                 var consulta = _modeloRepositorio.Consultar(p =>
-                p.Nombre.ToLower().Contains(buscar.ToLower()));
+                p.Nombre.ToLower().Contains(buscar.ToLower())).OrderBy(j => j.Nombre);
                 
 
                 List<JacDTO> lista = _mapper.Map<List<JacDTO>>(await consulta.ToListAsync());
@@ -196,7 +196,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         {
             try
             {
-                if (buscar == "")
+                if (buscar == "NA" || !buscar.Any())
                 {
                     var consulta = _zonaveredaRepositorio.Consultar().OrderBy(z => z.Nombre);
 
@@ -223,12 +223,12 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         {
             try
             {
-                if (buscar == "")
+                if (buscar == "NA" || !buscar.Any() )
                 {
                     var consulta = _municipioRepositorio.Consultar().OrderBy(r => r.Nombre);
 
                     List<MunicipioDTO> lista = _mapper.Map<List<MunicipioDTO>>(await consulta.ToListAsync());
-                    return lista;
+                    return lista.OrderBy(r => r.Nombre).ToList();
                 }
                 else
                 {
@@ -250,7 +250,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         {
             try
             {
-                if (buscar == "")
+                if (buscar == "NA" || !buscar.Any())
                 {
                     var consulta = _regionRepositorio.Consultar().OrderBy(r => r.Nombre);
 
@@ -277,7 +277,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
         {
             try
             {
-                if (buscar == "" || buscar == "NA")
+                if (buscar == "NA" || !buscar.Any())
                 {
                     var consulta = _departamentoRepositorio.Consultar().Where(pa => pa.IdPais == "COL").OrderBy(p => p.Nombre);
 

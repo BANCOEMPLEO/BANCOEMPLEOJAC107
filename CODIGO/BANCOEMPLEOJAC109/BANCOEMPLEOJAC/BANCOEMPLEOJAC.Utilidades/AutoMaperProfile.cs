@@ -18,9 +18,9 @@ namespace BANCOEMPLEOJAC.Utilidades
             CreateMap<ActividadEconomica, ActividadEconomicaDTO>();
             CreateMap<ActividadEconomicaDTO, ActividadEconomica>();
 
-            CreateMap<Usuario, UsuarioDTO>();
+            CreateMap<Usuario, UsuarioDTO>().ForMember(dest => dest.Jac, opt => opt.Ignore()); ;
             CreateMap<Usuario, SesionDTO>();
-            //CreateMap<Usuario, SesionDTO>().ForMember(dest => dest.Jac, opt => opt.Ignore());
+           // CreateMap<Usuario, SesionDTO>();/
             CreateMap<UsuarioDTO, Usuario>();
             CreateMap<UsuarioEditaDTO, Usuario>();
             CreateMap<UsuarioEditaDTO, UsuarioDTO>();

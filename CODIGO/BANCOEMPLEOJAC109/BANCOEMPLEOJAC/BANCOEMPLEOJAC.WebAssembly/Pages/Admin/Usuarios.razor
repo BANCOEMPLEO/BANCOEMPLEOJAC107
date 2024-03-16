@@ -12,7 +12,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider autenticacionProvider;
 
-@attribute [Authorize(Roles = "1,2,3,4")]
+@attribute [Authorize(Roles = "1,2,3,4,5")]
 
 <div class="row justify-content-center  mt-3">
     <div class="col-sm-6 col-md-4 col-xl-3 mb-4">
@@ -91,7 +91,7 @@
 
 </div>
 @code {
-    // POR HACER : QUE LOS USUARIOS ADMINISTRADORES SOLO PUEDAN VER LOS USUARIOS ADMINISTRADORES Y OTROS MAYORES DEL ROL AL QUE PERTENECEN 23/FEB/2024 2:00PM
+    // HECHO : QUE LOS USUARIOS ADMINISTRADORES SOLO PUEDAN VER LOS USUARIOS ADMINISTRADORES Y OTROS MAYORES DEL ROL AL QUE PERTENECEN 23/FEB/2024 2:00PM : FIN 15/MAR2024 1:25PM
 
     [Parameter]
     public int IdRol { get; set; } = 6;
@@ -133,7 +133,7 @@
     private async Task ObtenerUsuarios(int idRol = 0, string Valor = "NA")
     {
         if (String.IsNullOrEmpty(Valor)) Valor = "NA";
-        var response = await usuarioServicio.Lista(idRol, Valor, RolId);
+        var response = await usuarioServicio.Lista(idRol, Valor, UsuarioId);
 
         if (response.EsCorrecto!)
         {

@@ -11,6 +11,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IPropuestaEmpleoServicio propuestaEmpleoServicio
 @inject IPerfilCargoServicio perfilcargoServicio
+@inject IUsuarioServicio usuarioServicio
 @inject ICarritoServicio carritoServicio
 @inject NavigationManager navigate
 @inject IToastService toastService
@@ -50,6 +51,7 @@
                                             <div class="row">
                                                 <div class="col-12 lead">@modelo.Descripcion</div>
                                             </div>
+                                            <hr />
                                             <div class="row">
                                                 <div class="col col-6 text-end">Requisitos:</div>
                                                 <div class="col col-6">@modelo.Requisitos</div>
@@ -88,17 +90,19 @@
                                                 <div class="col-6">@modelo.Cantidad</div>
                                             </div>
                                             <div class="row">
-                                                <div class ="col col-6 text-end">Empleador Id:</div>
-                                                <div class="col col-6">@modelo.EmpleadorId</div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col col-6 text-end">Empleado Id:</div>
-                                                <div class="col col-6">@modelo.EmpleadoId</div>
-                                            </div>
-                                            <div class="row">
                                                 <div class="col col-6 text-end">Cantidad Propuestas:</div>
                                                 <div class="col col-6">@cantidadPropuestas</div>
                                             </div>
+                                            <hr />
+                                            <div class="row">
+                                            <div class="col col-6 text-end"><b>Empleador :</b></div>
+                                                <div class="col col-6"><b>@NombreEmpleador</b></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col col-6 text-end"><b>Empleado :</b></div>
+                                                <div class="col col-6"><b>@NombreEmpleado</b></div>
+                                            </div>
+                                            <hr />
                                             @if (modelo.FechaHoraReProponeEmpleador != null)
                                             {
                                                 <div class="row">
@@ -155,15 +159,19 @@
                 <hr />
                     <div class="row">
                         <div class="col-12 text-center">
+                        @if (userId != modelo.EmpleadorId && userId != modelo.EmpleadoId)
+                        {
                             <a class="btn btn-outline-dark flex-shrink-0" href="/propuestaempleo/@modelo.IdPropuestaEmpleo.ToString()">
                                 <i class="bi-cart-fill me-1"></i>
                                 Proponer Cambios
                             </a>
+                            
                             <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await AgregarCarrito(modelo))">
                                 <i class="bi-cart-fill me-1"></i>
                                 Contratar
                             </button>
-                            <!-- Si tiene mas de 1 propuesta pone boton siguiente para verla siguente propuesta -->
+                        }
+                        <!-- Si tiene mas de 1 propuesta pone boton siguiente para verla siguente propuesta -->
                             @if (IdAnterior != null && IdAnterior != Id)
                             {
                                 <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await Atras((int)IdAnterior))">
@@ -209,12 +217,18 @@
 </div>
 @code {
     // HECHO : VER MAS DETALLES EN OFERTAEMPLEO LOS QUE SON DE INTERES PARA CONTRATAR. FECHA: 26/FEB/2024 9:44PM :FIN : 11/MAR/2024 12:22AM
-    // VOY : QUE NO SALGA EL BOTON DE PROPONER SI EL AUTOR DEL EMPLEO ES QUIEN LO VE Y SE MUESTRE EL DE BORRAR, SOLO PARA OTROS : 26/FEB/2024 8:39PM :
+    // POR HACER : QUE NO SALGA EL BOTON DE PROPONER SI EL AUTOR DEL EMPLEO ES QUIEN LO VE Y SE MUESTRE EL DE BORRAR, SOLO PARA OTROS : 26/FEB/2024 8:39PM : FIN : 12/MAR/2024 1:05PM
     // HECHO : QUE SE PUEDAN CREAR REPROPUESTAS DE EMPLEO 24/FEB/2024 12:27AM : INICIO : 24/FEB/2024 12:55PM FIN : 26/FEB/2024 8:40PM
     // HECHO : QUE NO APAREZCA ERROR DE DISPLAY AL VER LA REPROUESTA DE EMPLEO. 26/FEB/2024 8:41PM : FIN 8/MAR/2024 10:40AM
-    // POR HACER : QUE SE VEA INFORMACIÓN DEL EMPLEADOR Y DEL EMPLEADO SI LA HAY POR COMPONENTE Y PARAMETROS 24/FEB/2024 12:24AM
+    // HECHO : QUE SE VEA INFORMACIÓN DEL EMPLEADOR Y DEL EMPLEADO SI LA HAY  24/FEB/2024 12:24AM : FIN 15/MAR/2024 5:56PM
+    // VOY :  QUE SE PUEDA VER CORRECTAMENTE LAS REPROPUESTAS DE UN EMPLEO SIGUIENTE Y ATRAS 11/MAR/2024 12:36AM
+    // POR HACER : QUE SE PUEDA ELIMIAR LA PROPUESTA EMPLEO SOLO POR EL AUTOR. 15/MAR/2024 6:18PM
+
     [Parameter]
     public int Id { get; set; }
+    private string NombreEmpleador;
+    private string NombreEmpleado;
+    private UsuarioDTO usuario = new UsuarioDTO();
     public int? IdSiguiente { get; set; } = null;
     public int? IdAnterior { get; set; } = null;
     private PropuestaEmpleoDTO? modelo = null;
@@ -232,11 +246,26 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // IDENTIFICAR EL SUSUARIO
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            JACId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.Locality).Value);
+        }
+
+        // Obtener oferta empleo
         var response = await propuestaEmpleoServicio.Obtener(Id);
         if (response.EsCorrecto)
             modelo = (PropuestaEmpleoDTO)response.Resultado!;
+        // saca los nombres de EmpleadorId
+        ObtieneNombresEmpleador(modelo.EmpleadorId);
+        // saca los nombres de EmpleadoId
+        ObtieneNombresEmpleado(modelo.EmpleadoId);
 
-        // obtiene el IdSiguiente Propuesta si la hay
+        // obtiene el IdSiguiente Propuesta consultando la propuesta que tenga ésta de anterior, si la hay
         if (Id != null)
         {
             var responseS = await propuestaEmpleoServicio.ObtenerAnterior(Id);
@@ -246,7 +275,6 @@
                 {
 
                     IdSiguiente = (int)responseS.Resultado;
-                    IdAnterior = Id;
                     StateHasChanged();
                 }
                 else
@@ -256,16 +284,14 @@
                 }
             }
         }
+        // obtiene el IdAnterior Propuesta consultando la propuesta que tenga ésta de anterior, si la hay
+        if (Id != null)
+        {
+                    IdAnterior = modelo.PropuestaEmpleoAnteriorId;
+        }
+
         var propuestas = await propuestaEmpleoServicio.ListaPorEmpleo(modelo.EmpleoId.GetValueOrDefault());
         cantidadPropuestas = propuestas.Resultado.Count();
-
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        if (user.Identity.IsAuthenticated)
-        {
-            userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            JACId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.Locality).Value);
-        }
 
         var TipoContrato = await perfilcargoServicio.ListaTipoContrato("NA");
         if (TipoContrato.EsCorrecto)
@@ -302,6 +328,34 @@
         calcula = CalculaDis(Convert.ToDouble(distanciaDTO.latitudPunto1), Convert.ToDouble(distanciaDTO.longitudPunto1), Convert.ToDouble(distanciaDTO.latitudPunto2), Convert.ToDouble(distanciaDTO.longitudPunto2)).Result;
     }
 
+    private async Task ObtieneNombresEmpleador(int? IdUsuario)
+    {
+        if (modelo.EmpleadorId != null)
+        {
+            var respuesta = await usuarioServicio.Obtener(IdUsuario.Value);
+            if (respuesta.EsCorrecto)
+            {
+                NombreEmpleador = respuesta.Resultado.Nombres.ToString() + " " + respuesta.Resultado.Apellidos.ToString();
+            }
+        }
+        else
+            NombreEmpleador = "No hay Empleador Todavía";
+
+    }
+    private async Task ObtieneNombresEmpleado(int? IdUsuario)
+    {
+        if (modelo.EmpleadoId != null)
+        {
+            var respuesta = await usuarioServicio.Obtener(IdUsuario.Value);
+            if (respuesta.EsCorrecto)
+            {
+                NombreEmpleado = respuesta.Resultado.Nombres.ToString() + " " + respuesta.Resultado.Apellidos.ToString();
+            }
+        }
+        else
+            NombreEmpleado = "No hay Empleado Todavía";
+    }
+
     public async Task<double> CalculaDis(double lat1, double lon1, double lat2, double lon2)
     {
         distanciaDTO.latitudPunto1 = lat1;
@@ -320,7 +374,10 @@
         var response = await propuestaEmpleoServicio.Obtener((int)IdSiguiente);
         if (response.EsCorrecto)
             modelo = (PropuestaEmpleoDTO)response.Resultado!;
-
+        // saca los nombres de EmpleadorId
+        ObtieneNombresEmpleador(modelo.EmpleadorId);
+        // saca los nombres de EmpleadoId
+        ObtieneNombresEmpleado(modelo.EmpleadoId);
         // obtiene el IdSiguiente Propuesta si la hay
         if (modelo.IdPropuestaEmpleo != null)
         {
@@ -329,7 +386,6 @@
             {
                 if (responseS.Resultado != null)
                 {
-
                     this.IdSiguiente = (int)responseS.Resultado;
                     IdAnterior = modelo.PropuestaEmpleoAnteriorId;
                     StateHasChanged();
@@ -341,44 +397,33 @@
                 }
             }
         }
-
-
         StateHasChanged();
-        //OnInitializedAsync();
     }
     private async Task Atras(int IdAnterior)
     {
         navigate.NavigateTo("/ofertaempleo/" + IdAnterior);
-        this.IdAnterior = Id;
+        this.IdSiguiente = Id;
 
         var response = await propuestaEmpleoServicio.Obtener(IdAnterior);
         if (response.EsCorrecto)
             modelo = (PropuestaEmpleoDTO)response.Resultado!;
+        // saca los nombres de EmpleadorId
+        ObtieneNombresEmpleador(modelo.EmpleadorId);
+        // saca los nombres de EmpleadoId
+        ObtieneNombresEmpleado(modelo.EmpleadoId);
+
 
         // obtiene el IdAnterior Propuesta si la hay
         if (modelo.PropuestaEmpleoAnteriorId != null)
         {
-            var responseS = await propuestaEmpleoServicio.Obtener((int)modelo.PropuestaEmpleoAnteriorId);
-            if (responseS.EsCorrecto)
-            {
-                if (responseS.Resultado != null)
-                {
-                    modelo = responseS.Resultado;
-                    this.IdSiguiente = modelo.PropuestaEmpleoAnteriorId;// (int)responseS.Resultado;
-                    this.IdAnterior = Id;
-                    StateHasChanged();
-                }
-                else
-                {
-                    this.IdSiguiente = Id;
-                    StateHasChanged();
-                }
-            }
+            this.IdAnterior = modelo.PropuestaEmpleoAnteriorId;
         }
-
-
+        else
+        {
+            this.IdAnterior = null;
+            StateHasChanged();
+        }
         StateHasChanged();
-        //OnInitializedAsync();
     }
     private async Task AgregarCarrito(PropuestaEmpleoDTO modelo)
     {

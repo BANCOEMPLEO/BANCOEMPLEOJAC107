@@ -22,43 +22,80 @@
 
         <EditForm Model="modelo" OnValidSubmit="GuardarCambios">
             <DataAnnotationsValidator></DataAnnotationsValidator>
+            <!--Como empleador o Empleado-->
+            <div class="input-group mt-3">
+                <label class="input-group-text bg-light" for="inputGroupSelect01">Actúa como :</label>
+                <select class="form-control" @onchange="CambiarTipo" id="selTipo">
+                    <option value="true" selected="@empleador">Empleador</option>
+                    <option value="false" selected="@(!empleador)">Empleado</option>
+                </select>
+            </div>
+            @if (empleador)
+            {
+                <input type="hidden" @bind-value="modelo.EmpleadorId" />
+            }
+            else
+            {
+                <input type="hidden" @bind-value="modelo.EmpleadoId" />
+            }
+
+            <div class="input-group mt-3">
+                @if (empleador)
+                {
+                    <span class="input-group-text bg-light" id="basic-addon3">
+                        Número Empleos Requeridos:
+                        <input type="number" class="form-control" @bind-value="modelo.Cantidad">
+                    </span>
+                }
+                else
+                {
+                    <span class="input-group-text bg-light" id="basic-addon3">
+                        Cantidad Empleados:
+                        <input type="number" disabled class="form-control" @bind-value="modelo.Cantidad">
+                    </span>
+                }
+            </div>
+            <ValidationMessage For="@(()=>modelo.Cantidad)" />
 
             <div class="input-group mt-3">
                 <a href="/perfilcargo" class="btn btn-secondary float-start oi oi-plus" style="width:45px; heigh:auto"></a>
-                <label class="input-group-text bg-light" for="inputGroupSelect01">Perfil o Cargo</label>
-                <select class="form-control" @onchange="CambiarCategoria">
+                <label class="input-group-text bg-light col-sm-1 col-lg-4 overflow: hidden;" for="inputGroupSelect01">Perfil ó Cargo y Tipo Contrato :</label>
+                <select class="form-control col-sm-8 col-lg-8 overflow: hidden;" @onchange="CambiarCategoria">
                     @foreach (var item in listaPerfilCargo)
                     {
                         if (item.IdPerfilCargo == IdPerfilCargo)
                         {
-                             <option value="@item.IdPerfilCargo" selected>@item.Descripcion</option>
+                            <option value="@item.IdPerfilCargo" selected>@item.Descripcion - <b>@listaTipoContrato.Where(lp => lp.IdTipoContrato == item.IdTipoContrato).FirstOrDefault().Nombre.ToString()</b></option>
                         }
                         else
                         {
-                            <option value="@item.IdPerfilCargo">@item.Descripcion</option>
+                            <option value="@item.IdPerfilCargo">@item.Descripcion - <b>@listaTipoContrato.Where(lp => lp.IdTipoContrato == item.IdTipoContrato).FirstOrDefault().Nombre.ToString()</b></option>
                         }
                     }
                 </select>
                 <a href="/perfilcargo/@IdPerfilCargo" class="btn btn-secondary float-end oi oi-pencil" style="width:45px"></a>
 
             </div>
+
             <div class="input-group mt-3">
-                <span class="input-group-text bg-light" id="basic-addon3">Nombre</span>
+                <span class="input-group-text bg-light" id="basic-addon3">Nombre Empleo</span>
                 <input type="text" class="form-control" @bind-value="modelo.Nombre">
             </div>
             <ValidationMessage For="@(()=>modelo.Nombre)" />
 
             <div class="input-group  mt-3">
-                <span class="input-group-text bg-light">Descripcion</span>
+                <span class="input-group-text bg-light">Descripcion Empleo</span>
                 <input type="text" class="form-control" @bind-value="modelo.Descripcion"></input>
 
             </div>
             <ValidationMessage For="@(()=>modelo.Descripcion)" />
+
             <div class="input-group mt-3">
-                <span class="input-group-text bg-light" id="basic-addon3">Requisitos</span>
+                <span class="input-group-text bg-light" id="basic-addon3">@if (empleador) { @("Requisitos"); } else { @("Experiencia"); }</span>
                 <input type="text" class="form-control" @bind-value="modelo.Requisitos">
             </div>
             <ValidationMessage For="@(()=>modelo.Requisitos)" />
+
             <div class="form-check form-switch mt-3" style="margin-left: 10px;margin-right: 10px;margin-top: 5px;margin-bottom: 5px;">
                 <input class="form-check-input" type="checkbox" @bind-value="modelo.Activo">
                 <label class="form-check-label" for="flexSwitchCheckDefault">Activo</label>
@@ -78,21 +115,15 @@
                 <input type="text" class="form-control" @bind-value="modelo.Ubicacion">
             </div>
             <ValidationMessage For="@(()=>modelo.Ubicacion)" />
-            <div class="input-group mt-3">
-                <span class="input-group-text bg-light" id="basic-addon3">Cantidad</span>
-                <input type="number" class="form-control" @bind-value="modelo.Cantidad">
-            </div>
-            <ValidationMessage For="@(()=>modelo.Cantidad)" />
-
 
             <div class="input-group mt-3">
-                <span class="input-group-text bg-light" id="basic-addon3">Precio</span>
+                <span class="input-group-text bg-light" id="basic-addon3">Valor del Empleo</span>
                 <input type="number" class="form-control" @bind-value="modelo.Precio">
             </div>
             <ValidationMessage For="@(()=>modelo.Precio)" />
 
             <div class="input-group mt-3">
-                <span class="input-group-text bg-light" id="basic-addon3">Precio Oferta</span>
+                <span class="input-group-text bg-light" id="basic-addon3">Precio Oferta del Empleo</span>
                 <input type="number" class="form-control" @bind-value="modelo.PrecioOferta">
             </div>
             <ValidationMessage For="@(()=>modelo.PrecioOferta)" />
@@ -107,22 +138,6 @@
             </div>
             <ValidationMessage For="@(()=>modelo.FechaHoraInactiva)" />
 
-            <!--Como empleador o Empleado-->
-            <div class="input-group mt-3">
-                <label class="input-group-text bg-light" for="inputGroupSelect01">Actúa como :</label>
-                <select class="form-control" @onchange="CambiarTipo" id="selTipo">
-                    <option value="true" selected="@empleador">Empleador</option>
-                    <option value="false" selected="@(!empleador)">Empleado</option>
-                </select>
-            </div>
-            @if (empleador)
-            {
-                <input type="hidden" @bind-value="modelo.EmpleadorId" />
-            }
-            else
-            {
-                <input type="hidden" @bind-value="modelo.EmpleadoId" />
-            }
             <div class="input-group mt-3">
                 <span class="input-group-text bg-light" id="basic-addon3">Observaciones</span>
                 <textarea class="form-control" @bind="modelo.Observaciones"></textarea>
@@ -146,13 +161,14 @@
     // HECHO : REVISANDO CAMBIOS EN TABLAS DE "EMPLEO", "SERVICIO", "PROPUESTAEMPLEO" Y "PROPUESTASERVICIO" : INICIO : 26/FEB/2024 5:07PM :  FIN : 26/FEB/2024 7:46PM
     // HECHO : AGREGAR EL CAMPO IdEmpleado A "PROPUESTAEMPLEO" : INICIO : 26/FEB/2024 5:07PM  FIN : 26/FEB/2024 7:46PM
     // HECHO : HACER SCAFFOLDING DE NUEVO A LA BASE DE DATOS Y PASAR DATOS A REPOSITORIO. INICIO : 26/FEB/2024 5:10PM : FIN : 26/FEB/2024 7:46PM
-
+    // POR HACER : AL PONER ACTIVO EL EMPLEO SE DEBE CREAR LA PROPUESTA DE EMPLEO DE UNA VEZ. FECHA: 15/MAR/2024 6.59PM
     [Parameter]
     public int Id { get; set; }
     public int IdPerfilCargo { get; set; } = 0;
     private string Titulo = "Nuevo Empleo";
     private string boton = "Crear";
     private List<PerfilCargoDTO> listaPerfilCargo = new List<PerfilCargoDTO>();
+    private List<TipoContratoDTO> listaTipoContrato = new List<TipoContratoDTO>();
     private EmpleoDTO modelo = new EmpleoDTO();
     private bool empleador = true;
     private int userId;
@@ -176,6 +192,11 @@
                 modelo.PerfilCargoId = listaPerfilCargo.First().IdPerfilCargo;
                 IdPerfilCargo = modelo.PerfilCargoId;
             }
+        }
+        var respTContrrato = await perfilcargoServicio.ListaTipoContrato("");
+        if (respTContrrato.EsCorrecto)
+        {
+            listaTipoContrato = (List<TipoContratoDTO>)respTContrrato.Resultado;
         }
 
     }
@@ -201,7 +222,8 @@
                 {
                     empleador = false;
                     modelo.EmpleadoId = userId;
-                    
+                    modelo.Cantidad = 1;
+
                 }
 
             }
@@ -214,7 +236,7 @@
     }
     private async Task CambiarCategoria(ChangeEventArgs e)
     {
-       IdPerfilCargo = modelo.PerfilCargoId = Convert.ToInt32(e.Value);
+        IdPerfilCargo = modelo.PerfilCargoId = Convert.ToInt32(e.Value);
 
     }
     void CambiarTipo(ChangeEventArgs e)
@@ -229,6 +251,7 @@
         {
             modelo.EmpleadoId = userId;
             modelo.EmpleadorId = null;
+            modelo.Cantidad = 1;
         }
 
     }

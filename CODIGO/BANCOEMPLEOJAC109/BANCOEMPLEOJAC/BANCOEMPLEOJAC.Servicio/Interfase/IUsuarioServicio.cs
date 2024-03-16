@@ -10,7 +10,7 @@ namespace BANCOEMPLEOJAC.Servicio.Interfase
 {
     public interface IUsuarioServicio
     {
-        Task<List<UsuarioDTO>> Lista(int rol, string buscar, int RolId);
+        Task<List<UsuarioDTO>> Lista(int rol, string buscar, int RolId, int JacId);
         Task<UsuarioDTO> Obtener(int id);
         Task<SesionDTO> Autorizacion(LoginDTO modelo);
         Task<UsuarioDTO> Crear(UsuarioDTO modelo);

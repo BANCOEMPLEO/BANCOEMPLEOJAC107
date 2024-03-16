@@ -18,13 +18,16 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
     public class UsuarioServicio : IUsuarioServicio
     {
         private readonly IGenericoRepositorio<Usuario> _modeloRepositorio;
+        private readonly IJacServicio _jacServicio;
         private readonly IMapper _mapper;
 
-        public UsuarioServicio(IGenericoRepositorio<Usuario> modeloRepositorio, IMapper mapper)
+        public UsuarioServicio(IGenericoRepositorio<Usuario> modeloRepositorio,
+            IJacServicio jacServicio,
+            IMapper mapper)
         {
             _modeloRepositorio = modeloRepositorio;
+            _jacServicio = jacServicio;
             _mapper = mapper;
-
         }
 
         public async Task<SesionDTO> Autorizacion(LoginDTO modelo)
@@ -136,30 +139,89 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
 
         }
 
-        public async Task<List<UsuarioDTO>> Lista(int rol, string buscar, int RolId = 0)
+        public async Task<List<UsuarioDTO>> Lista(int rol = 0, string buscar = "NA", int RolId = 0, int JacId = 0)
         {
             try
             {
                 var consulta = _modeloRepositorio.Consultar();
-                if (rol != 0) {
+                if (rol != 0) 
+                {
+                    // muesta solo los usuarios de un rol
                     if (rol < RolId)
                     {
                         rol = RolId;
                     }
-                    consulta = consulta.Where(p =>
-                    p.Rol == rol &&
-                    string.Concat(p.Nombres.ToLower(), p.Apellidos.ToLower(), p.Correo.ToLower()).Contains(buscar.ToLower()));
+                    // Administrador Municipal :: muestra usuarios de las Jac del Municipio
+                    var listaJacs = await _jacServicio.Lista("NA");
+                    var zonaverdaId = listaJacs.Where(lj => lj.IdJac == JacId).FirstOrDefault().IdZonaVereda;
+                    var listaZonavereda = await _jacServicio.ListaZonaVeredas("");
+                    var municipioId = listaZonavereda.Where(lzv => lzv.IdzonaVereda == zonaverdaId).FirstOrDefault().IdMunicipio;
+                    var listaZonaVeredaMunicipio = listaZonavereda.Where(lzv => lzv.IdMunicipio == municipioId);
+                    // Administrador Departamental :: Muestra usuarios de las Jacs del departamento.
+                    var listaMunicipios = await _jacServicio.ListaMunicipios("NA");
+                    var regionId = listaMunicipios.Where(m => m.IdMunicipio == municipioId).FirstOrDefault().IdRegion;
+                    var listaRegiones = await _jacServicio.ListaRegiones("NA");
+                    var departamentoId = listaRegiones.Where(r => r.IdRegion == regionId).FirstOrDefault().IdDepartamento;
+                    //var listaJacsDepartamento = listaMunicipios.Where(m => m.IdRegion == )
+                    switch (rol)
+                    {
+                        case 4: case 5:  case 6:
+                            // Administrador Local y Usuarios Jac :: muestra los usuarios de esa JAC
+                            consulta = consulta.Where(p =>
+                            p.Rol == rol &&
+                            p.JacId == JacId &&
+                            string.Concat(p.Nombres.ToLower(), p.Apellidos.ToLower(), p.Correo.ToLower()).Contains(buscar.ToLower()));
+                            break;
+                        case 3:
+                                var listaJacsZonaVeredaMunicipio = listaJacs.Where(lj => listaZonaVeredaMunicipio.Any(lzv => lzv.IdzonaVereda == lj.IdZonaVereda));
+                                consulta = consulta.Where(p => listaJacsZonaVeredaMunicipio.Any(lj => lj.IdJac == p.JacId) &&
+                                                            p.Rol == RolId &&
+                                                               string.Concat(p.Nombres.ToLower(), 
+                                                               p.Apellidos.ToLower(), 
+                                                               p.Correo.ToLower()).Contains(buscar.ToLower()));
+                            break;
+                        case 2:
+                            // Administrador Departamental :: muestra usuarios de Todo el departamento
+
+                        case 1:
+                            // Administrador General del Sistema BANCOEMPLEOJAC :: Muestra solo usuarios administradores
+
+                        default:
+                            break;
+                    }
                 }
                 else
                 {
+                    // muestra los usuarios de roles inferiores o iguales
                     if (rol < RolId)
                     {
                         rol = RolId;
                     }
+                    switch (RolId)
+                    {
+                        case 4: case 5:
+                            consulta = consulta.Where(p =>
+                            p.Rol >= rol &&
+                            p.JacId == JacId && 
+                            string.Concat(p.Nombres.ToLower(), p.Apellidos.ToLower(), p.Correo.ToLower()).Contains(buscar.ToLower()));
+                            break;
+                        case 3:
 
-                    consulta = consulta.Where(p =>
-                    p.Rol >= rol &&
-                    string.Concat(p.Nombres.ToLower(), p.Apellidos.ToLower(), p.Correo.ToLower()).Contains(buscar.ToLower()));
+
+                            break;
+                        case 2:
+
+
+                            break;
+                        case 1:
+
+
+                            break;
+
+
+                        default:
+                            break;
+                    }
 
                 };
 
@@ -173,6 +235,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
             }
 
         }
+
 
         public async Task<UsuarioDTO> Obtener(int id)
         {

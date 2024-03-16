@@ -24,7 +24,7 @@ namespace BANCOEMPLEOJAC.DTO
         public int? JacId { get; set; }
         public string? Observaciones { get; set; }
 
-        //public virtual TipoContratoDTO? IdTipoContratoNavigation { get; set; }
+        public virtual TipoContratoDTO? dTipoContratoNavigation { get; set; }
         public virtual JacDTO? Jac { get; set; }
 
 

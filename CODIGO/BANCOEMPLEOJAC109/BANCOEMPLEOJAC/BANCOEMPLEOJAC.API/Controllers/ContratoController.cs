@@ -17,7 +17,7 @@ namespace BANCOEMPLEOJAC.API.Controllers
             _contratoServicio = contratoServicio;
         }
 
-        // VOY : PONIENDO LISTADO CONTRATOS POR USUARO : 11/MAR/2024 4:07AM
+        // HECHO : PONIENDO LISTADO CONTRATOS POR USUARO : 11/MAR/2024 4:07AM : FIN : 13/MAR/20204 10:00PM
 
         //[HttpGet("Listar/{UserId:int}/{buscar?}")]
         //public async Task<List<ContratoDTO>> Listar(int? UserId, string? buscar = "NA")

@@ -4,7 +4,7 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Interfase
 {
     public interface IUsuarioServicio
     {
-        Task<ResponseDTO<List<UsuarioDTO>>> Lista(int rol, string buscar, int RolId);
+        Task<ResponseDTO<List<UsuarioDTO>>> Lista(int rol, string buscar, int UsuarioId);
         Task<ResponseDTO<UsuarioEditaDTO>> Obtener(int Id);
         Task<ResponseDTO<SesionDTO>> Autorizacion(LoginDTO modelo);
         Task<ResponseDTO<UsuarioDTO>> Crear(UsuarioDTO modelo);
