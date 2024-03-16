@@ -19,16 +19,19 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
     {
         private readonly IGenericoRepositorio<PerfilCargo> _modeloRepositorio;
         private readonly IGenericoRepositorio<TipoContrato> _tipoContratoRepositorio;
+        private readonly IGenericoRepositorio<Empleo> _empleoRepositorio;
         private readonly IGenericoRepositorio<Usuario> _usuarioRepositorio;
         private readonly IMapper _mapper;
 
         public PerfilCargoServicio(IGenericoRepositorio<PerfilCargo> modeloRepositorio,
             IGenericoRepositorio<TipoContrato> tipoContratoRepositorio,
+            IGenericoRepositorio<Empleo> empleoRepositorio,
             IGenericoRepositorio<Usuario> usuarioRepositorio,
             IMapper mapper)
         {
             _modeloRepositorio = modeloRepositorio;
             _tipoContratoRepositorio = tipoContratoRepositorio;
+            _empleoRepositorio = empleoRepositorio;
             _usuarioRepositorio = usuarioRepositorio;
             _mapper = mapper;
 
@@ -127,7 +130,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 ).OrderBy(L => L.Descripcion);
 
 
-                List< PerfilCargoDTO> lista = _mapper.Map<List<PerfilCargoDTO>>(await consulta.ToListAsync());
+                List<PerfilCargoDTO> lista = _mapper.Map<List<PerfilCargoDTO>>(await consulta.ToListAsync());
                 return lista;
             }
             catch (Exception ex)
@@ -136,6 +139,29 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 throw ex;
             }
 
+        }
+        // Es para verificar que no existen empleos con el perfil cargo que se borrará
+        public async Task<bool> VerificaPerfilEmpleoBorrar(int idUsuario, int idPerfilCargo)
+        {
+            try
+            {
+                // Se saca la IdJAC del usuario
+                var usuario = _usuarioRepositorio.Consultar(u => u.IdUsuario == idUsuario).FirstOrDefault();
+                var IdJAC = usuario.JacId;
+                // se consulta empleo  si tiene perfiles o cargos con el idPerfilCargo para poder borrar el perfilcargo
+                var consulta = _empleoRepositorio.Consultar(e => e.PerfilCargoId == idPerfilCargo).Count();
+                if (consulta == 0)
+                {
+                    //  se puede borrar: no hay empleos con éste idPerfilCargo
+                    return true;
+                }
+                // no se puede borrar: hay empleos con éste idPerfilCargo
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task<PerfilCargo> ConsultarPerfilCargoEnPropuestaEmpleo()

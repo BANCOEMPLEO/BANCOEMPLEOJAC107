@@ -36,6 +36,23 @@ namespace BANCOEMPLEOJAC.API.Controllers
             }
             return Ok(response);
         }
+        [HttpGet("VerificaPerfilEmpleoBorrar/{idUsuario:int}/{idPerfilCargo:int}")]
+        public async Task<IActionResult> VerificaPerfilEmpleoBorrar(int idUsuario, int idPerfilCargo)
+        {
+            var response = new ResponseDTO<bool>();
+
+            try
+            {
+                response.EsCorrecto = true;
+                response.Resultado = await _perfilCargoServicio.VerificaPerfilEmpleoBorrar(idUsuario, idPerfilCargo);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
         [HttpGet("ListaTipoContrato/{buscar?}")]
         public async Task<IActionResult> ListaTipoContrato(string buscar = "NA")
         {

@@ -59,7 +59,7 @@
 
             <div class="input-group mt-3">
                 <a href="/perfilcargo" class="btn btn-secondary float-start oi oi-plus" style="width:45px; heigh:auto"></a>
-                <label class="input-group-text bg-light col-sm-1 col-lg-4 overflow: hidden;" for="inputGroupSelect01">Perfil ó Cargo y Tipo Contrato :</label>
+                <label class="input-group-text bg-light col-sm-1 col-md-2 col-lg-4 display: block; hight: 100px;" for="inputGroupSelect01">Perfil ó Cargo y Tipo Contrato :</label>
                 <select class="form-control col-sm-8 col-lg-8 overflow: hidden;" @onchange="CambiarCategoria">
                     @foreach (var item in listaPerfilCargo)
                     {
@@ -207,7 +207,6 @@
         {
             Titulo = "Editar Empleo";
             boton = "Actualizar";
-
             var response = await empleoServicio.Obtener(Id);
             if (response.EsCorrecto)
             {
@@ -217,28 +216,32 @@
                 {
                     empleador = true;
                     modelo.EmpleadoId = userId;
+                    modelo.Cantidad = 1;
                 }
                 else
                 {
                     empleador = false;
                     modelo.EmpleadoId = userId;
                     modelo.Cantidad = 1;
-
                 }
-
             }
             else
             {
                 toastService.ShowWarning(response.Mensaje);
             }
         }
+        else
+        {
+            modelo.Cantidad = 1;
+        }
         StateHasChanged();
     }
+
     private async Task CambiarCategoria(ChangeEventArgs e)
     {
         IdPerfilCargo = modelo.PerfilCargoId = Convert.ToInt32(e.Value);
-
     }
+
     void CambiarTipo(ChangeEventArgs e)
     {
         empleador = Convert.ToBoolean(e.Value.ToString());
@@ -253,22 +256,7 @@
             modelo.EmpleadorId = null;
             modelo.Cantidad = 1;
         }
-
     }
-    // async Task OnFileChange(InputFileChangeEventArgs e)
-    // {
-    //     FileInfo fileInfo = new FileInfo(e.File.Name);
-    //     if (fileInfo.Extension.ToLower().Contains(".jpg") || fileInfo.Extension.ToLower().Contains(".png"))
-    //     {
-    //         var format = $"image/{fileInfo.Extension.Replace(".", "")}";
-    //         var resizeImage = await e.File.RequestImageFileAsync(format, 450, 300);
-    //         var buffer = new byte[resizeImage.Size];
-    //         await resizeImage.OpenReadStream().ReadAsync(buffer);
-    //         var imagenData = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
-    //         modelo.Foto = imagenData;
-    //     }
-
-    // }
 
     private async Task GuardarCambios()
     {

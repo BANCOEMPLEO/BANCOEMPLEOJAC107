@@ -5,6 +5,8 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Interfase
     public interface IPerfilCargoServicio
     {
         Task<ResponseDTO<List<PerfilCargoDTO>>> Lista(int idUsuario, string buscar);
+        Task<ResponseDTO<bool>> VerificaPerfilEmpleoBorrar(int idUsuario, int idPerfilCargo);
+
         Task<ResponseDTO<List<TipoContratoDTO>>> ListaTipoContrato(string buscar);
         Task<ResponseDTO<PerfilCargoDTO>> Obtener(int Id);
         Task<ResponseDTO<PerfilCargoDTO>> Crear(PerfilCargoDTO modelo);

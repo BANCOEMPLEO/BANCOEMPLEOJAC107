@@ -12,6 +12,7 @@ namespace BANCOEMPLEOJAC.Servicio.Interfase
     public interface IPerfilCargoServicio
     {
         Task<List<PerfilCargoDTO>> Lista(int idUsuario, string buscar);
+        Task<bool> VerificaPerfilEmpleoBorrar(int idUsuario, int idPerfilCargo);
         Task<List<TipoContratoDTO>> ListaTipoContrato(string buscar);
         Task<PerfilCargo> ConsultarPerfilCargoEnPropuestaEmpleo();
 

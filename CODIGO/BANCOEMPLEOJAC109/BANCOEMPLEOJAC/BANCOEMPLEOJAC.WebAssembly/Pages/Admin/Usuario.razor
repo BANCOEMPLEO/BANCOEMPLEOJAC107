@@ -92,7 +92,7 @@
 
             <div class="mt-3">
                 <span class="input-group-text bg-secondary text-light" id="basic-addon3">Fecha Nacimiento</span>
-                <input type="text" class="form-control" @bind-value="modelo.FechaNacimiento"><br />
+                <input type="datetime-local" class="form-control" @bind-value="modelo.FechaNacimiento"><br />
             </div>
             <ValidationMessage For="@(()=>modelo.FechaNacimiento)" />
             <div class="mb-3">
@@ -126,7 +126,10 @@
 
             <div class="mt-3 justify-content-center">
                 <button type="submit" class="btn btn-primary" style="width:130px">@boton</button>
-                <a href="/usuarios" class="btn btn-secondary float-end" style="width:130px">Volver</a>
+                @if (IdRol <=4)
+                {
+                    <a href="/usuarios" class="btn btn-secondary float-end" style="width:130px">Volver</a>
+                }
             </div>
         </EditForm>
     </div>
@@ -147,16 +150,15 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // autenticación de usuario
         var authState = await autenticacionProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-
         UsuarioId = Convert.ToInt32(user.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault().ToString());
-
+        IdRol = Convert.ToInt32(user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).SingleOrDefault().ToString());
         try
         {
             modelo.Clave = "";
             modelo.ConfirmarClave = "";
-
             var response = await _jacServicio.Lista("NA");
             if (response.EsCorrecto)
             {
@@ -166,11 +168,9 @@
                     modelo.JacId = listaJac.First().IdJac;
                 }
             }
-
         }
         catch (Exception ex)
         {
-
             throw ex;
         }
         ObtenerRoles();
@@ -179,6 +179,10 @@
     {
         if (Id != 0)
         {
+            if (IdRol >= 5)
+            {
+                Id = UsuarioId;
+            }
             Titulo = "Editar usuario";
             boton = "Actualizar";
             var response = await usuarioServicio.Obtener(Id);
@@ -278,7 +282,14 @@
         if (respuesta)
         {
             toastService.ShowSuccess(mensaje);
-            _navServicio.NavigateTo("/usuarios");
+            if (IdRol <=4)
+            {
+                _navServicio.NavigateTo("/usuarios");
+            }
+            else
+            {
+                _navServicio.NavigateTo("/");
+            }
         }
         else
         {

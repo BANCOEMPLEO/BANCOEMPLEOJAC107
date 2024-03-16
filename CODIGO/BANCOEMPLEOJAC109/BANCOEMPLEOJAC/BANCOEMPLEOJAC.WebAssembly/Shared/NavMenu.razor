@@ -118,11 +118,13 @@ navbar-toggleable-md avbar-toggleable-lg navbar-light bg-light">
             <AuthorizeView>
                 <Authorized>
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <span class="navbar-text me-3" style="font-size: 0.9rem; text-decoration: none; color: inherit; font-weight: bold;">
-                            @context.User.Claims.Where(c => c.Type == ClaimTypes.Name).Select(c => c.Value).SingleOrDefault()
-                            <br />
-                            @context.User.Claims.Where(c => c.Type == ClaimTypes.Surname).Select(c => c.Value).SingleOrDefault()
-                        </span>
+                        <a href="/usuario/@context.User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault().ToString() " style="text-decoration: none; color: inherit; font-weight: bold;">
+                            <span class="navbar-text me-3 " style="font-size: 0.9rem;">
+                                @context.User.Claims.Where(c => c.Type == ClaimTypes.Name).Select(c => c.Value).SingleOrDefault()
+                                <br />
+                                @context.User.Claims.Where(c => c.Type == ClaimTypes.Surname).Select(c => c.Value).SingleOrDefault()
+                                </span>
+                        </a>
                         <br />
                     </ul>
 
@@ -152,7 +154,7 @@ navbar-toggleable-md avbar-toggleable-lg navbar-light bg-light">
     // HECHO : SE REORGANIZO EL MENU PARA QUE MOSTRARA EL NOMBRE DE LA JAC DEBAJO DEL TITULO BANCOEMPLEOJAC Y EL NOMBRE DE USUARIO. INICIO: 12:00AM 26/FEB/2024 FIN: 26/FEB/2024 12:58AM
     // HECHO : QUE SE VEA EL NOMBRE DE LA JAC A LA QUE PERTENECE EL USUARIO 23/FEB/2024 2:00PM INICIO : 11:00PM 23/FEB/2024 : FIN 12:00AM 24/FEB/2024
     // POR HACER : HACER FILTRO DE SERVICIOS CREADOS POR EL USUARIO 23/FEB/2024 2:00PM
-    // VOY : QUE EL USUARIO PUEDA EDITAR SU INFORMACIÓN DESDE UN ENLACE DE SU NOMBRE DEL MENU : FECHA : 26/FEB/2024 9:50PM
+    // HECHO : QUE EL USUARIO PUEDA EDITAR SU INFORMACIÓN DESDE UN ENLACE DE SU NOMBRE DEL MENU : FECHA : 26/FEB/2024 9:50PM : FIN : 15/MAR/2024 11:04PM
     private List<JacDTO> listaJac = new List<JacDTO>();
     private JacDTO jac = new JacDTO();
     private string Localidad { get; set; } = "";
