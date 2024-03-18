@@ -18,7 +18,9 @@
 @inject IJacServicio jacServicio
 
 
-<div class="container px-4 px-lg-5 my-5">
+<div class="container px-4 px-lg-5 my-5 position: relative;
+    width: 100%;
+    height: 100vh;">
 
 
     @if (modelo != null)
@@ -29,6 +31,7 @@
                     <div class="container px-4 px-lg-5 my-5">
                         @if (modelo != null)
                         {
+
                             <div class="row gx-4 gx-lg-5 align-items-center">
                                     <div >
                                             <div class="row">
@@ -147,6 +150,49 @@
                             </div>
                         }
                     </div>
+                @if ((modelo.Aceptada != null) && ((bool)modelo.Aceptada))
+                {
+                    <div class="badge bg-danger text-white position-relative" style="top: 1rem; right: 1rem
+                                    position: absolute;
+                                    top: 50%;
+                                    left: 50%;
+                                    transform: translate(-50%, -50%);
+                                    text-align: center;
+                                    padding: 20px; font-size: 2em;">
+                        Empleo Contratado
+                    </div>
+                }
+                else
+                {
+                    @if ((modelo.EmpleadoId != null && modelo.EmpleadorId != null)  && (modelo.Aceptada == null))
+                        {
+                            <div class="badge bg-info text-black-50 position-relative" style="top: 0.5rem; right: 0.5rem
+                                                        position: absolute;
+                                                        top: 50%;
+                                                        left: 50%;
+                                                        transform: translate(-50%, -50%);
+                                                        text-align: center;
+                                                        padding: 20px; font-size: 2em;">
+                                En Verificación
+                            </div>
+                        }
+                    @if (((modelo.EmpleadoId != null && modelo.EmpleadorId  == null) ||
+                   (modelo.EmpleadoId == null && modelo.EmpleadorId != null))
+                    && (modelo.Aceptada == null))
+                        {
+                            <div class="badge bg-success text-light position-relative" style="top: 0.5rem; right: 0.5rem
+                                                            position: absolute;
+                                                            top: 50%;
+                                                            left: 50%;
+                                                            transform: translate(-50%, -50%);
+                                                            text-align: center;
+                                                            padding: 20px; font-size: 2em;">
+                                VACANTE !
+                            </div>
+
+                        }
+                }
+
                     <hr />
                     <div class="row">
                         <div class="col-6 text-end">
@@ -159,17 +205,20 @@
                 <hr />
                     <div class="row">
                         <div class="col-12 text-center">
-                        @if (userId != modelo.EmpleadorId && userId != modelo.EmpleadoId)
+                        @if ((userId != modelo.EmpleadorId  && userId != modelo.EmpleadoId) && modelo.Aceptada != true)
+                         {
+                                <a class="btn btn-outline-dark flex-shrink-0" href="/propuestaempleo/@modelo.IdPropuestaEmpleo.ToString()">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Proponer Empleo
+                                </a>
+                        }
+                        @if ((userId == modelo.EmpleadorId && modelo.EmpleadoId != null) && modelo.Aceptada != true)
                         {
-                            <a class="btn btn-outline-dark flex-shrink-0" href="/propuestaempleo/@modelo.IdPropuestaEmpleo.ToString()">
-                                <i class="bi-cart-fill me-1"></i>
-                                Proponer Cambios
-                            </a>
-                            
                             <button class="btn btn-outline-dark flex-shrink-0 me-3" type="button" @onclick="(async() => await AgregarCarrito(modelo))">
                                 <i class="bi-cart-fill me-1"></i>
                                 Contratar
                             </button>
+
                         }
                         <!-- Si tiene mas de 1 propuesta pone boton siguiente para verla siguente propuesta -->
                             @if (IdAnterior != null && IdAnterior != Id)
@@ -216,6 +265,7 @@
 
 </div>
 @code {
+    #region Comentarios Desarrollo
     // HECHO : VER MAS DETALLES EN OFERTAEMPLEO LOS QUE SON DE INTERES PARA CONTRATAR. FECHA: 26/FEB/2024 9:44PM :FIN : 11/MAR/2024 12:22AM
     // HECHO : QUE NO SALGA EL BOTON DE PROPONER SI EL AUTOR DEL EMPLEO ES QUIEN LO VE Y SE MUESTRE EL DE BORRAR, SOLO PARA OTROS : 26/FEB/2024 8:39PM : FIN : 15/MAR/2024 11:34PM
     // HECHO : QUE SE PUEDAN CREAR REPROPUESTAS DE EMPLEO 24/FEB/2024 12:27AM : INICIO : 24/FEB/2024 12:55PM FIN : 26/FEB/2024 8:40PM
@@ -226,6 +276,10 @@
     // Z-BD : AGREGAR CAMPO EN PROPUESTA EMPLEO "TIPO CONTRATO" PARA PODER OFERTAR OTRO TIPO DE CONTRATO FECHA. 15/MAR/2024 10:57PM
     // POR HACER : QUE NO PUEDA PROPONER CAMBIOS NI CONTRATAR CUANDO EXISTA YA UNA CONTRATACION DE EMPLEO Y QUE NO APAREZCA EN EMPLEOS PÚBLICOS AL CONTRATAR. FECHA: 15/MAR/2024 11:45PM
     // POR HACER : QUE NO SE PUEDA ELIMINAR LA PROPUESTA CUANDO YA FUE CONTRATADA. FECHA: 15/MAR/2024 11:47PM 
+    // POR HACER : QUE NO SE PUEDAN VER LAS PROPUESTAS YA CONTRATADAS Y LAS DEL USUARIO QUE CONTRATA TAMPOCO SOLO DE NUEVOS USUARIOS SI LA CANTIDAD DE EMPLEOS DA PARA TENER MÁS PROPUESTASEMPLEO. FECHA: 16/MAR/2024 11:43AM
+    #endregion 
+
+    #region Inicialización de Objetos
     [Parameter]
     public int Id { get; set; }
     private string NombreEmpleador;
@@ -244,7 +298,7 @@
     private double localLon { get; set; }
     private string nombrecontrato { get; set; }
     public DistanciaDTO distanciaDTO = new DistanciaDTO();
-
+    #endregion
 
     protected override async Task OnInitializedAsync()
     {
@@ -292,16 +346,14 @@
                     IdAnterior = modelo.PropuestaEmpleoAnteriorId;
         }
 
-        var propuestas = await propuestaEmpleoServicio.ListaPorEmpleo(modelo.EmpleoId.GetValueOrDefault());
-        cantidadPropuestas = propuestas.Resultado.Count();
+        var propuestas = await propuestaEmpleoServicio.EstadoPorEmpleo(modelo.EmpleoId.GetValueOrDefault());
+        cantidadPropuestas = propuestas.Resultado.Propuestas;
 
         var TipoContrato = await perfilcargoServicio.ListaTipoContrato("NA");
         if (TipoContrato.EsCorrecto)
         {
             listaTipoContrato = TipoContrato.Resultado;
         }
-
-
         var response0 = await propuestaEmpleoServicio.Obtener(Id);
         if (response0.EsCorrecto)
             modelo = (PropuestaEmpleoDTO)response0.Resultado!;
@@ -318,7 +370,7 @@
             distanciaDTO.longitudPunto1 = double.Parse(zona.Resultado.Longitud, CultureInfo.InvariantCulture);
         }
 
-        // localizacion local
+        // localizacion JAC Usuario
         var response2 = await jacServicio.Obtener(JACId);
         if (response2.EsCorrecto)
         {
@@ -344,6 +396,7 @@
             NombreEmpleador = "No hay Empleador Todavía";
 
     }
+   
     private async Task ObtieneNombresEmpleado(int? IdUsuario)
     {
         if (modelo.EmpleadoId != null)
@@ -401,6 +454,7 @@
         }
         StateHasChanged();
     }
+    
     private async Task Atras(int IdAnterior)
     {
         navigate.NavigateTo("/ofertaempleo/" + IdAnterior);
@@ -427,6 +481,7 @@
         }
         StateHasChanged();
     }
+    
     private async Task AgregarCarrito(PropuestaEmpleoDTO modelo)
     {
         decimal? precioFinal = (modelo.Valor);

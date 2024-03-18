@@ -71,8 +71,16 @@ namespace BANCOEMPLEOJAC.Utilidades
                 destino.IdZonaVeredaNavigation,
                 opt => opt.Ignore());
 
-            CreateMap<PropuestaEmpleo, PropuestaEmpleoDTO>();
+            CreateMap<PropuestaEmpleo, PropuestaEmpleoDTO>().ForMember(destino =>
+                                                             destino.Empleado,
+                                                             opt => opt.Ignore()).ForMember(destino =>
+                                                             destino.Empleador,
+                                                             opt => opt.Ignore()).ForMember(destino =>
+                                                             destino.DetallePropuesta,
+                                                             opt => opt.Ignore());
             CreateMap<PropuestaEmpleoDTO, PropuestaEmpleo>().ForMember(destino =>
+                                                             destino.Empleo,
+                                                             opt => opt.Ignore()).ForMember(destino =>
                                                              destino.Empleado,
                                                              opt => opt.Ignore()).ForMember(destino =>
                                                              destino.Empleador,

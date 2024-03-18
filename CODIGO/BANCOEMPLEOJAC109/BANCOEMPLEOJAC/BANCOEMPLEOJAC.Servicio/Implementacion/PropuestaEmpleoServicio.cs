@@ -138,16 +138,20 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
             }
         }
 
-        public async Task<List<PropuestaEmpleoDTO>> ListaPorEmpleo(int idEmpleo)
+        public async Task<EmpleoEstadoDTO> EstadoPorEmpleo(int idEmpleo)
         {
             try
             {
-                var consulta = _modeloRepositorio.Consultar(p => p.EmpleoId == idEmpleo);
-
-//                consulta = consulta.Include(c => c.Empleo);
-
-                List<PropuestaEmpleoDTO> lista = _mapper.Map<List<PropuestaEmpleoDTO>>(await consulta.ToListAsync());
-                return lista;
+                EmpleoEstadoDTO estado = new EmpleoEstadoDTO();
+                estado.Propuestas = _modeloRepositorio.Consultar(p => p.EmpleoId == idEmpleo).Count();
+                estado.Contratado = _modeloRepositorio.Consultar(p => p.EmpleoId == idEmpleo).Where(c => c.Aceptada == true).Count();
+                estado.Vacante = 0; // _modeloRepositorio.Consultar(p => p.EmpleoId == idEmpleo).Where(c => c.Aceptada != true).Count();
+                estado.EnVerificacion = _modeloRepositorio.Consultar(p => p.EmpleoId == idEmpleo).Where(c => c.Aceptada != true).
+                    Where(e => e.EmpleadorId != null && e.EmpleadoId != null).Count();
+                //                consulta = consulta.Include(c => c.Empleo);
+                //estado.EnVerificacion = 0;
+                
+                return estado;
             }
             catch (Exception ex)
             {
@@ -155,7 +159,6 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 throw ex;
             }
         }
-
 
         public async Task<PropuestaEmpleoDTO> Obtener(int id)
         {
@@ -179,6 +182,7 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 throw ex;
             }
         }
+        
         public async Task<int?> ObtenerAnterior(int id)
         {
             try
@@ -234,7 +238,6 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 throw ex;
             }
         }
-
 
         public async Task<List<PropuestaEmpleoDTO>> PerfilCargo(int categoria, string buscar)
         {

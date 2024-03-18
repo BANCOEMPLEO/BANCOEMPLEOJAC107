@@ -19,8 +19,8 @@
                     <table class="table table-sm bg-light table-bordered">
                         <thead class="table-dark">
                             <tr>
-                                <th style="width:102px"></th>
-                                <th>Producto</th>
+@*                                 <th style="width:102px"></th>
+ *@                                <th>Producto</th>
                                 <th>Precio</th>
                                 <th>Cantidad</th>
                                 <th>Total</th>
@@ -175,6 +175,7 @@
     private List<CarritoDTO> lista = new List<CarritoDTO>();
     private decimal? TotalPagar = 0;
     private FormaPagoDTO modelo = new FormaPagoDTO();
+    private int UsuarioId = 0;
 
     [CascadingParameter]
     private Task<AuthenticationState> authenticationState { get; set; }
@@ -184,8 +185,14 @@
         lista = await carritoServicio.DevolverCarrito();
 
         var authState = await authenticationState;
-        if (authState.User.Identity.IsAuthenticated)
+        var user = authState.User;
+        if (user.Identity.IsAuthenticated)
+        {
             disabled = false;
+            UsuarioId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            //JACId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.Locality).Value);
+        }
+
     }
 
     async Task OnFileChange(InputFileChangeEventArgs e)
@@ -267,7 +274,7 @@
                 DetallePropuesta = detalle
             };
 
-        var response2 = await contratoServicio.RegistrarEmpleo(modelo);
+        var response2 = await contratoServicio.RegistrarEmpleo(modelo, UsuarioId);
 
         if (response2.EsCorrecto)
         {

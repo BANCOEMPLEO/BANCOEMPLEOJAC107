@@ -60,10 +60,8 @@ namespace BANCOEMPLEOJAC.API.Controllers
             return Ok(response);
         }
 
-
-
-        [HttpPost("RegistrarEmpleo")]
-        public async Task<IActionResult> RegistrarEmpleo([FromBody] ContratoDTO modelo)
+        [HttpPost("RegistrarEmpleo/{UsuarioId}")]
+        public async Task<IActionResult> RegistrarEmpleo([FromBody] ContratoDTO modelo, int UsuarioId)
         {
             var response = new ResponseDTO<ContratoDTO>();
             try
@@ -71,7 +69,7 @@ namespace BANCOEMPLEOJAC.API.Controllers
 
                 response.EsCorrecto = true;
                 var tipo = "Empleo";
-                response.Resultado = await _contratoServicio.Registrar(tipo, modelo);
+                response.Resultado = await _contratoServicio.Registrar(tipo, modelo, UsuarioId);
             }
             catch (Exception ex)
             {
@@ -81,8 +79,8 @@ namespace BANCOEMPLEOJAC.API.Controllers
             return Ok(response);
         }
 
-        [HttpPost("RegistrarServicio")]
-        public async Task<IActionResult> RegistrarServicio([FromBody] ContratoDTO modelo)
+        [HttpPost("RegistrarServicio/{UsuarioId}")]
+        public async Task<IActionResult> RegistrarServicio([FromBody] ContratoDTO modelo, int UsuarioId)
         {
             var response = new ResponseDTO<ContratoDTO>();
             try
@@ -90,7 +88,7 @@ namespace BANCOEMPLEOJAC.API.Controllers
 
                 response.EsCorrecto = true;
                 var tipo = "Servicio";
-                response.Resultado = await _contratoServicio.Registrar(tipo, modelo);
+                response.Resultado = await _contratoServicio.Registrar(tipo, modelo, UsuarioId);
             }
             catch (Exception ex)
             {

@@ -9,7 +9,7 @@ namespace BANCOEMPLEOJAC.Servicio.Contrato
 {
     public interface IContratoServicio
     {
-        Task<ContratoDTO> Registrar(string tipo, ContratoDTO modelo);
+        Task<ContratoDTO> Registrar(string tipo, ContratoDTO modelo, int UsuarioId);
         Task<List<ContratoDTO>> PerfilCargo(int UserId, int? categoria, string? buscar);
         Task<ContratoDTO> Obtener(int id);
 

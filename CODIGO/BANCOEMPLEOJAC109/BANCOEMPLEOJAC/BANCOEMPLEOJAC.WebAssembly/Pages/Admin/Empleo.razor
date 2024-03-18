@@ -3,15 +3,15 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+@using BANCOEMPLEOJAC.WebAssembly.Servicio.Interfase;
+@using BANCOEMPLEOJAC.DTO
+@using BANCOEMPLEOJAC.Modelo
 
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject IEmpleoServicio empleoServicio
-@inject IPerfilCargoServicio perfilcargoServicio
-@inject IToastService toastService
-@inject NavigationManager _navServicio
-
-@attribute [Authorize(Roles = "1,2,3,4,5")]
-
+@inject  AuthenticationStateProvider AuthenticationStateProvider
+@inject  IEmpleoServicio empleoServicio
+@inject  IPerfilCargoServicio perfilcargoServicio
+@inject  IToastService toastService
+@inject  NavigationManager _navServicio
 
 
 <div class="row justify-content-center  mt-3">
@@ -25,8 +25,8 @@
             <!--Como empleador o Empleado-->
             <div class="input-group mt-3">
                 <label class="input-group-text bg-light" for="inputGroupSelect01">Actúa como :</label>
-                <select class="form-control" @onchange="CambiarTipo" id="selTipo">
-                    <option value="true" selected="@empleador">Empleador</option>
+                <select class="form-control" @onchange=CambiarTipo >
+                     <option value="true" selected="@empleador">Empleador</option>
                     <option value="false" selected="@(!empleador)">Empleado</option>
                 </select>
             </div>
@@ -153,5 +153,163 @@
 </div>
 
 @code {
+    #region Comentarios Desarrollo
+    // HECHO : SE PUSO SOLAMENTE EL USUARIO SI ESCOJE VER EL EMPLEO COMO EMPLEADO O COMO EMPLEADOR. FINALIZA 25/FEB/2024 7:48PM
+    // HECHO : HACER QUE SE VEAN SOLO LOS EMPLEOS QUE CREA EL USUARIO: FIN : 09/MAR/2024 5:10PM
+    // HECHO : HACER QUE SE VEA EN OFERTA TODOS LOS EMPLEOS DE LA JAC LOCAL. FIN : 07/MAR/2024 8:00PM
+    // HECHO : SE DEBE QUITAR LAS TABLAS "EMPLEADO" Y "EMPLEADOR" YA QUE NO CONTIENEN DATOS PROPIOS : INICIO : 26/FEB/2024 5:07PM : FIN : 26/FEB/2024 7:46PM
+    // HECHO : REVISANDO CAMBIOS EN TABLAS DE "EMPLEO", "SERVICIO", "PROPUESTAEMPLEO" Y "PROPUESTASERVICIO" : INICIO : 26/FEB/2024 5:07PM :  FIN : 26/FEB/2024 7:46PM
+    // HECHO : AGREGAR EL CAMPO IdEmpleado A "PROPUESTAEMPLEO" : INICIO : 26/FEB/2024 5:07PM  FIN : 26/FEB/2024 7:46PM
+    // HECHO : HACER SCAFFOLDING DE NUEVO A LA BASE DE DATOS Y PASAR DATOS A REPOSITORIO. INICIO : 26/FEB/2024 5:10PM : FIN : 26/FEB/2024 7:46PM
+    // POR HACER : AL PONER ACTIVO EL EMPLEO SE DEBE CREAR LA PROPUESTA DE EMPLEO DE UNA VEZ. FECHA: 15/MAR/2024 6.59PM
+    #endregion
+
+    [Parameter]
+    public int Id { get; set; }
+    public int IdPerfilCargo { get; set; } = 0;
+    protected string Titulo = "Nuevo Empleo";
+    private string boton = "Crear";
+    protected List<PerfilCargoDTO> listaPerfilCargo = new List<PerfilCargoDTO>();
+    protected List<TipoContratoDTO> listaTipoContrato = new List<TipoContratoDTO>();
+    protected EmpleoDTO modelo = new EmpleoDTO();
+    public bool empleador = true;
+    protected int userId;
+
+        
+    protected override async Task OnInitializedAsync()
+    {
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
+        }
+        var response = await perfilcargoServicio.Lista(userId, "");
+        if (response.EsCorrecto)
+        {
+            listaPerfilCargo = (List<PerfilCargoDTO>)response.Resultado!;
+            if (listaPerfilCargo.Any() && Id == 0)
+            {
+                modelo.PerfilCargoId = listaPerfilCargo.First().IdPerfilCargo;
+                IdPerfilCargo = modelo.PerfilCargoId;
+            }
+        }
+        var respTContrrato = await perfilcargoServicio.ListaTipoContrato("");
+        if (respTContrrato.EsCorrecto)
+        {
+            listaTipoContrato = (List<TipoContratoDTO>)respTContrrato.Resultado;
+        }
+
+    }
+
+        protected override async Task OnParametersSetAsync()
+        {
+            if (Id != 0)
+            {
+                Titulo = "Editar Empleo";
+                boton = "Actualizar";
+                var response = await empleoServicio.Obtener(Id);
+                if (response.EsCorrecto)
+                {
+                    modelo = (EmpleoDTO)response.Resultado!;
+                    IdPerfilCargo = modelo.PerfilCargoId;
+                    if (modelo.EmpleadorId != null)
+                    {
+                        empleador = true;
+                        modelo.EmpleadoId = userId;
+                        //modelo.Cantidad = 1;
+                    }
+                    else
+                    {
+                        empleador = false;
+                        modelo.EmpleadoId = userId;
+                        modelo.Cantidad = 1;
+                    }
+                }
+                else
+                {
+                    toastService.ShowWarning(response.Mensaje);
+                }
+            }
+            else
+            {
+                modelo.Cantidad = 1;
+            }
+            StateHasChanged();
+        }
+
+        private async Task CambiarCategoria(ChangeEventArgs e)
+        {
+            IdPerfilCargo = modelo.PerfilCargoId = Convert.ToInt32(e.Value);
+        }
+
+        protected void CambiarTipo(ChangeEventArgs e)
+        {
+            empleador = Convert.ToBoolean(e.Value.ToString());
+            if (empleador)
+            {
+                modelo.EmpleadorId = userId;
+                modelo.EmpleadoId = null;
+            }
+            else
+            {
+                modelo.EmpleadoId = userId;
+                modelo.EmpleadorId = null;
+                modelo.Cantidad = 1;
+            }
+        }
+
+        protected async Task GuardarCambios()
+        {
+            bool respuesta = true;
+            string mensaje = string.Empty;
+            //StateHasChanged();
+            if (Id != 0)
+            {
+                var response = await empleoServicio.Editar(modelo);
+                if (response.EsCorrecto)
+                {
+                    mensaje = "Empleo fue modificado";
+                }
+                else
+                {
+                    respuesta = false;
+                    mensaje = "No ser pudo editar";
+                }
+            }
+            else
+            {
+                if (empleador)
+                {
+                    modelo.EmpleadorId = userId;
+                    modelo.EmpleadoId = null;
+                }
+                else
+                {
+                    modelo.EmpleadoId = userId;
+                    modelo.EmpleadorId = null;
+                }
+                var response = await empleoServicio.Crear(modelo);
+                if (response.EsCorrecto)
+                {
+                    mensaje = "Empleo fue creado";
+                }
+                else
+                {
+                    respuesta = false;
+                    mensaje = "No se pudo crear";
+                }
+            }
+            if (respuesta)
+            {
+                toastService.ShowSuccess(mensaje);
+                _navServicio.NavigateTo("/empleos");
+            }
+            else
+                toastService.ShowWarning(mensaje);
+        }
 
 }

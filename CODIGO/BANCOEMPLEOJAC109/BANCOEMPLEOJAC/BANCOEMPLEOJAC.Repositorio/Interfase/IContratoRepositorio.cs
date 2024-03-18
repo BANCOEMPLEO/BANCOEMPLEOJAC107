@@ -9,6 +9,6 @@ namespace BANCOEMPLEOJAC.Repositorio.Interfase
 {
     public interface IContratoRepositorio : IGenericoRepositorio<Contrato>
     {
-        Task<Contrato> Registrar(string tipo, Contrato modelo);
+        Task<Contrato> Registrar(string tipo, Contrato modelo, int UsuarioId);
     }
 }

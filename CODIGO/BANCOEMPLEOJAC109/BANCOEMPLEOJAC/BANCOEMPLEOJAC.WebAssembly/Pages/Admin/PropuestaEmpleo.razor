@@ -8,6 +8,7 @@
 
 @inject IPropuestaEmpleoServicio propuestaEmpleoServicio;
 @inject IPerfilCargoServicio perfilcargoServicio
+@inject IUsuarioServicio usuarioServicio
 
 @inject IToastService toastService
 @inject SweetAlertService Swal
@@ -100,20 +101,18 @@
                         <input type="number" class="form-control" @bind-value="modelo.Valor">
                     </div>
                     <ValidationMessage For="@(()=>modelo.Valor)" />
-                    @if (modelo.EmpleadoId != null)
-                    {
-                        <div class="input-group mt-3">
-                            <span class="input-group-text bg-light" id="basic-addon3">Empleado Id</span>
-                            <input type="text" class="form-control" @bind-value="modelo.EmpleadoId">
-                        </div>
-                    }
-                    @if (modelo.EmpleadorId != null)
-                    {
-                         <div class="input-group mt-3">
-                            <span class="input-group-text bg-light" id="basic-addon3">Empleador Id</span>
-                            <input type="text" class="form-control" @bind-value="modelo.EmpleadorId">
-                        </div>
-                     }
+                     <!--Empleador-->
+                    <div class="input-group mt-3">
+                        <span class="input-group-text bg-light" id="basic-addon3">Empleador :</span>
+                        <input type="text" disabled class="form-control" value="@NombresApellidosEmpleador">
+                        <input type="hidden" @bind="modelo.EmpleadorId">
+                    </div>
+                    <!--Empleado-->
+                    <div class="input-group mt-3">
+                        <span class="input-group-text bg-light" id="basic-addon3">Empleado :</span>
+                        <input type="text" class="form-control" disabled value="@NombresApellidosEmpleado" >
+                        <input type="hidden" @bind="modelo.EmpleadoId">
+                    </div>
                     <div class="input-group mt-3">
                         <span class="input-group-text bg-light" id="basic-addon3">Observaciones</span>
                         <textarea class="form-control" @bind="modelo.Observaciones"></textarea>
@@ -141,7 +140,7 @@
 @code {
     // HECHO : HACER QUE SE PUEDAN EDITAR LOS DATOS DE LA REPROPUESTA DE EMPLEO Y SE PUEDA GUARDAR LOS NUEVOS DATOS 24/FEB/2024 1:04PM : INICIO : 26/FEB/2024 10:12AM FIN: 11/MAR/2024 12:36AM
     // POR HACER :  INFORMAR AL EMPLEADOR Y/O EMPLEADO DE LOS CAMBIOS DE REPROPUESTA 11/MAR/2024 12:36AM
-    // VOY : QUE EL EMPLEADOR  O EMPLEADO QUE PROPONEN QUEDE GRABADO EN EL REGISTRO CON SU ID FECHA: 15/MAR/2024 11:33PM
+    // VOY : QUE EL EMPLEADOR  O EMPLEADO QUE PROPONEN QUEDE GRABADO EN EL REGISTRO CON SU ID CUANDO HACE LA PROPUESTA Y CUANDO HACE EL CONTRATO  : FECHA: 15/MAR/2024 11:33PM
     // POR HACER : DESPUES DE Z-DB PARA AGREGAR CODIGO EDITAR CAMPO IDTIPOCONTRATO FECHA: 15/MAR/2024 11:40PM
     [Parameter]
     public int idPropuestaEmpleo { get; set; }
@@ -152,51 +151,68 @@
     public PropuestaEmpleoDTO? modelo = new PropuestaEmpleoDTO();
     private string Titulo = "Nueva Propuesta Empleo";
     private string boton = "Proponer Cambios";
+    private string NombresApellidos = "";
+    private string NombresApellidosEmpleado = "";
+    private string NombresApellidosEmpleador = "";
 
     private int cantidad = 1;
     private List<PerfilCargoDTO>? listaPerfilCargo = null;
 
-    protected override async Task OnParametersSetAsync()
+    // protected override async Task OnParametersSetAsync()
+    // {
+    //     // var response = await propuestaEmpleoServicio.Obtener(idPropuestaEmpleo);
+    //     // if (response.EsCorrecto)
+    //     // {
+    //     //     modelo = (PropuestaEmpleoDTO)response.Resultado!;
+    //     //     modelo.Orden += 1;
+    //     //     IdTipoContrato = (int)modelo.Empleo.PerfilCargo.IdTipoContrato!;
+    //     //     //idPropuestaEmpleo = null; 
+    //     //     modelo.IdPropuestaEmpleo = null;
+    //     // }
+    //     // else
+    //     //     toastService.ShowWarning(response.Mensaje);
+
+    //     // StateHasChanged();
+
+    // }
+    protected override async Task OnInitializedAsync()
     {
+        // se obtiene la propuesta
         var response = await propuestaEmpleoServicio.Obtener(idPropuestaEmpleo);
         if (response.EsCorrecto)
         {
             modelo = (PropuestaEmpleoDTO)response.Resultado!;
             modelo.Orden += 1;
             IdTipoContrato = (int)modelo.Empleo.PerfilCargo.IdTipoContrato!;
-            //idPropuestaEmpleo = null; 
             modelo.IdPropuestaEmpleo = null;
         }
         else
             toastService.ShowWarning(response.Mensaje);
 
-        // StateHasChanged();
 
-    }
-    protected override async Task OnInitializedAsync()
-    {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-
         if (user.Identity.IsAuthenticated)
         {
             userId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
-
+            NombresApellidos = string.Concat(user.Claims.First(c => c.Type == ClaimTypes.Name).Value.ToString()," ",
+            user.Claims.First(c => c.Type == ClaimTypes.Surname).Value.ToString()); 
+            if (modelo.EmpleadorId == null && modelo.EmpleadoId != null)
+            {
+                modelo.EmpleadorId = userId;
+                NombresApellidosEmpleador = await ObtenerNombresApellidos(userId);
+                NombresApellidosEmpleado = await ObtenerNombresApellidos(modelo.EmpleadoId.Value);
+            }
+            if (modelo.EmpleadorId != null && modelo.EmpleadoId == null)
+            {
+                modelo.EmpleadoId = userId;
+                NombresApellidosEmpleado = await ObtenerNombresApellidos(userId);
+                NombresApellidosEmpleador = await ObtenerNombresApellidos(modelo.EmpleadorId.Value);
+            }
         }
-
-        // var response = await propuestaEmpleoServicio.Obtener(idPropuestaEmpleo);
-        // if (response.EsCorrecto)
-        //     modelo = (PropuestaEmpleoDTO)response.Resultado!;
-        // StateHasChanged();
         await ObtenerPerfilesCargos();
         await ListarTipoContrato();
-    }
-
-    // private async Task ReProponerEmpleo(PropuestaEmpleoDTO modelo)
-    // {
-    //     //await propuestaEmpleoServicio.Crear(modelo);
-
-    // }
+     }
 
     private async Task ObtenerPerfilesCargos(string Valor = "")
     {
@@ -209,6 +225,15 @@
         {
             listaPerfilCargo = new List<PerfilCargoDTO>();
         }
+    }
+    private async Task<string> ObtenerNombresApellidos(int UserId)
+    {
+        var response = await usuarioServicio.Obtener(UserId);
+        if (response.EsCorrecto)
+        {
+            return response.Resultado.Nombres.ToString() + " " + response.Resultado.Apellidos.ToString();
+        }
+        return "";
     }
 
     public async Task ListarTipoContrato(string Valor = "")

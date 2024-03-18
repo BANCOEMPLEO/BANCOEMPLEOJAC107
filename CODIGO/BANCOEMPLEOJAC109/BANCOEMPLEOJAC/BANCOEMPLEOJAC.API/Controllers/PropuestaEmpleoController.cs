@@ -15,6 +15,7 @@ namespace BANCOEMPLEOJAC.API.Controllers
         {
             _propuestaempleoServicio = propuestaEmpleoServicio;
         }
+
         [HttpGet("Lista/{buscar?}")]
         public async Task<IActionResult> Lista(string buscar = "NA")
         {
@@ -35,16 +36,15 @@ namespace BANCOEMPLEOJAC.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("ListaPorEmpleo/{idEmpleo}")]
-        public async Task<IActionResult> ListaPorEmpleo(int idEmpleo)
+        [HttpGet("EstadoPorEmpleo/{idEmpleo}")]
+        public async Task<IActionResult> EstadoPorEmpleo(int idEmpleo)
         {
-            var response = new ResponseDTO<List<PropuestaEmpleoDTO>>();
+            var response = new ResponseDTO<EmpleoEstadoDTO>();
 
             try
             {
-
                 response.EsCorrecto = true;
-                response.Resultado = await _propuestaempleoServicio.ListaPorEmpleo(idEmpleo);
+                response.Resultado = await _propuestaempleoServicio.EstadoPorEmpleo(idEmpleo);
             }
             catch (Exception ex)
             {
@@ -75,7 +75,6 @@ namespace BANCOEMPLEOJAC.API.Controllers
             }
             return Ok(response);
         }
-
 
         [HttpGet("Obtener/{Id:int?}")]
         public async Task<IActionResult> Obtener(int Id)

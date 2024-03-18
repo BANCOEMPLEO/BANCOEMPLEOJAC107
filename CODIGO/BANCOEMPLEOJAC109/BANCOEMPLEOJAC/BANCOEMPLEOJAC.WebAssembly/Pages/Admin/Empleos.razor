@@ -51,11 +51,11 @@
                             @if (item.PrecioOferta != 0 && item.PrecioOferta > item.Precio)
                             {
                                 <span class="text-danger text-decoration-line-through">$COL/. @item.Precio</span>
-                                <span>$COL /.@item.PrecioOferta</span>
+                                <span>COL $@item.PrecioOferta</span>
                             }
                             else
                             {
-                                <span>$COL /.@item.Precio</span>
+                                <span>COL $@item.Precio</span>
                             }
                         </div>
                         <div class="text-center">
@@ -76,17 +76,44 @@
                             </h4>
                         </div>
 
-                    </div>
                     <!-- Propuestas de producto cantidad  con enlace a detalle -->
-                    <div class="text-center">
-                        Cantidad de propuestas: @item.PropuestaEmpleos.Count() &nbsp;
-                        @if (@item.PropuestaEmpleos.Count() > 0)
-                        {
-                            
-                            <a class="border-start:5px" href="/ofertaempleo/@item.PropuestaEmpleos.First().IdPropuestaEmpleo">
-                                <i class="oi oi-eye fs-5" title="Ver"></i>
-                             </a>
-                        }
+                        <hr />
+
+                        <div class="row border-2 ">
+                            <div class="col-8 text-end">
+                                Propuestas: 
+                            </div>
+                            <div class="col-4">
+                                <b>@estados[(item.IdEmpleo.ToString(),"propuestas")]</b>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row border-2 ">
+                            <div class="col-8 text-end">
+                                    Vacantes :
+                            </div>
+                            <div class="col-4">
+                                <b>@(item.Cantidad - Convert.ToInt32(estados[(item.IdEmpleo.ToString(), "contratado")]))</b>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row border-2 ">
+                            <div class="col-8 text-end">
+                                En Verificación :
+                            </div>
+                            <div class="col-4">
+                                <b>@estados[(item.IdEmpleo.ToString(), "enverificacion")]</b>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row border-2 ">
+                            <div class="col-8 text-end">
+                                Contratos :
+                            </div>
+                            <div class="col-4">
+                                <b>@estados[(item.IdEmpleo.ToString(), "contratado")] </b>
+                            </div>
+                        </div>
                     </div>
                     <!-- Product actions-->
                     <div class="card-footer bg-transparent">
@@ -127,28 +154,49 @@
 
 </div>
 @code {
+    #region ComentariosDesarrollo
     // HECHO : QUE NO SE PUEDA BORRAR LOS EMPLEOS QUE TENGAN CONTRATOS ELABORADOS FECHA: 27/FEB/2024 5:04PM :FIN : 8/MAR/2024 10:37AM
     // HECHO : DESDE LAS 2PM DEL 23/FEB/2024 YA SE PUEDEN PONER COMO PROPUESTAS LOS EMPLEOS Y QUEDAN EN EL LISTADO DE PUBLICOS FALTAS LAS REPROPUESTAS DE EMPLEO 24/FEB/2024 12.28AM
     // HECHO : HACER FILTRO DE EMPLEOS CREADOS POR EL USUARIO 23/FEB/2024 2:00PM : INICIO : 26/FEB/2024 8:00PM : FIN : 26/FEB/2024 8:33PM
     // HECHO : HACER QUE SE VEAN LA CANTIDAD DE PROPUESTAS QUE TIENE UN EMPLEO Y SE PUEDA VER CADA UNA DE ELLAS : FECHA : 01/MAR/2024 3:13PM : FIN : 8/MAR/2024 10:39AM
+    // HECHO: SE PUEDEN VER EN UN LISTADO POR CADA EMPLEO LOS ESTADOS DE LA CANTIDAD DE  : PROPUESTAS, VACANTES, EN VERIFICACIÓN Y CONTRATADAS FECHA FIN: 17/MAR/2024 8:55PM
+    #endregion
 
+    #region Inicializacion Objetos
     private List<EmpleoDTO>? lista = null;
     private List<PropuestaEmpleoDTO>? listaPropuestaEmpleo = new List<PropuestaEmpleoDTO>();
+    private EmpleoEstadoDTO estado = new EmpleoEstadoDTO();
+    private Dictionary<(string, string), int> estados = new Dictionary<(string, string), int>();
+
     private string buscar = "";
+    #endregion
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ObtenerEmpleos();
+    }
 
     private async Task ObtenerEmpleos(string Valor = "")
     {
         var authState = await autenticacionProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-
         int idUsuario = Convert.ToInt32(user.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault().ToString());
-
-        // obtienen la propuestas
-
         var response = await empleoServicio.Lista(idUsuario,Valor);
+        estados.Clear();
         if (response.EsCorrecto)
         {
             lista = (List<EmpleoDTO>)response.Resultado!;
+            if (lista != null && lista.Count() > 0)
+            {
+                 foreach (var item in lista)
+                {
+                    await ObenerPropuestasEmpleo(item.IdEmpleo);
+                    estados.Add((item.IdEmpleo.ToString(), "propuestas"), estado.Propuestas);
+                    estados.Add((item.IdEmpleo.ToString(), "enverificacion"), estado.EnVerificacion);
+                    estados.Add((item.IdEmpleo.ToString(), "vacante"), estado.Vacante);
+                    estados.Add((item.IdEmpleo.ToString(), "contratado"), estado.Contratado);
+                }
+            }
         }
         else
         {
@@ -156,18 +204,14 @@
         }
         StateHasChanged();
     }
+
     private async Task ObenerPropuestasEmpleo(int idEmpleo)
     {
-        var response = await propuestaempleoServicio.ListaPorEmpleo(idEmpleo);
+        var response = await propuestaempleoServicio.EstadoPorEmpleo(idEmpleo);
         if (response.EsCorrecto)
         {
-            listaPropuestaEmpleo = (List<PropuestaEmpleoDTO>)response.Resultado!;
+            estado = (EmpleoEstadoDTO)response.Resultado!;
         }
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await ObtenerEmpleos();
     }
 
     private async Task Eliminar(EmpleoDTO modelo)
@@ -196,27 +240,12 @@
         }
     }
 
-    private async Task<List<PropuestaEmpleoDTO>> ObtenerPropuestasEmpleo(int idEmpleo)
-    {
-        var response = await propuestaempleoServicio.ListaPorEmpleo(idEmpleo);
-        if (response.EsCorrecto)
-        {
-            return response.Resultado!.ToList();
-        }
-        else
-        {
-            // Manejar el error como prefieras
-            return  new List<PropuestaEmpleoDTO>();
-        }
-    }
-
-
     private async Task Activar(EmpleoDTO modelo)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "Esta seguro de?",
-                Text = $"Activar Empleo: {modelo.Nombre}",
+                Text = $"Activar Empleo: {modelo.Nombre} y crear una Propuesta de Empleo Pública!",
                 Icon = SweetAlertIcon.Warning,
                 ShowCancelButton = true,
                 ConfirmButtonText = "Si, activar",

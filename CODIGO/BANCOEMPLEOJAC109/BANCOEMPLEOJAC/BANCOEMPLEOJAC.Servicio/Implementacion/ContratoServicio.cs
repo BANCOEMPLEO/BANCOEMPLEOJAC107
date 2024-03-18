@@ -29,12 +29,12 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
 
         }
 
-        public async Task<ContratoDTO> Registrar(string tipo, ContratoDTO modelo)
+        public async Task<ContratoDTO> Registrar(string tipo, ContratoDTO modelo, int UsuarioId)
         {
             try
             {
                 var dbModelo = _mapper.Map<Modelo.Contrato>(modelo);
-                var contratoGenerado = await _contratoRepositorio.Registrar(tipo, dbModelo);
+                var contratoGenerado = await _contratoRepositorio.Registrar(tipo, dbModelo, UsuarioId);
 
                 if (contratoGenerado.IdContrato != 0)
                     return _mapper.Map<ContratoDTO>(contratoGenerado);

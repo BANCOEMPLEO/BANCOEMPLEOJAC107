@@ -40,9 +40,9 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
         {
             return await _httpClient.GetFromJsonAsync<ResponseDTO<List<PropuestaEmpleoDTO>>>($"PropuestaEmpleo/Lista/{buscar}");
         }
-        public async Task<ResponseDTO<List<PropuestaEmpleoDTO>>> ListaPorEmpleo(int idEmpleo)
+        public async Task<ResponseDTO<EmpleoEstadoDTO>> EstadoPorEmpleo(int idEmpleo)
         {
-            return await _httpClient.GetFromJsonAsync<ResponseDTO<List<PropuestaEmpleoDTO>>>($"PropuestaEmpleo/ListaPorEmpleo/{idEmpleo}");
+            return await _httpClient.GetFromJsonAsync<ResponseDTO<EmpleoEstadoDTO>>($"PropuestaEmpleo/EstadoPorEmpleo/{idEmpleo}");
         }
 
         public async Task<ResponseDTO<PropuestaEmpleoDTO>> Obtener(int Id)

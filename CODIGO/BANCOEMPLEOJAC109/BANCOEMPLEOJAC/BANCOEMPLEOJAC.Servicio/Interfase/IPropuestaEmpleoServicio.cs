@@ -10,7 +10,7 @@ namespace BANCOEMPLEOJAC.Servicio.Contrato
     public interface IPropuestaEmpleoServicio
     {
         Task<List<PropuestaEmpleoDTO>> Lista(string buscar);
-        Task<List<PropuestaEmpleoDTO>> ListaPorEmpleo(int idEmpleo);
+        Task<EmpleoEstadoDTO> EstadoPorEmpleo(int idEmpleo);
         Task<List<PropuestaEmpleoDTO>> PerfilCargo(int categoria, string buscar);
         Task<PropuestaEmpleoDTO> Obtener(int id);
         Task<int?> ObtenerAnterior(int id);
