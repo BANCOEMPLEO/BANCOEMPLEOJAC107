@@ -38,19 +38,19 @@
                                             <img class="card-img-top" src="@item.propuestaEmpleo.Imagen" style="width:100px">
                                         </td>
  *@                                        <td valign="middle">@item.propuestaEmpleo.Nombre</td>
-                                        <td valign="middle">@item.Precio</td>
+                                        <td valign="middle">$@String.Format("{0:N0}", item.Precio)</td>
                                         <td valign="middle" align="center">
                                             <div class="btn-group" role="group">
-               <button type="button" class="btn btn-outline-dark" @onclick="(() =>Disminuir((int)item.propuestaEmpleo.IdPropuestaEmpleo))">
+               <button type="button" disabled="@disabledmodificacion" class="btn btn-outline-dark" @onclick="(() =>Disminuir((int)item.propuestaEmpleo.IdPropuestaEmpleo))">
                                                     <i class="oi oi-minus"></i>
                                                 </button>
                                                 <input class="form-control" readonly="readonly" style="width:50px" @bind-value="item.Cantidad" />
-               <button type="button" class="btn btn-outline-dark" @onclick="(() =>Aumentar((int)item.propuestaEmpleo.IdPropuestaEmpleo))">
+                                                <button type="button" disabled="@disabledmodificacion" class="btn btn-outline-dark" @onclick="(() =>Aumentar((int)item.propuestaEmpleo.IdPropuestaEmpleo))">
                                                     <i class="oi oi-plus"></i>
                                                 </button>
                                             </div>
                                         </td>
-                                        <td valign="middle">@item.Total</td>
+                                        <td valign="middle">$@String.Format("{0:N0}", item.Total)</td>
                                         <td valign="middle">
            <button type="button" class="btn btn-outline-dark" @onclick="(async () => await Eliminar((int)item.propuestaEmpleo.IdPropuestaEmpleo))">
                                                 <i class="oi oi-trash"></i>
@@ -94,21 +94,55 @@
                 <div class="mb-2 text-center">
                     <label class="form-label text-center h3">Forma de Pago Origen</label>
                 </div>
-                <div class="mb-2">
-                    <label class="form-label">Nequi</label>
-                    <span class="float-end"><img src="nequi.jpg" width="110px"/></span>
-                    <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
-                </div>
-                <div class="mb-2">
-                    <label class="form-label">Daviplata</label>
-                    <span class="float-end"><img src="daviplata.jpg" width="110px" /></span>
-                    <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
-                </div>
                     <div class="mb-2">
-                        <label class="form-label">Consignación</label>
-                        <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
-                    </div>
-                    <div class="mb-2">
+                        <div class="mb-2">
+                            <label class="form-label">Forma de Pago</label>
+                            <select id="formadepago" @onchange="MostrarInput" class="form-control form-control-sm">
+                                <option value="">Seleccione una opción</option>
+                                @if (formaPagoSeleccionada == "nequi")
+                                {
+                                    <option value="nequi" selected>Nequi</option>
+                                }
+                                else
+                                {
+                                    <option value="nequi">Nequi</option>
+                                }
+                                @if (formaPagoSeleccionada == "daviplata")
+                                {
+                                    <option value="daviplata" selected>Daviplata</option>
+                                }
+                                else
+                                {
+                                    <option value="daviplata">Daviplata</option>
+                                }
+                                @if (formaPagoSeleccionada == "consignacion")
+                                {
+                                    <option value="consignacion" selected>Consignación</option>
+                                }
+                                else
+                                {
+                                    <option value="consignacion">Consignación</option>
+                                }
+                            </select>
+                        </div>
+                        @if (mostrarInput)
+                        {
+                                string str1 = @formaPagoSeleccionada.ToString();
+                                string str2 = ".jpg";
+                                string result = String.Concat(str1, str2);
+                            <div class="mb-2">
+                                <span class="float-end"><img src="@result" width="110px" hight="50px"/></span>
+                                @if (formaPagoSeleccionada == "consignacion")
+                                {
+                                     <br /><br /><br /><span class="float-start">Cuenta Banco</span>
+                                }
+                                @if (formaPagoSeleccionada == "daviplata" || formaPagoSeleccionada == "nequi")
+                                {
+                                    <br /><span class="float-start">Número Celular</span>
+                                }
+                                <input type="text" class="form-control form-control-sm" placeholder="">
+                            </div>
+                        }
                         <label class="form-label">Codigo Transaccoón</label>
                         <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
                     </div>
@@ -128,7 +162,7 @@
                     <hr />
                     <div class="d-flex justify-content-between">
                         <div>Total a pagar:</div>
-                        <div>S/. @(lista.Sum(i => i.Total))</div>
+                        <div>$ @(lista.Sum(i => i.Total))</div>
                     </div>
                     <div class="mt-2">
                         <div class="d-grid gap-1">
@@ -140,18 +174,27 @@
                         <label class="form-label text-center h3">Forma de Pago Destino</label>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Nequi</label>
-                        <span class="float-end"><img src="nequi.jpg" width="110px" /></span>
-                        <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Daviplata</label>
-                        <span class="float-end"><img src="daviplata.jpg" width="110px" /></span>
-                        <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Consignación</label>
-                        <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
+                        @if (mostrarInput)
+                        {
+                            string str1 = @formaPagoSeleccionada.ToString();
+                            string str2 = ".jpg";
+                            string result = String.Concat(str1, str2);
+                            <div class="mb-2">
+                                <span class="float-end"><img src="@result" width="110px" hight="50px" /></span>
+                                @if (formaPagoSeleccionada == "consignacion")
+                                {
+                                    <br /><br /><br />
+                                    <span class="float-start">Cuenta Banco</span>
+                                }
+                                @if (formaPagoSeleccionada == "daviplata" || formaPagoSeleccionada == "nequi")
+                                {
+                                    <br />
+
+                                    <span class="float-start">Número Celular</span>
+                                }
+                                <input type="text" class="form-control form-control-sm" placeholder="">
+                            </div>
+                        }
                     </div>
 
                     </EditForm>
@@ -173,10 +216,22 @@
     // POR HACER : QUE SE PONGAN LOS DATOS DEL EMPLEADOR EN ORIGEN Y DEL EMPLEADO EN DESTINO FECHA : 15/MAR/2024 1.35PM
     // POR HACER : QUE SE VEA EL NOMBRE DE LA PERSONA QUE ESTA SIENDO CONTRATADA EN CANASTA DE CADA EMPLEO. 18/MAR/2024 6:49PM
     private bool disabled = true;
+    private bool disabledmodificacion = true;
     private List<CarritoDTO> lista = new List<CarritoDTO>();
     private decimal? TotalPagar = 0;
     private FormaPagoDTO modelo = new FormaPagoDTO();
     private int UsuarioId = 0;
+    private string activa = " disabled "; 
+    private string formaPagoSeleccionada;
+    private string formapago;
+    private bool mostrarInput = false;
+
+    private void MostrarInput(ChangeEventArgs e)
+    {
+        formaPagoSeleccionada = e.Value.ToString();
+        mostrarInput = !string.IsNullOrEmpty(formaPagoSeleccionada);
+        //formapago.IndexOf(e.Value.ToString());
+    }
 
     [CascadingParameter]
     private Task<AuthenticationState> authenticationState { get; set; }
@@ -189,6 +244,7 @@
         var user = authState.User;
         if (user.Identity.IsAuthenticated)
         {
+            disabledmodificacion = true;
             disabled = false;
             UsuarioId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
             //JACId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.Locality).Value);
