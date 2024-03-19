@@ -92,7 +92,7 @@
                                     <!-- Product name-->
                                     <h5 class="fw-bolder">@item.Nombre</h5>
                                     <!-- Product price-->
-                                    <span>COL$ /.@item.Valor</span>
+                                    <span>COL $ @item.Valor</span>
                                     <div class="text-center">
                                         Creado como :<h4>
                                             <u>
@@ -159,11 +159,15 @@
     </div>
 </div>
 @code {
+    #region Comentarios Desarrollo
     // HECHO : CALCULAR DISTANCIA ENTRE PERFIL DE EMPLEO LOCAL Y EL PERFIL DE EMPLEO EXTERNO E IMPRIMIRLO EN CADA EMPLEO OFRECIDO. INICIA: 9/MAR/2024 12:34AM  FIN : 9/MAR/2024 610PM 
     // HECHO : QUE LA BUSQUEDA DE TODOS PUEDA BUSCAR CON DESCRIPCION TAMBIEN, BUSCA CON PERFIIL SELECCIONADA PERO CON TODOS NO :  FIN : 13/MAR/2024 2:40PM
     // HECHO : HACER QUE LAS OFERTAS SE VEAN EMPLEOS SOLAMENTE LAS PROPUESTAS 24/FEB/2024 12:35AM FIN : 28/FEB/2024 11:15AM
      // HECHO : QUE SE DESACTIVE EN EL "EMPLEOS PUBLICOS" LOS EMPLEOS QUE SE DESACTIVAN EN "EMPLEOS" 24/FEB/2024 12:34 : FIN : 25/FEB/2024 11:03
-    private List<PerfilCargoDTO>? listaCategoria = null;
+    #endregion
+
+    #region Inicialización Objetos
+     private List<PerfilCargoDTO>? listaCategoria = null;
     private List<PropuestaEmpleoDTO>? listaProducto = null;
     private string buscar = "";
     private int categoriaSeleccionada = 0;
@@ -177,6 +181,7 @@
     private double localLat { get; set; }
     private double localLon { get; set; }
     public DistanciaDTO distanciaDTO = new DistanciaDTO();
+    #endregion
 
     public async Task CalculaDis(double lat1, double lon1, double lat2, double lon2)
     {
@@ -191,7 +196,6 @@
         calcula = distancialatlonservicio.CalcularDistancia(distanciaDTO).Result;
         StateHasChanged();
     }
-
 
     protected override async Task OnInitializedAsync()
     {

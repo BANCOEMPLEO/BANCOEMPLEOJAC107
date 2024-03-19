@@ -8,7 +8,8 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Interfase
         Task<ResponseDTO<EmpleoEstadoDTO>> EstadoPorEmpleo(int idEmpleo);
         Task<ResponseDTO<List<PropuestaEmpleoDTO>>> Catalogo(int categoria, string buscar);
         Task<ResponseDTO<PropuestaEmpleoDTO>> Obtener(int Id);
-        Task<ResponseDTO<int?>> ObtenerAnterior(int Id);
+        Task<ResponseDTO<int?>> ObtenerAnterior(int Orden, int Id);
+        Task<ResponseDTO<int?>> ObtenerSiguiente(int Orden, int Id);
         Task<ResponseDTO<PropuestaEmpleoDTO>> Crear(PropuestaEmpleoDTO modelo);
         Task<ResponseDTO<bool>> Editar(PropuestaEmpleoDTO modelo);
         Task<ResponseDTO<bool>> Eliminar(int Id);

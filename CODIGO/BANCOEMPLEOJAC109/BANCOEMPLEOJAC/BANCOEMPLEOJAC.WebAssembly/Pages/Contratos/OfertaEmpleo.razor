@@ -25,9 +25,51 @@
 
     @if (modelo != null)
     {
-        <div class="row gx-4 gx-lg-5 align-items-center">
+        <div class="row gx-12 gx-lg-12 align-items-center">
             <div class="col-12">
-   
+                @if ((modelo.Aceptada != null) && ((bool)modelo.Aceptada))
+                {
+                    <div class="badge bg-danger text-white position-absolute" style="top: 1rem; right: 1rem
+                                    position: absolute;
+                                                            top: 30%;
+                                                            left: 70%;
+                                                            transform: translate(-5%, -5%);
+                                                            text-align: right;
+                                                            padding: 20px; font-size: 2em;">
+                        Empleo Contratado
+                    </div>
+                }
+                else
+                {
+                    @if ((modelo.EmpleadoId != null && modelo.EmpleadorId != null) && (modelo.Aceptada == null))
+                    {
+                        <div class="badge bg-info text-black-50 position-absolute" style="top: 0.5rem; right: 0.5rem
+                                                         position: absolute;
+                                                            top: 30%;
+                                                            left: 70%;
+                                                            transform: translate(-5%, -5%);
+                                                            text-align: right;
+                                                            padding: 20px; font-size: 2em;">
+                            En Verificación
+                        </div>
+                    }
+                    @if (((modelo.EmpleadoId != null && modelo.EmpleadorId == null) ||
+                   (modelo.EmpleadoId == null && modelo.EmpleadorId != null))
+                   && (modelo.Aceptada == null))
+                    {
+                        <div class="badge bg-success text-light position-absolute" style="top: 0.5rem; right: 0.5rem
+                                                            position: absolute;
+                                                            top: 30%;
+                                                            left: 70%;
+                                                            transform: translate(-5%, -5%);
+                                                            text-align: right;
+                                                            padding: 20px; font-size: 2em;">
+                            VACANTE !
+                        </div>
+
+                    }
+                }
+
                     <div class="container px-4 px-lg-5 my-5">
                         @if (modelo != null)
                         {
@@ -150,48 +192,6 @@
                             </div>
                         }
                     </div>
-                @if ((modelo.Aceptada != null) && ((bool)modelo.Aceptada))
-                {
-                    <div class="badge bg-danger text-white position-relative" style="top: 1rem; right: 1rem
-                                    position: absolute;
-                                    top: 50%;
-                                    left: 50%;
-                                    transform: translate(-50%, -50%);
-                                    text-align: center;
-                                    padding: 20px; font-size: 2em;">
-                        Empleo Contratado
-                    </div>
-                }
-                else
-                {
-                    @if ((modelo.EmpleadoId != null && modelo.EmpleadorId != null)  && (modelo.Aceptada == null))
-                        {
-                            <div class="badge bg-info text-black-50 position-relative" style="top: 0.5rem; right: 0.5rem
-                                                        position: absolute;
-                                                        top: 50%;
-                                                        left: 50%;
-                                                        transform: translate(-50%, -50%);
-                                                        text-align: center;
-                                                        padding: 20px; font-size: 2em;">
-                                En Verificación
-                            </div>
-                        }
-                    @if (((modelo.EmpleadoId != null && modelo.EmpleadorId  == null) ||
-                   (modelo.EmpleadoId == null && modelo.EmpleadorId != null))
-                    && (modelo.Aceptada == null))
-                        {
-                            <div class="badge bg-success text-light position-relative" style="top: 0.5rem; right: 0.5rem
-                                                            position: absolute;
-                                                            top: 50%;
-                                                            left: 50%;
-                                                            transform: translate(-50%, -50%);
-                                                            text-align: center;
-                                                            padding: 20px; font-size: 2em;">
-                                VACANTE !
-                            </div>
-
-                        }
-                }
 
                     <hr />
                     <div class="row">
@@ -322,9 +322,9 @@
         ObtieneNombresEmpleado(modelo.EmpleadoId);
 
         // obtiene el IdSiguiente Propuesta consultando la propuesta que tenga ésta de anterior, si la hay
-        if (Id != null)
+        if (modelo.EmpleoId != null && modelo.Orden != null)
         {
-            var responseS = await propuestaEmpleoServicio.ObtenerAnterior(Id);
+            var responseS = await propuestaEmpleoServicio.ObtenerSiguiente(modelo.Orden.Value, modelo.EmpleoId.Value);
             if (responseS.EsCorrecto)
             {
                 if (responseS.Resultado != null )
@@ -341,9 +341,23 @@
             }
         }
         // obtiene el IdAnterior Propuesta consultando la propuesta que tenga ésta de anterior, si la hay
-        if (Id != null)
+        if (modelo.EmpleoId != null && modelo.Orden != null)
         {
-                    IdAnterior = modelo.PropuestaEmpleoAnteriorId;
+            var responseS = await propuestaEmpleoServicio.ObtenerAnterior(modelo.Orden.Value, modelo.EmpleoId.Value);
+            if (responseS.EsCorrecto)
+            {
+                if (responseS.Resultado != null)
+                {
+
+                    IdAnterior = (int)responseS.Resultado;
+                    StateHasChanged();
+                }
+                else
+                {
+                    IdAnterior = null;
+                    StateHasChanged();
+                }
+            }
         }
 
         var propuestas = await propuestaEmpleoServicio.EstadoPorEmpleo(modelo.EmpleoId.GetValueOrDefault());
@@ -360,6 +374,7 @@
         if (modelo.Empleo.PerfilCargo.IdTipoContrato != null)
             nombrecontrato = listaTipoContrato.Where(c => c.IdTipoContrato == modelo.Empleo.PerfilCargo.IdTipoContrato).FirstOrDefault().Nombre.ToString();
 
+        #region Localización Por Latitud Longitud
         // localizacion empleo
         var response1 = await jacServicio.Obtener(modelo.Empleo.PerfilCargo.Jac.IdJac);
         if (response1.EsCorrecto)
@@ -380,6 +395,7 @@
             distanciaDTO.longitudPunto2 = double.Parse(zona.Resultado.Longitud, CultureInfo.InvariantCulture);
         }
         calcula = CalculaDis(Convert.ToDouble(distanciaDTO.latitudPunto1), Convert.ToDouble(distanciaDTO.longitudPunto1), Convert.ToDouble(distanciaDTO.latitudPunto2), Convert.ToDouble(distanciaDTO.longitudPunto2)).Result;
+        #endregion
     }
 
     private async Task ObtieneNombresEmpleador(int? IdUsuario)
@@ -434,9 +450,9 @@
         // saca los nombres de EmpleadoId
         ObtieneNombresEmpleado(modelo.EmpleadoId);
         // obtiene el IdSiguiente Propuesta si la hay
-        if (modelo.IdPropuestaEmpleo != null)
+        if (modelo.Orden != null && modelo.EmpleoId != null)
         {
-            var responseS = await propuestaEmpleoServicio.ObtenerAnterior((int)modelo.IdPropuestaEmpleo);
+            var responseS = await propuestaEmpleoServicio.ObtenerSiguiente((int)modelo.Orden,(int)modelo.EmpleoId);
             if (responseS.EsCorrecto)
             {
                 if (responseS.Resultado != null)
@@ -470,14 +486,22 @@
 
 
         // obtiene el IdAnterior Propuesta si la hay
-        if (modelo.PropuestaEmpleoAnteriorId != null)
+        if (modelo.Orden != null && modelo.EmpleoId != null)
         {
-            this.IdAnterior = modelo.PropuestaEmpleoAnteriorId;
-        }
-        else
-        {
-            this.IdAnterior = null;
-            StateHasChanged();
+            var responseS = await propuestaEmpleoServicio.ObtenerAnterior((int)modelo.Orden, (int)modelo.EmpleoId);
+            if (responseS.EsCorrecto)
+            {
+                if (responseS.Resultado != null)
+                {
+                    this.IdAnterior = (int)responseS.Resultado;
+                    StateHasChanged();
+                }
+                else
+                {
+                    this.IdAnterior = null;
+                    StateHasChanged();
+                }
+            }
         }
         StateHasChanged();
     }

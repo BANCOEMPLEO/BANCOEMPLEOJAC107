@@ -13,7 +13,8 @@ namespace BANCOEMPLEOJAC.Servicio.Contrato
         Task<EmpleoEstadoDTO> EstadoPorEmpleo(int idEmpleo);
         Task<List<PropuestaEmpleoDTO>> PerfilCargo(int categoria, string buscar);
         Task<PropuestaEmpleoDTO> Obtener(int id);
-        Task<int?> ObtenerAnterior(int id);
+        Task<int?> ObtenerAnterior(int Orden, int id);
+        Task<int?> ObtenerSiguiente(int Orden, int id);
         Task<PropuestaEmpleoDTO> Crear(PropuestaEmpleoDTO modelo);
         Task<PropuestaEmpleoDTO> RePropuesta(PropuestaEmpleoDTO modelo);
         Task<bool> Aceptada(PropuestaEmpleoDTO modelo);

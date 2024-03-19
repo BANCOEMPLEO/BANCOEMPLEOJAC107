@@ -93,15 +93,15 @@ namespace BANCOEMPLEOJAC.API.Controllers
             }
             return Ok(response);
         }
-        [HttpGet("ObtenerAnterior/{Id:int?}")]
-        public async Task<IActionResult> ObtenerAnterior(int Id)
+        [HttpGet("ObtenerAnterior/{orden}/{Id:int?}")]
+        public async Task<IActionResult> ObtenerAnterior(int Orden, int Id)
         {
             var response = new ResponseDTO<int?>();
             try
             {
 
                 response.EsCorrecto = true;
-                response.Resultado = await _propuestaempleoServicio.ObtenerAnterior(Id);
+                response.Resultado = await _propuestaempleoServicio.ObtenerAnterior(Orden, Id);
             }
             catch (Exception ex)
             {
@@ -110,6 +110,25 @@ namespace BANCOEMPLEOJAC.API.Controllers
             }
             return Ok(response);
         }
+
+        [HttpGet("ObtenerSiguiente/{orden}/{Id:int?}")]
+        public async Task<IActionResult> ObtenerSiguiente(int Orden, int Id)
+        {
+            var response = new ResponseDTO<int?>();
+            try
+            {
+
+                response.EsCorrecto = true;
+                response.Resultado = await _propuestaempleoServicio.ObtenerSiguiente(Orden, Id);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
 
         [HttpPost("Crear")]
         public async Task<IActionResult> Crear([FromBody] PropuestaEmpleoDTO modelo)

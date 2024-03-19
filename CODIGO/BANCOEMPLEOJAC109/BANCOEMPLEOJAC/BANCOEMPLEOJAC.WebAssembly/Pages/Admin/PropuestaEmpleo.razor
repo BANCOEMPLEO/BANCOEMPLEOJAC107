@@ -43,7 +43,12 @@
                     <ValidationMessage For="@(()=>modelo.Descripcion)" />
 
                     <div class="input-group mt-3">
-                        <span class="input-group-text bg-light" id="basic-addon3">Requisitos</span>
+                        @if (modelo.EmpleadoId == userId)
+                        {
+                            <span class="input-group-text bg-light" id="basic-addon3">Experiencia:</span>
+                        }else{
+                            <span class="input-group-text bg-light" id="basic-addon3">Requisitos:</span>
+                        }
                         <input type="text" class="form-control" @bind-value="modelo.Requisitos">
                     </div>
                     <ValidationMessage For="@(()=>modelo.Requisitos)" />
@@ -91,7 +96,7 @@
                     <ValidationMessage For="@(()=>modelo.Ubicacion)" />
                     <div class="input-group mt-3">
                         <span class="input-group-text bg-light" id="basic-addon3">Cantidad</span>
-                        <input type="number" class="form-control" @bind-value="modelo.Cantidad">
+                        <input type="number" disabled class="form-control" @bind-value="modelo.Cantidad">
                     </div>
                     <ValidationMessage For="@(()=>modelo.Cantidad)" />
 
@@ -182,9 +187,15 @@
         if (response.EsCorrecto)
         {
             modelo = (PropuestaEmpleoDTO)response.Resultado!;
-            modelo.Orden += 1;
+            // el orden se toma de las propuestas existentes
+            var respuestaestado = await propuestaEmpleoServicio.EstadoPorEmpleo(modelo.EmpleoId.Value);
+            if (respuestaestado.EsCorrecto)
+            {
+                modelo.Orden = respuestaestado.Resultado.Propuestas + 1; 
+            }
             IdTipoContrato = (int)modelo.Empleo.PerfilCargo.IdTipoContrato!;
             modelo.IdPropuestaEmpleo = null;
+            modelo.Cantidad = 1;
         }
         else
             toastService.ShowWarning(response.Mensaje);
@@ -257,40 +268,23 @@
     {
         bool respuesta = true;
         string mensaje = string.Empty;
-        //StateHasChanged();
-        // if (idPropuestaEmpleo != 0)
-        // {
-        //     var response = await propuestaEmpleoServicio.Editar(modelo);
-        //     if (response.EsCorrecto)
-        //     {
-        //         mensaje = "Propuesta Empleo fue modificada";
-        //     }
-        //     else
-        //     {
-        //         respuesta = false;
-        //         mensaje = "No ser pudo editar";
-        //     }
-        // }
-        // else
-        // {
-            if (modelo.IdPropuestaEmpleo == null)
-            {
+        if (modelo.IdPropuestaEmpleo == null)
+        {
                 
-                modelo.RePropone = true;
-                modelo.FechaHoraReProponeEmpleador = DateTime.Now;
-                modelo.PropuestaEmpleoAnteriorId = idPropuestaEmpleo;
-                var response = await propuestaEmpleoServicio.Crear(modelo);
-                if (response.EsCorrecto)
-                {
-                    mensaje = "RePropuesta Empleo fue creada";
-                }
-                else
-                {
-                    respuesta = false;
-                    mensaje = "No se pudo crear : " + response.Mensaje;
-                }
+            modelo.RePropone = true;
+            modelo.FechaHoraReProponeEmpleador = DateTime.Now;
+            modelo.PropuestaEmpleoAnteriorId = idPropuestaEmpleo;
+            var response = await propuestaEmpleoServicio.Crear(modelo);
+            if (response.EsCorrecto)
+            {
+                mensaje = "RePropuesta Empleo fue creada";
             }
-      //  }
+            else
+            {
+                respuesta = false;
+                mensaje = "No se pudo crear : " + response.Mensaje;
+            }
+        }
         if (respuesta)
         {
             toastService.ShowSuccess(mensaje);

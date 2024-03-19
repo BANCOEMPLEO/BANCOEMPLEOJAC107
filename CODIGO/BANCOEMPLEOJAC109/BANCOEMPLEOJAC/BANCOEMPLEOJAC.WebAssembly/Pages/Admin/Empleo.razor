@@ -33,10 +33,12 @@
             @if (empleador)
             {
                 <input type="hidden" @bind-value="modelo.EmpleadorId" />
+                <span class="text-black-50 bg-info">*Es quien puede dar un Valor o Cantidad de Dinero al recibir Productos o Serviciós de Terceros.</span>
             }
             else
             {
                 <input type="hidden" @bind-value="modelo.EmpleadoId" />
+                <span class="text-black-50 bg-info">*Es quien puede dar un Productos o Serviciós a Terceros por un Valor o Cantidad de Dinero que recibe.</span>
             }
 
             <div class="input-group mt-3">

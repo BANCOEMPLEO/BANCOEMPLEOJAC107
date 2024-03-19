@@ -33,7 +33,7 @@ namespace BANCOEMPLEOJAC.Repositorio.Implementacion
                             // Quita de propuestaEmpleo la cantidad contratada
                             PropuestaEmpleo propuestaEmpleo_encontrado = _dbContext.PropuestaEmpleos.Where(p => p.IdPropuestaEmpleo == dp.PropuestaEmpleoId).FirstOrDefault();
 
-                            propuestaEmpleo_encontrado.Cantidad = propuestaEmpleo_encontrado.Cantidad - dp.Cantidad;
+                            //propuestaEmpleo_encontrado.Cantidad -= dp.Cantidad;
                             propuestaEmpleo_encontrado.Aceptada = true;
                             if (propuestaEmpleo_encontrado.EmpleadoId == null)
                             {
@@ -46,24 +46,56 @@ namespace BANCOEMPLEOJAC.Repositorio.Implementacion
                             propuestaEmpleo_encontrado.FechaHoraAceptaEmpleador = DateTime.Now;
                             _dbContext.Update(propuestaEmpleo_encontrado);
                             await _dbContext.SaveChangesAsync();
+                            // si la  cantidad de empleos ofrecidos menos la cantidad de propuestas aceptadas es mayor o igual a 1, se debe crear una propuesta nueva
+                            var CantAceptadas = _dbContext.PropuestaEmpleos.Where(p => p.Aceptada == true && p.EmpleoId == propuestaEmpleo_encontrado.EmpleoId).Count();
+                            var Propuesta = _dbContext.PropuestaEmpleos.Where(p => p.EmpleoId == propuestaEmpleo_encontrado.EmpleoId && p.Orden ==1).FirstOrDefault();
+                            var CantPropuestas = _dbContext.PropuestaEmpleos.Where(p => p.EmpleoId == propuestaEmpleo_encontrado.EmpleoId).Count();
+                            var CantEmpleosOfrecidos = _dbContext.Empleos.Where(e => e.IdEmpleo == propuestaEmpleo_encontrado.EmpleoId).FirstOrDefault().Cantidad;
+                            // Se quita uno de Cantidad de Empleo ofrecido a la propuesta orden 1
+                            Propuesta.Cantidad -= 1;
 
-                            // POR HACER : ACTUALIZAR EMPLEO CON EL IDEMPLEADOR Y IDEMPLEADO Y DESACTIVARLO FECHA: 13/MAR/2024 2:02PM
+                            //if ( (CantEmpleosOfrecidos - CantAceptadas) >= 1)
+                            //{
+                            //    // Se cra una prouesta nueva con cantidad  = 1
+                            //    PropuestaEmpleo propuestaEmpleo = new PropuestaEmpleo();
+                            //    propuestaEmpleo.Nombre = Propuesta.Nombre;
+                            //    propuestaEmpleo.Descripcion = Propuesta.Descripcion;
+                            //    propuestaEmpleo.EmpleoId = Propuesta.EmpleoId;
+                            //    propuestaEmpleo.Orden = CantPropuestas + 1;
+                            //    propuestaEmpleo.Requisitos = Propuesta.Requisitos;
+                            //    propuestaEmpleo.FechaHoraInicio = Propuesta.FechaHoraInicio;
+                            //    propuestaEmpleo.FechaHoraFin = Propuesta.FechaHoraFin;
+                            //    propuestaEmpleo.Ubicacion = Propuesta.Ubicacion;
+                            //    propuestaEmpleo.Cantidad = 1;
+                            //    propuestaEmpleo.Valor = Propuesta.Valor;
+                            //    propuestaEmpleo.EmpleadorId = Propuesta.EmpleadorId;
+                            //    propuestaEmpleo.EmpleadoId = Propuesta.EmpleadoId;
+                            //    propuestaEmpleo.Observaciones = Propuesta.Observaciones;
+                            //    propuestaEmpleo.Aceptada = false;
+                            //    _dbContext.Update(propuestaEmpleo);
+                            //    await _dbContext.SaveChangesAsync();
+                            //}
+                             // o sino se actualiza como activo false el empleo para que no aparezca en publico las propuestasEmpleo
+
                             var empleo =  _dbContext.Empleos.Where(e => e.IdEmpleo == propuestaEmpleo_encontrado.EmpleoId).FirstOrDefault();
-                            empleo.EmpleadoId = propuestaEmpleo_encontrado.EmpleadoId;
-                            empleo.EmpleadorId = propuestaEmpleo_encontrado.EmpleadorId;
-                            if (propuestaEmpleo_encontrado.Cantidad == 0)
+                            //empleo.EmpleadoId = propuestaEmpleo_encontrado.EmpleadoId;
+                            //empleo.EmpleadorId = propuestaEmpleo_encontrado.EmpleadorId;
+                            if (Propuesta.Cantidad == 0)
                             {
                                 empleo.Activo = false;
-                                empleo.Observaciones = empleo.Observaciones + "::EMPLEO CONTRATADO EN FECHA Y HORA QUE SE INACTIVA:: ";
+                                empleo.Observaciones = empleo.Observaciones + "::CANTIDAD PROPUESTAS CONTRATADAS EN FECHA Y HORA QUE SE INACTIVA:: ";
+                                empleo.FechaHoraInactiva = DateTime.Now;
                             }
                             else
                             {
                                 empleo.Observaciones = empleo.Observaciones + ":: UN EMPLEO CONTRATADO EN :"+ DateTime.Now + "-> FALTA(N) :(" + propuestaEmpleo_encontrado.Cantidad.ToString() + ") POR CONTRATAR::";
                             }
-                            empleo.FechaHoraInactiva = DateTime.Now;
                             _dbContext.Update(empleo);
                             await _dbContext.SaveChangesAsync();
 
+                            // Se graba Propuesta orden 1
+                            _dbContext.Update(Propuesta);
+                            await _dbContext.SaveChangesAsync();
                         }
                         //if(tipo == "Servicio")
                         //{

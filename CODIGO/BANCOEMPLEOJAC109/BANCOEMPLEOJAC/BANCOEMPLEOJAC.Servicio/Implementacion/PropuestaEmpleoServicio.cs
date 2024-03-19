@@ -182,25 +182,67 @@ namespace BANCOEMPLEOJAC.Servicio.Implementacion
                 throw ex;
             }
         }
-        
-        public async Task<int?> ObtenerAnterior(int id)
+
+        public async Task<int?> ObtenerAnterior(int Orden, int id)
         {
             try
             {
-                var consulta = _modeloRepositorio.Consultar(p => p.PropuestaEmpleoAnteriorId == id);
-                    //.Include(c => c.Empleo).ThenInclude(p => p.PerfilCargo).ThenInclude(j => j.Jac);
-
-
-                var fromDbModelo = await consulta.FirstOrDefaultAsync();
-                if (fromDbModelo != null)
+                if (Orden > 1)
                 {
-                    var idAnterior = fromDbModelo.IdPropuestaEmpleo;
-                    return idAnterior;
+                    Orden -= 1;
+                }
+                else return null;
+                var consulta = _modeloRepositorio.Consultar(p => p.EmpleoId == id && p.Orden == Orden);
+                if (consulta.Count() > 0)
+                {
+                    var fromDbModelo = await consulta.FirstOrDefaultAsync();
+                    if (fromDbModelo != null)
+                    {
+                        var idAnterior = fromDbModelo.IdPropuestaEmpleo;
+                        return idAnterior;
+                    }
+                    else
+                        return null;
+
                 }
                 else
+                {
                     return null;
-                    //throw new TaskCanceledException("No se encontraron coincidencias Anterior");
 
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public async Task<int?> ObtenerSiguiente(int Orden, int id)
+        {
+            try
+            {
+                if (Orden >= 1)
+                {
+                    Orden += 1;
+                }
+                var consulta = _modeloRepositorio.Consultar(p => p.EmpleoId == id && p.Orden == Orden);
+                if (consulta.Count() > 0)
+                {
+                    var fromDbModelo = await consulta.FirstOrDefaultAsync();
+                    if (fromDbModelo != null)
+                    {
+                        var idSiguiente = fromDbModelo.IdPropuestaEmpleo;
+                        return idSiguiente;
+                    }
+                    else
+                        return null;
+
+                }
+                else
+                {
+                    return null;
+
+                }
             }
             catch (Exception ex)
             {

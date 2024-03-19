@@ -11,6 +11,8 @@ namespace BANCOEMPLEOJAC.DTO
     {
         public int IdEmpleo { get; set; }
         [Required(ErrorMessage = "Ingrese Nombre del Empleo")]
+        [MinLength(5,ErrorMessage ="No se pueden menos de 5 caracteres para el nombre")]
+        [MaxLength(50, ErrorMessage ="No se pueden mas de 100 Caracteres para el Nombre")]
         public string Nombre { get; set; } = null!;
         [Required(ErrorMessage = "Ingrese Descripción")]
         public string Descripcion { get; set; } = null!;
