@@ -5,6 +5,9 @@ using Blazored.Toast.Services;
 
 namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
 {
+    // VOY : PONIENDO A CARRITO EN BASE DEDATOS PARA COMPARTIR ENTRE USUARIOS LOS DATOS DE CONTRATO FECHA: 25/MAR/2024 12:18AM
+
+
     public class CarritoServicio : ICarritoServicio
     {
         private ILocalStorageService _localstorageService;
@@ -28,6 +31,8 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
             try
             {
                 var carrito = await _localstorageService.GetItemAsync<List<CarritoDTO>>("carrito");
+                //  Lista desde base de datos Carrito de Usuario de PropuestaEmpleo ya sea Empleador o Empleado
+
                 if (carrito == null)
                     carrito = new List<CarritoDTO>();
 
@@ -48,9 +53,9 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
                 await _localstorageService.SetItemAsync("carrito", carrito);
 
                 if (modelo.propuestaEmpleo.IdPropuestaEmpleo != null)
-                    _toastService.ShowSuccess("Propuesta Empleo fue actualizada en Canasta");
+                    _toastService.ShowSuccess("Propuesta Empleo fue actualizada en Contratos");
                 else
-                    _toastService.ShowSuccess("Propuesta Empleo fue agregada al Canasta");
+                    _toastService.ShowSuccess("Propuesta Empleo fue agregada a Contratos");
 
                 //if (modelo.propuestaServicio.IdPropuestaServicio != null)
                 //    _toastService.ShowSuccess("Propuesta Servicio fue actualizada en carrito");
@@ -76,7 +81,6 @@ namespace BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
             var carrito = await _localstorageService.GetItemAsync<List<CarritoDTO>>("carrito");
             if (carrito == null)
                 carrito = new List<CarritoDTO>();
-
             return carrito;
         }
 

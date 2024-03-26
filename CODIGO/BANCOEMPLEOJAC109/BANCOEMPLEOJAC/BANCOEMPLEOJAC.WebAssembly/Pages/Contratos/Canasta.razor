@@ -20,7 +20,7 @@
                         <thead class="table-dark">
                             <tr>
 @*                                 <th style="width:102px"></th>
- *@                                <th>Producto</th>
+ *@                                <th>Producto o Servicio</th>
                                 <th>Precio</th>
                                 <th>Cantidad</th>
                                 <th>Total</th>
@@ -36,8 +36,11 @@
                                     <tr>
 @*                                         <td valign="middle">
                                             <img class="card-img-top" src="@item.propuestaEmpleo.Imagen" style="width:100px">
-                                        </td>
- *@                                        <td valign="middle">@item.propuestaEmpleo.Nombre</td>
+                                        </td>*@ 
+                                        <td valign="middle">@item.propuestaEmpleo.Nombre
+                                                 <br />
+                                                 <span class="text-muted">Requisitos: @item.propuestaEmpleo.Requisitos</span> 
+                                            </td>
                                         <td valign="middle">$@String.Format("{0:N0}", item.Precio)</td>
                                         <td valign="middle" align="center">
                                             <div class="btn-group" role="group">
@@ -95,6 +98,13 @@
                     <label class="form-label text-center h3">Forma de Pago Origen</label>
                 </div>
                     <div class="mb-2">
+                        @if (NombresEmpleador != "")
+                        {
+                             <div class="mb-2">
+                                <label class="form-label">Nombre Empleador</label>
+                                <h3>@NombresEmpleador</h3>
+                            </div>
+                        }
                         <div class="mb-2">
                             <label class="form-label">Forma de Pago</label>
                             <select id="formadepago" @onchange="MostrarInput" class="form-control form-control-sm">
@@ -123,28 +133,48 @@
                                 {
                                     <option value="consignacion">Consignación</option>
                                 }
+                                @if (formaPagoSeleccionada == "contraentrega")
+                                {
+                                    <option value="contraentrega" selected>Contra Entrega</option>
+                                }
+                                else
+                                {
+                                    <option value="contraentrega">Contra Entrega</option>
+                                }
                             </select>
+                            <ValidationMessage For="@(() => modelo.EntidadOrigen)" />
                         </div>
                         @if (mostrarInput)
                         {
-                                string str1 = @formaPagoSeleccionada.ToString();
-                                string str2 = ".jpg";
-                                string result = String.Concat(str1, str2);
+                            string result = String.Concat(@formaPagoSeleccionada.ToString(),".jpg" );
                             <div class="mb-2">
                                 <span class="float-end"><img src="@result" width="110px" hight="50px"/></span>
                                 @if (formaPagoSeleccionada == "consignacion")
                                 {
                                      <br /><br /><br /><span class="float-start">Cuenta Banco</span>
+                                    <input type="text" class="form-control form-control-sm" @bind=@CuentaOrigen placeholder="Cuenta Origen">
                                 }
                                 @if (formaPagoSeleccionada == "daviplata" || formaPagoSeleccionada == "nequi")
                                 {
                                     <br /><span class="float-start">Número Celular</span>
+                                    <input type="text" class="form-control form-control-sm" @bind="@CelularOrigen" placeholder="">
                                 }
-                                <input type="text" class="form-control form-control-sm" placeholder="">
+                                @if (formaPagoSeleccionada == "contraentrega")
+                                {
+                                    <br />
+                                    <span class="float-start">Contra Entrega!</span>
+                                    <span class="float-end">Esta de acuerdo el Usuario Origen en la Forma de Pago ?</span>
+                                    <input type="checkbox" @bind="@contraentregaOrigen" />
+                                }
                             </div>
                         }
-                        <label class="form-label">Codigo Transaccoón</label>
-                        <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
+                        @if (formaPagoSeleccionada != "contraentrega")
+                        {
+                            <label class="form-label">Codigo Transaccoón</label>
+                            <input type="text" class="form-control form-control-sm" placeholder="" disabled="@disabled">
+                            <ValidationMessage For="@(() => modelo.CodigoTransacción)" />
+                        }
+
                     </div>
                     <div class="input-group mt-3">
                         <div class="input-group-text form-control bg-light text-secondary justify-content-center" id="basic-addon3">Foto Transacción</div>
@@ -162,7 +192,7 @@
                     <hr />
                     <div class="d-flex justify-content-between">
                         <div>Total a pagar:</div>
-                        <div>$ @(lista.Sum(i => i.Total))</div>
+                        <div>$@String.Format("{0:N0}", lista.Sum(i => i.Total))</div>
                     </div>
                     <div class="mt-2">
                         <div class="d-grid gap-1">
@@ -170,29 +200,49 @@
                         </div>
                     </div>
                     <hr />
+                    @if (NombresEmpleado != "")
+                    {
+                        <div class="mb-2">
+                            <label class="form-label">Nombre Empleado</label>
+                            <h3>@NombresEmpleado</h3>
+                        </div>
+                    }
+
                     <div class="mb-2 text-center">
                         <label class="form-label text-center h3">Forma de Pago Destino</label>
                     </div>
                     <div class="mb-2">
                         @if (mostrarInput)
                         {
-                            string str1 = @formaPagoSeleccionada.ToString();
-                            string str2 = ".jpg";
-                            string result = String.Concat(str1, str2);
+                            string result = String.Concat(@formaPagoSeleccionada.ToString(),".jpg");
                             <div class="mb-2">
                                 <span class="float-end"><img src="@result" width="110px" hight="50px" /></span>
                                 @if (formaPagoSeleccionada == "consignacion")
                                 {
                                     <br /><br /><br />
                                     <span class="float-start">Cuenta Banco</span>
+                                    <input type="text" class="form-control form-control-sm" @bind="@CuentaDestino" placeholder="Cuenta Destino">
                                 }
                                 @if (formaPagoSeleccionada == "daviplata" || formaPagoSeleccionada == "nequi")
                                 {
                                     <br />
-
                                     <span class="float-start">Número Celular</span>
+                                    @if (lista.Where(l => l.propuestaEmpleo.EmpleadoId == UsuarioId).Any())
+                                    {
+                                        <input type="text" class="form-control form-control-sm" @bind="@CelularDestino" placeholder="Celular Destino">
+                                    }
+                                    else
+                                    {
+                                        <input type="text" class="form-control form-control-sm" @bind="@CelularDestino" placeholder="Celular Destino">
+                                    }
                                 }
-                                <input type="text" class="form-control form-control-sm" placeholder="">
+                                @if (formaPagoSeleccionada == "contraentrega")
+                                {
+                                    <br />
+                                    <span class="float-start">Contra Entrega!</span>
+                                    <span class="float-end">Esta de acuerdo el Usuario Destino en la Forma de Pago ?</span>
+                                    <input type="checkbox" @bind="@contraentregaDestino" />
+                                }
                             </div>
                         }
                     </div>
@@ -218,19 +268,31 @@
     private bool disabled = true;
     private bool disabledmodificacion = true;
     private List<CarritoDTO> lista = new List<CarritoDTO>();
+    private List<PropuestaEmpleoDTO> Propuesta = new List<PropuestaEmpleoDTO>();
     private decimal? TotalPagar = 0;
     private FormaPagoDTO modelo = new FormaPagoDTO();
     private int UsuarioId = 0;
-    private string activa = " disabled "; 
+    private string NombresEmpleador = "";
+    private string NombresEmpleado = "";
+    private string CelularOrigen = "";
+    private string CelularDestino = "";
+    private string activa = " disabled ";
     private string formaPagoSeleccionada;
     private string formapago;
     private bool mostrarInput = false;
+    private bool contraentregaOrigen = false;
+    private bool contraentregaDestino = false;
+    private string EntidadOrigen = "";
+    private string EntidadDestino = "";
+    private string CuentaOrigen = "";
+    private string CuentaDestino = "";
 
     private void MostrarInput(ChangeEventArgs e)
     {
         formaPagoSeleccionada = e.Value.ToString();
         mostrarInput = !string.IsNullOrEmpty(formaPagoSeleccionada);
-        //formapago.IndexOf(e.Value.ToString());
+        EntidadOrigen = formaPagoSeleccionada;
+        EntidadDestino = formaPagoSeleccionada;
     }
 
     [CascadingParameter]
@@ -239,7 +301,11 @@
     protected override async Task OnInitializedAsync()
     {
         lista = await carritoServicio.DevolverCarrito();
+        // foreach (var item in lista)
+        // {
+        //             Propuesta = item.propuestaEmpleo.;
 
+        // }
         var authState = await authenticationState;
         var user = authState.User;
         if (user.Identity.IsAuthenticated)
@@ -247,7 +313,11 @@
             disabledmodificacion = true;
             disabled = false;
             UsuarioId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            //JACId = Convert.ToInt32(user.Claims.First(c => c.Type == ClaimTypes.Locality).Value);
+            if (lista.Where(l => l.propuestaEmpleo.EmpleadorId == UsuarioId).Any())
+            {
+                CelularOrigen = Convert.ToString(user.Claims.First(c => c.Type == ClaimTypes.MobilePhone).Value);
+                NombresEmpleador = Convert.ToString(user.Claims.First(c => c.Type == ClaimTypes.Name).Value) + " " + Convert.ToString(user.Claims.First(c => c.Type == ClaimTypes.Surname).Value);
+            }
         }
 
     }

@@ -300,9 +300,19 @@
     public DistanciaDTO distanciaDTO = new DistanciaDTO();
     #endregion
 
+    protected override async Task OnParametersSetAsync()
+    {
+        ObtenerDatosPropuesta();
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        // IDENTIFICAR EL SUSUARIO
+        ObtenerDatosPropuesta();
+    }
+
+    private async Task ObtenerDatosPropuesta()
+    {
+                // IDENTIFICAR EL SUSUARIO
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
@@ -396,6 +406,7 @@
         }
         calcula = CalculaDis(Convert.ToDouble(distanciaDTO.latitudPunto1), Convert.ToDouble(distanciaDTO.longitudPunto1), Convert.ToDouble(distanciaDTO.latitudPunto2), Convert.ToDouble(distanciaDTO.longitudPunto2)).Result;
         #endregion
+
     }
 
     private async Task ObtieneNombresEmpleador(int? IdUsuario)
@@ -513,7 +524,6 @@
         CarritoDTO carrito = new CarritoDTO()
             {
                 propuestaEmpleo = modelo,
-                // Producto = modelo,
                 Cantidad = cantidad,
                 Precio = precioFinal,
                 Total = Convert.ToDecimal(cantidad) * precioFinal

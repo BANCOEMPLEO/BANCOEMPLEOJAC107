@@ -143,6 +143,9 @@ namespace BANCOEMPLEOJAC.Utilidades
             CreateMap<ZonaVereda, ZonaVeredaDTO>();
             CreateMap<ZonaVeredaDTO, ZonaVereda>();
 
+            CreateMap<Carrito, CarritoDTO>();
+            CreateMap<CarritoDTO, Carrito>();
+
 
         }
         //static string CalcularNuevoCampo(IGenericoRepositorio<Jac> jacModelo, Usuario origen)

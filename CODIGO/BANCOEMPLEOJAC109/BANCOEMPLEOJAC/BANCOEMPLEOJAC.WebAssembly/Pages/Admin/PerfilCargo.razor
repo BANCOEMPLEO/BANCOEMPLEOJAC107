@@ -1,5 +1,6 @@
 ﻿@page "/perfilcargo"
 @page "/perfilcargo/{Id:int}"
+@page "/perfilcargo/{Id:int}/{EmpleoId:int?}"
 @using BANCOEMPLEOJAC.Modelo
 @using BANCOEMPLEOJAC.Repositorio.Interfase
 @using BANCOEMPLEOJAC.WebAssembly.Servicio.Implementacion
@@ -92,7 +93,15 @@
                 {
                 <button type="button" class="btn alert-danger" style="width:130px" @onclick="BorrarPerfilCargo">Borrar</button>
                 }
-                <a href="/empleo" class="btn btn-secondary" style="width:130px">Volver</a>
+                @if (EmpleoId != 0)
+                {
+                    <a href="/empleo/@(EmpleoId.ToString())"  class="btn btn-secondary" style="width:130px">Volver</a>
+                }
+                else
+                {
+                    <a href="/empleo" class="btn btn-secondary" style="width:130px">Volver</a>
+                }
+
             </div>
         </EditForm>
 
@@ -105,6 +114,8 @@
     // Z-BD : AGREGAR "IDUSUARIO" PARA EVITAR MODIFICACIONES DE OTROS USUARIOS A PERFILES CREADOS FECHA: 15/MAR/2024 10:59PM
     [Parameter]
     public int Id { get; set; } = 0;
+    [Parameter]
+    public int EmpleoId { get; set; } = 0;
     public int IdTipoContrato { get; set; }
     public int IdJAC { get; set; }
     private JacDTO jac = new JacDTO();
@@ -248,7 +259,14 @@
         if (respuesta)
         {
             toastService.ShowSuccess(mensaje);
-            _navServicio.NavigateTo("/empleo");
+            if (EmpleoId != null)
+            {
+              _navServicio.NavigateTo("/empleo/" + EmpleoId.ToString());
+            }
+            else
+            {
+                _navServicio.NavigateTo("/empleo");
+            }
         }
         else
         {
